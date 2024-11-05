@@ -1,0 +1,29 @@
+<h1>Assignments</h1>
+
+<%= link_to 'Create New Assignment', new_assignment_path, class: 'button' %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Subject</th>
+      <th>Grade Level</th>
+      <th>Difficulty</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @assignments.each do |assignment| %>
+      <tr>
+        <td><%= assignment.title %></td>
+        <td><%= assignment.subject %></td>
+        <td><%= assignment.grade_level %></td>
+        <td><%= assignment.difficulty %></td>
+        <td>
+          <%= link_to 'Edit', edit_assignment_path(assignment) %> |
+          <%= link_to 'Delete', assignment, method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
