@@ -1,3 +1,5 @@
+require 'ostruct'
+
 class AssignmentsController < ApplicationController
 
   def index
@@ -31,7 +33,7 @@ class AssignmentsController < ApplicationController
               },
               { role: "user", content: prompt }
             ],
-						response_format: {
+            response_format: {
               type: "json_schema",
               json_schema: {
                 "strict": true,
@@ -43,13 +45,39 @@ class AssignmentsController < ApplicationController
           }
         )
         
-        Rails.logger.info "Prompt sent to OpenAI: #{prompt}"
-        Rails.logger.info "Full OpenAI Response: #{response.inspect}"
+        content = response.dig("choices", 0, "message", "content")
+        content = JSON.parse(content) if content.is_a?(String)
         
-        redirect_to assignments_path, notice: 'Assignment was successfully created.'
-      rescue => e
-        Rails.logger.error "OpenAI API Error: #{e.message}"
+        ActiveRecord::Base.transaction do
+          # Update assignment with the passage
+          @assignment.update!(passage: content["passage"])
+          
+          # Save questions and their answers
+          content["questions"].each do |q|
+            question = @assignment.questions.create!(
+              content: q["question_text"],
+              explanation: q["explanation"]
+            )
+            
+            # Create answers for this question
+            q["answers"].each do |answer|
+              question.answers.create!(
+                text: answer["text"],
+                is_correct: answer["is_correct"]
+              )
+            end
+          end
+          
+          redirect_to assignment_path(@assignment), notice: 'Assignment was successfully created.'
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error "Database validation error: #{e.message}"
+        @assignment.destroy
+        redirect_to assignments_path, alert: 'Error saving questions and answers. Please try again.'
+      rescue StandardError => e
+        Rails.logger.error "Error processing OpenAI response: #{e.message}"
         Rails.logger.error "Full error details: #{e.inspect}"
+        @assignment.destroy
         redirect_to assignments_path, alert: 'Error generating questions. Please try again.'
       end
     else
@@ -62,18 +90,44 @@ class AssignmentsController < ApplicationController
 	
 
   def generate_prompt(assignment)
-    """
-    Create an educational assignment with the following parameters:
-    Title: #{assignment.title}
-    Subject: #{assignment.subject}
-    Grade Level: #{assignment.grade_level}
-    Difficulty: #{assignment.difficulty}
-    Number of Questions: #{assignment.number_of_questions}
-    Student Interests: #{assignment.interests}
-    """
+    Rails.logger.info "Generating prompt for subject: #{assignment.subject}"
+    
+    prompt_filename = PromptMapperService.get_prompt_filename(assignment.subject)
+    Rails.logger.info "Mapped to prompt file: #{prompt_filename}"
+    
+    template_path = Rails.root.join('lib', 'prompts', prompt_filename)
+    Rails.logger.info "Looking for template at: #{template_path}"
+    
+    if File.exist?(template_path)
+      template = File.read(template_path)
+      Rails.logger.info "Found template, length: #{template.length} characters"
+      
+      # Create a binding where 'assignment' is available
+      b = binding
+      b.local_variable_set(:assignment, assignment)
+      
+      prompt = ERB.new(template).result(b)
+      Rails.logger.info "Generated prompt, length: #{prompt.length} characters"
+      Rails.logger.debug "Full prompt content: #{prompt}"
+      prompt
+    else
+      Rails.logger.warn "No prompt template found for subject: #{assignment.subject}"
+      fallback = """
+        Create an educational assignment with the following parameters:
+        Title: #{assignment.title}
+        Subject: #{assignment.subject}
+        Grade Level: #{assignment.grade_level}
+        Difficulty: #{assignment.difficulty}
+        Number of Questions: #{assignment.number_of_questions}
+        Student Interests: #{assignment.interests}
+      """
+      Rails.logger.info "Using fallback prompt"
+      Rails.logger.debug "Fallback prompt content: #{fallback}"
+      fallback
+    end
   end
 
   def assignment_params
-    params.require(:assignment).permit(:title, :subject, :grade_level, :difficulty, :number_of_questions, :interests)
+    params.require(:assignment).permit(:title, :subject, :grade_level, :difficulty, :number_of_questions, :interests, :passage)
   end
 end

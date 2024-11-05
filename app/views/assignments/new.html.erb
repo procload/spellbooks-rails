@@ -1,6 +1,11 @@
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900">New Assignment</h1>
+    
+    <button type="button" onclick="fillRandomValues()" 
+            class="mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-500 hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+      🎲 Fill Random
+    </button>
   </div>
 
   <%= form_with model: @assignment, local: true, class: "space-y-6" do |form| %>
@@ -54,4 +59,43 @@
           class: "inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
     </div>
   <% end %>
+
+  <script>
+    function fillRandomValues() {
+      const funnyTitles = [
+        "Zombie Math: Adding Brains",
+        "Ninja History: Silent but Deadly Facts",
+        "Pokemon Physics: Gotta Calculate 'Em All",
+        "Minecraft Reading: Block by Block",
+        "Among Us Art: Sus Masterpieces"
+      ];
+
+      const funnyInterests = [
+        "dancing pickles, professional napping",
+        "competitive sandwich making, extreme tea drinking",
+        "professional pillow fighting, cloud watching",
+        "underwater basket weaving, professional procrastination",
+        "dinosaur whispering, bubble wrap popping"
+      ];
+
+      // Set random values
+      document.querySelector('[name="assignment[title]"]').value = 
+        funnyTitles[Math.floor(Math.random() * funnyTitles.length)];
+      
+      document.querySelector('[name="assignment[subject]"]').value = 
+        ['Math', 'Art', 'History', 'Reading Comprehension', 'Physics'][Math.floor(Math.random() * 5)];
+      
+      document.querySelector('[name="assignment[grade_level]"]').value = 
+        Math.floor(Math.random() * 13);
+      
+      document.querySelector('[name="assignment[difficulty]"]').value = 
+        ['Easy', 'Medium', 'Hard'][Math.floor(Math.random() * 3)];
+      
+      document.querySelector('[name="assignment[number_of_questions]"]').value = 
+        Math.floor(Math.random() * 20) + 1;
+      
+      document.querySelector('[name="assignment[interests]"]').value = 
+        funnyInterests[Math.floor(Math.random() * funnyInterests.length)];
+    }
+  </script>
 </div>

@@ -1,0 +1,44 @@
+<%= turbo_frame_tag dom_id(question) do %>
+  <%= form_with(model: [@assignment, question], data: { turbo: true }) do |f| %>
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Edit Question</h3>
+      </div>
+      
+      <div class="border-t border-gray-200">
+        <div class="px-4 py-5 sm:px-6">
+          <div class="mb-4">
+            <%= f.label :content, "Question Text", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.text_area :content, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+
+          <div class="space-y-4">
+            <h4 class="text-sm font-medium text-gray-700">Answers</h4>
+            <% question.answers.each do |answer| %>
+              <div class="flex items-center space-x-4">
+                <%= text_field_tag "answers[#{answer.id}][text]", answer.text, 
+                      class: "flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                <label class="inline-flex items-center">
+                  <%= check_box_tag "answers[#{answer.id}][is_correct]", "1", answer.is_correct, 
+                        class: "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500",
+                        onchange: "ensureSingleCorrect(this)" %>
+                  <span class="ml-2 text-sm text-gray-600">Correct</span>
+                </label>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mt-4">
+            <%= f.label :explanation, class: "block text-sm font-medium text-gray-700" %>
+            <%= f.text_area :explanation, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+
+          <div class="mt-4 flex justify-end space-x-3">
+            <%= f.submit "Save Changes", class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+            <%= link_to "Cancel", assignment_path(@assignment), class: "inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %> 

@@ -13,5 +13,12 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   root 'assignments#index'
-  resources :assignments
+  resources :assignments do
+    resources :questions do
+      member do
+        post :check_answer
+        post :regenerate
+      end
+    end
+  end
 end

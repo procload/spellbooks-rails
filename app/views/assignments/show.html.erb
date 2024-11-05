@@ -42,51 +42,26 @@
     </div>
   </div>
 
+  <% if @assignment.passage.present? %>
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+      <div class="px-4 py-5 sm:px-6">
+        <h2 class="text-lg leading-6 font-medium text-gray-900">Reading Passage</h2>
+      </div>
+      <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+        <div class="prose max-w-none">
+          <%= @assignment.passage %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <div class="space-y-6">
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold text-gray-900">Questions</h2>
     </div>
 
     <div class="space-y-6">
-      <% @questions.each_with_index do |question, index| %>
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-          <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">Question <%= index + 1 %></h3>
-          </div>
-          
-          <div class="border-t border-gray-200">
-            <% if question.passage.present? %>
-              <div class="px-4 py-5 sm:px-6 bg-gray-50">
-                <h4 class="text-sm font-medium text-gray-500 mb-2">Passage</h4>
-                <div class="prose max-w-none"><%= question.passage %></div>
-              </div>
-            <% end %>
-            
-            <div class="px-4 py-5 sm:px-6">
-              <div class="prose max-w-none mb-4"><%= question.content %></div>
-              
-              <div class="space-y-2">
-                <% question.options.each do |option| %>
-                  <div class="p-3 bg-gray-50 rounded-md text-sm"><%= option %></div>
-                <% end %>
-              </div>
-              
-              <div class="explanation mt-4" style="display: none;">
-                <h4 class="text-sm font-medium text-gray-500 mb-2">Explanation</h4>
-                <div class="prose max-w-none">
-                  <%= question.explanation %>
-                  <p class="mt-2"><strong>Correct Answer:</strong> <%= question.correct_answer %></p>
-                </div>
-              </div>
-              
-              <button onclick="toggleExplanation(this)" 
-                      class="mt-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Show Explanation
-              </button>
-            </div>
-          </div>
-        </div>
-      <% end %>
+      <%= render partial: "questions/question", collection: @questions %>
     </div>
   </div>
 
@@ -107,6 +82,16 @@ function toggleExplanation(button) {
   } else {
     explanation.style.display = 'none';
     button.textContent = 'Show Explanation';
+  }
+}
+
+function ensureSingleCorrect(checkbox) {
+  if (checkbox.checked) {
+    // Uncheck all other checkboxes in the form
+    const form = checkbox.closest('form');
+    form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      if (cb !== checkbox) cb.checked = false;
+    });
   }
 }
 </script> 
