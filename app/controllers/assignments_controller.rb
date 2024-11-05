@@ -20,7 +20,7 @@ class AssignmentsController < ApplicationController
     
     if @assignment.save
       ProcessAssignmentJob.perform_later(@assignment.id)
-      redirect_to assignments_path, notice: 'Assignment is being generated...'
+      redirect_to root_path, notice: 'Assignment is being generated...'
     else
       render :new
     end
