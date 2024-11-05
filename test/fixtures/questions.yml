@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  assignment: one
+  content: MyText
+  correct_answer: MyString
+  explanation: MyText
+  options: MyText
+  passage: MyText
+
+two:
+  assignment: two
+  content: MyText
+  correct_answer: MyString
+  explanation: MyText
+  options: MyText
+  passage: MyText

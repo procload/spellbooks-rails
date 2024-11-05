@@ -1,39 +1,57 @@
-<h1>New Assignment</h1>
-
-<%= form_with model: @assignment, local: true do |form| %>
-  <div>
-    <%= form.label :title %><br>
-    <%= form.text_field :title %>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">New Assignment</h1>
   </div>
 
-  <div>
-    <%= form.label :subject %><br>
-    <%= form.select :subject, ['Math', 'Art', 'History', 'Reading Comprehension', 'Physics'] %>
-  </div>
+  <%= form_with model: @assignment, local: true, class: "space-y-6" do |form| %>
+    <div class="space-y-1">
+      <%= form.label :title, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_field :title, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
 
-  <div>
-    <%= form.label :grade_level %><br>
-    <%= form.number_field :grade_level, in: 0..12 %>
-  </div>
+    <div class="space-y-1">
+      <%= form.label :subject, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :subject, 
+          ['Math', 'Art', 'History', 'Reading Comprehension', 'Physics'],
+          {}, 
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
 
-  <div>
-    <%= form.label :difficulty %><br>
-    <%= form.select :difficulty, ['Easy', 'Medium', 'Hard'] %>
-  </div>
+    <div class="space-y-1">
+      <%= form.label :grade_level, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.number_field :grade_level, 
+          in: 0..12,
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
 
-  <div>
-    <%= form.label :number_of_questions %><br>
-    <%= form.number_field :number_of_questions, in: 1..100 %>
-  </div>
+    <div class="space-y-1">
+      <%= form.label :difficulty, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :difficulty, 
+          ['Easy', 'Medium', 'Hard'],
+          {}, 
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
 
-  <div>
-    <%= form.label :interests %><br>
-    <%= form.text_area :interests, placeholder: 'e.g., Fortnite, NBA' %>
-  </div>
+    <div class="space-y-1">
+      <%= form.label :number_of_questions, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.number_field :number_of_questions, 
+          in: 1..100,
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
 
-  <div>
-    <%= form.submit 'Create Assignment' %>
-  </div>
-<% end %>
+    <div class="space-y-1">
+      <%= form.label :interests, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_area :interests, 
+          placeholder: 'e.g., Fortnite, NBA',
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
 
-<%= link_to 'Back', assignments_path %>
+    <div class="flex items-center justify-between pt-4">
+      <%= form.submit 'Create Assignment', 
+          class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+      
+      <%= link_to 'Back', assignments_path, 
+          class: "inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    </div>
+  <% end %>
+</div>

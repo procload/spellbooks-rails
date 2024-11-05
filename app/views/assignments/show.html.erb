@@ -1,0 +1,112 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900"><%= @assignment.title %></h1>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+    <div class="px-4 py-5 sm:px-6">
+      <h2 class="text-lg leading-6 font-medium text-gray-900">Assignment Details</h2>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+      <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Subject</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @assignment.subject %></dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Grade Level</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @assignment.grade_level %></dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Difficulty</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+              <%= case @assignment.difficulty
+                  when 'Easy' then 'bg-green-100 text-green-800'
+                  when 'Medium' then 'bg-yellow-100 text-yellow-800'
+                  when 'Hard' then 'bg-red-100 text-red-800'
+                  end %>">
+              <%= @assignment.difficulty %>
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Number of Questions</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @assignment.number_of_questions %></dd>
+        </div>
+        <div class="sm:col-span-2">
+          <dt class="text-sm font-medium text-gray-500">Interests</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @assignment.interests %></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-2xl font-bold text-gray-900">Questions</h2>
+    </div>
+
+    <div class="space-y-6">
+      <% @questions.each_with_index do |question, index| %>
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Question <%= index + 1 %></h3>
+          </div>
+          
+          <div class="border-t border-gray-200">
+            <% if question.passage.present? %>
+              <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                <h4 class="text-sm font-medium text-gray-500 mb-2">Passage</h4>
+                <div class="prose max-w-none"><%= question.passage %></div>
+              </div>
+            <% end %>
+            
+            <div class="px-4 py-5 sm:px-6">
+              <div class="prose max-w-none mb-4"><%= question.content %></div>
+              
+              <div class="space-y-2">
+                <% question.options.each do |option| %>
+                  <div class="p-3 bg-gray-50 rounded-md text-sm"><%= option %></div>
+                <% end %>
+              </div>
+              
+              <div class="explanation mt-4" style="display: none;">
+                <h4 class="text-sm font-medium text-gray-500 mb-2">Explanation</h4>
+                <div class="prose max-w-none">
+                  <%= question.explanation %>
+                  <p class="mt-2"><strong>Correct Answer:</strong> <%= question.correct_answer %></p>
+                </div>
+              </div>
+              
+              <button onclick="toggleExplanation(this)" 
+                      class="mt-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Show Explanation
+              </button>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-8 flex space-x-4">
+    <%= link_to 'Edit Assignment', edit_assignment_path(@assignment), 
+        class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    <%= link_to 'Back to Assignments', assignments_path, 
+        class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+  </div>
+</div>
+
+<script>
+function toggleExplanation(button) {
+  const explanation = button.previousElementSibling;
+  if (explanation.style.display === 'none') {
+    explanation.style.display = 'block';
+    button.textContent = 'Hide Explanation';
+  } else {
+    explanation.style.display = 'none';
+    button.textContent = 'Show Explanation';
+  }
+}
+</script> 
