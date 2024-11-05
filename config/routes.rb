@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -10,9 +12,8 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "home#index"
 
-  root 'assignments#index'
   resources :assignments do
     resources :questions do
       member do
@@ -21,4 +22,10 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  # Mount Sidekiq web interface
+  mount Sidekiq::Web => '/sidekiq'
+
+  # Mount Action Cable server
+  mount ActionCable.server => '/cable'
 end

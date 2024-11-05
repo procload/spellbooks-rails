@@ -1,36 +1,5 @@
-require 'ostruct'
-
-class AssignmentsController < ApplicationController
-
-  def index
-    @assignments = Assignment.order(created_at: :desc)
-  end
-
-  def show
-    @assignment = Assignment.find(params[:id])
-    @questions = @assignment.questions
-  end
-
-  def new
-    @assignment = Assignment.new
-  end
-
-  def create
-    @assignment = Assignment.new(assignment_params)
-    
-    if @assignment.save
-      ProcessAssignmentJob.perform_later(@assignment.id)
-      redirect_to assignments_path, notice: 'Assignment is being generated...'
-    else
-      render :new
-    end
-  end
-
-  private
-
-	
-
-  def generate_prompt(assignment)
+class PromptGeneratorService
+  def self.generate_prompt(assignment)
     Rails.logger.info "Generating prompt for subject: #{assignment.subject}"
     
     prompt_filename = PromptMapperService.get_prompt_filename(assignment.subject)
@@ -67,8 +36,4 @@ class AssignmentsController < ApplicationController
       fallback
     end
   end
-
-  def assignment_params
-    params.require(:assignment).permit(:title, :subject, :grade_level, :difficulty, :number_of_questions, :interests, :passage)
-  end
-end
+end 

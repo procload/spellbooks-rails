@@ -1,8 +1,16 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">Assignments</h1>
-    <%= link_to 'Create New Assignment', new_assignment_path, 
-        class: 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' %>
+    <h1 class="text-3xl font-bold text-gray-900">Welcome to Spellbooks</h1>
+    <div class="space-x-4">
+      <!-- Add test toast button -->
+      <%= render partial: "shared/toast", locals: { message: "This is a test message!", type: "success" } %>
+      <button onclick="document.querySelector('[data-controller=toast]').style.display = 'block'" class="px-4 py-2 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        Test Toast
+      </button>
+
+      <%= link_to 'Create New Assignment', new_assignment_path, 
+          class: 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' %>
+    </div>
   </div>
 
   <div class="flex flex-col">

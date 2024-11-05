@@ -13,7 +13,7 @@ gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
-gem "stimulus-rails"
+# gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
@@ -67,3 +67,10 @@ gem "tailwindcss-rails", "~> 3.0"
 
 # Add this line
 gem 'ruby-openai'
+
+# Add Sidekiq
+gem 'sidekiq'
+
+# Add these to your existing Gemfile
+gem 'redis', '~> 5.0'
+gem 'hiredis-client'

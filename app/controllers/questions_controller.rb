@@ -25,6 +25,7 @@ class QuestionsController < ApplicationController
 
   def edit
     respond_to do |format|
+      format.html
       format.turbo_stream
     end
   end
