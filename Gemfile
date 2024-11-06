@@ -82,3 +82,5 @@ group :production do
   gem 'redis', '~> 5.0'
   gem 'sidekiq'
 end
+
+gem "pg", "~> 1.5"
