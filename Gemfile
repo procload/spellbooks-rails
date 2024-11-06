@@ -1,4 +1,6 @@
 source "https://rubygems.org"
+ruby "3.3.5"
+
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.0.rc2"
@@ -74,3 +76,9 @@ gem 'sidekiq'
 # Add these to your existing Gemfile
 gem 'redis', '~> 5.0'
 gem 'hiredis-client'
+
+# Add these to your Gemfile
+group :production do
+  gem 'redis', '~> 5.0'
+  gem 'sidekiq'
+end
