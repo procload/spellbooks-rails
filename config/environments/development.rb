@@ -74,4 +74,19 @@ Rails.application.configure do
   config.assets.compile = true       # Enable dynamic asset compilation
   config.assets.digest = false       # Disable asset digests for easier debugging
   config.importmap.sweep_cache = true
+
+  # Enable hot reloading for JavaScript and CSS
+  config.assets.debug = true
+  config.assets.compile = true
+  config.assets.digest = false
+  config.assets.quiet = false  # Add this to see asset-related logs
+  config.assets.check_precompiled_asset = false  # Add this to skip checking precompiled assets
+  
+  # Enable cache busting for importmaps
+  config.importmap.sweep_cache = true
+  
+  # Add this to force recompilation of assets
+  config.assets.configure do |env|
+    env.cache = ActiveSupport::Cache::NullStore.new
+  end
 end
