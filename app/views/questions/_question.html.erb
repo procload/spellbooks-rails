@@ -29,9 +29,15 @@
           <% end %>
         </div>
         
-        <div class="mt-4">
-          <h4 class="text-sm font-medium text-gray-500 mb-2">Explanation</h4>
-          <div class="prose max-w-none">
+        <div class="mt-4" data-controller="explanation">
+          <button
+            data-action="explanation#toggle"
+            data-explanation-target="button"
+            class="text-sm font-medium text-indigo-600 hover:text-indigo-500 mb-2">
+            Show Explanation
+          </button>
+          
+          <div data-explanation-target="explanation" class="prose max-w-none">
             <%= question.explanation %>
           </div>
         </div>

@@ -73,4 +73,5 @@ Rails.application.configure do
   config.assets.debug = true         # Expands the lines which load the assets
   config.assets.compile = true       # Enable dynamic asset compilation
   config.assets.digest = false       # Disable asset digests for easier debugging
+  config.importmap.sweep_cache = true
 end
