@@ -1,7 +1,10 @@
 require 'sidekiq'
 
 redis_config = if Rails.env.production?
-  { url: ENV['REDIS_URL'] }
+  { url: ENV['REDIS_URL'],
+    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
+    network_timeout: 5,
+    pool_timeout: 5 }
 else
   { url: 'redis://localhost:6379/1' }
 end
