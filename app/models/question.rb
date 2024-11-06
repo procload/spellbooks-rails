@@ -10,7 +10,7 @@ class Question < ApplicationRecord
   end
   
   def correct_answer
-    answers.find_by(is_correct: true)&.text
+    answers.find_by(is_correct: true)&.id&.to_s
   end
   
   def options

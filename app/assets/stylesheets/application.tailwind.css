@@ -6,12 +6,9 @@
   display: none;
 }
 
-/*
-
 @layer components {
-  .btn-primary {
-    @apply py-2 px-4 bg-blue-200;
+  /* Style for selected answer */
+  input[type="radio"].peer:checked + label {
+    @apply ring-2 ring-blue-500 bg-blue-50;
   }
 }
-
-*/

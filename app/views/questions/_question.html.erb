@@ -18,27 +18,52 @@
       <div class="px-4 py-5 sm:px-6">
         <div class="prose max-w-none mb-4"><%= question.content %></div>
         
-        <div class="space-y-2">
-          <% question.answers.each do |answer| %>
-            <div class="p-3 bg-gray-50 rounded-md text-sm flex justify-between items-center">
-              <span><%= answer.text %></span>
-              <% if answer.is_correct %>
-                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Correct</span>
+        <div data-controller="explanation" 
+             data-explanation-correct-answer-value="<%= question.correct_answer %>"
+             data-explanation-hidden-class="hidden"
+             data-explanation-correct-class="bg-green-100"
+             data-explanation-incorrect-class="bg-red-100">
+          
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <% question.answers.each do |answer| %>
+                <div data-explanation-target="answer"
+                     data-value="<%= answer.id %>"
+                     class="relative">
+                  <input type="radio" 
+                         name="question-<%= question.id %>"
+                         value="<%= answer.id %>"
+                         class="sr-only peer"
+                         data-action="explanation#checkAnswer"
+                         aria-label="Select answer: <%= answer.text %>"
+                         id="question-<%= question.id %>-answer-<%= answer.id %>">
+                  <label for="question-<%= question.id %>-answer-<%= answer.id %>" 
+                         class="block p-3 bg-gray-50 rounded-md text-sm hover:bg-gray-100 transition-colors cursor-pointer">
+                    <div class="flex justify-between items-center">
+                      <span class="flex-grow"><%= answer.text %></span>
+                    </div>
+                  </label>
+                </div>
               <% end %>
             </div>
-          <% end %>
-        </div>
-        
-        <div class="mt-4" data-controller="explanation">
-          <button
-            data-action="explanation#toggle"
-            data-explanation-target="button"
-            class="text-sm font-medium text-indigo-600 hover:text-indigo-500 mb-2">
-            Show Explanation
-          </button>
-          
-          <div data-explanation-target="explanation" class="prose max-w-none hidden">
-            <%= question.explanation %>
+
+            <div data-explanation-target="feedback" 
+                 class="mt-4 p-4 rounded-lg hidden" 
+                 role="status" 
+                 aria-live="polite">
+            </div>
+
+            <button data-explanation-target="button"
+                    data-action="explanation#toggle"
+                    type="button"
+                    class="text-blue-600 hover:text-blue-800">
+              Show Explanation
+            </button>
+
+            <div data-explanation-target="explanation" 
+                 class="mt-4 p-4 bg-gray-50 rounded-lg hidden">
+              <%= question.explanation %>
+            </div>
           </div>
         </div>
       </div>
