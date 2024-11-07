@@ -18,35 +18,15 @@ class AssignmentsController < ApplicationController
   def create
     @assignment = Assignment.new(assignment_params)
 
-    respond_to do |format|
-      if @assignment.save
-        format.turbo_stream { 
-          flash.now[:notice] = "Assignment was successfully created. Processing has begun."
-          render turbo_stream: [
-            turbo_stream.update("flash", partial: "shared/flash"),
-            turbo_stream.update("new_assignment", partial: "form", locals: { assignment: Assignment.new })
-          ]
-        }
-      else
-        format.turbo_stream {
-          render turbo_stream: turbo_stream.update("new_assignment", 
-            partial: "form", 
-            locals: { assignment: @assignment }
-          )
-        }
-      end
+    if @assignment.save
+      redirect_to root_path, notice: "Assignment was successfully created. Processing has begun."
+    else
+      render :new, status: :unprocessable_entity
     end
   rescue Redis::CannotConnectError => e
     Rails.logger.error "Redis Connection Error: #{e.message}"
-    respond_to do |format|
-      format.turbo_stream {
-        flash.now[:alert] = "Service temporarily unavailable. Please try again later."
-        render turbo_stream: [
-          turbo_stream.update("flash", partial: "shared/flash"),
-          turbo_stream.update("new_assignment", partial: "form", locals: { assignment: @assignment })
-        ]
-      }
-    end
+    flash.now[:alert] = "Service temporarily unavailable. Please try again later."
+    render :new, status: :service_unavailable
   end
 
   private

@@ -34,5 +34,11 @@
         Click me!
       </button>
     </div>
+
+    <% flash.each do |name, msg| %>
+      <div class="flash <%= name %>" role="alert">
+        <%= msg %>
+      </div>
+    <% end %>
   </body>
 </html>
