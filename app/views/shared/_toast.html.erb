@@ -1,19 +1,33 @@
-<div data-controller="toast" class="fixed bottom-4 right-4 z-50" style="display: none;">
-  <div data-toast-target="notification" class="<%= type == 'error' ? 'bg-red-100 border-red-500 text-red-700' : 'bg-green-100 border-green-500 text-green-700' %> border-l-4 p-4 rounded shadow-lg">
-    <div class="flex items-center">
-      <div class="py-1">
-        <% if type == 'error' %>
-          <svg class="h-6 w-6 text-red-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+<div data-controller="toast" class="fixed bottom-4 right-4 z-50">
+  <div data-toast-target="notification" 
+       class="hidden opacity-0 transform translate-y-2 transition-all duration-500 ease-in-out bg-white rounded-lg shadow-lg p-4 w-96 border-l-4 <%= type == 'success' ? 'border-green-500' : 'border-red-500' %>">
+    <div class="flex items-start space-x-4">
+      <div class="flex-shrink-0 pt-0.5">
+        <% if type == 'success' %>
+          <svg class="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
           </svg>
         <% else %>
-          <svg class="h-6 w-6 text-green-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          <svg class="h-6 w-6 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
           </svg>
         <% end %>
       </div>
-      <div>
-        <%= message %>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-gray-900">
+          <%= message %>
+        </p>
+        <% if defined?(link_path) && defined?(link_text) %>
+          <%= link_to link_text, link_path, class: "mt-1 text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
+        <% end %>
+      </div>
+      <div class="flex-shrink-0 self-start">
+        <button data-action="click->toast#hide" class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <span class="sr-only">Close</span>
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>

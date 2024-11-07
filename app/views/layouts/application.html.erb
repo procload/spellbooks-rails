@@ -28,6 +28,10 @@
       <%= yield %>
     </main>
 
+    <!-- Add this div to hold the toasts -->
+    <div id="toasts">
+    </div>
+
     <!-- Test Stimulus controller -->
     <div data-controller="hello">
       <button data-action="click->hello#greet">
@@ -40,5 +44,7 @@
         <%= msg %>
       </div>
     <% end %>
+
+    <%= turbo_stream_from "assignments" %>
   </body>
 </html>

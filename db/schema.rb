@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_05_212838) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_06_111018) do
   create_table "answers", force: :cascade do |t|
     t.string "text"
     t.boolean "is_correct"
@@ -31,6 +31,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_05_212838) do
     t.datetime "updated_at", null: false
     t.text "passage"
     t.string "status"
+    t.string "image_url"
   end
 
   create_table "questions", force: :cascade do |t|

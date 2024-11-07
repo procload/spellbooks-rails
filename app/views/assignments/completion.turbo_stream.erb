@@ -1,0 +1,8 @@
+<%= turbo_stream.append "toasts" do %>
+  <%= render partial: "shared/toast", locals: {
+    type: "success",
+    message: "Assignment '#{@assignment.title}' is ready!",
+    link_path: assignment_path(@assignment),
+    link_text: "View Assignment"
+  } %>
+<% end %> 

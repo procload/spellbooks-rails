@@ -19,6 +19,24 @@ class ProcessAssignmentJob < ApplicationJob
     begin
       Sidekiq.logger.info "Found assignment: #{assignment.title}"
       
+      # Generate image with DALL-E 3
+      image_prompt = generate_image_prompt(assignment)
+      Sidekiq.logger.info "Generated image prompt: #{image_prompt}"
+      
+      image_response = client.images.generate(
+        parameters: {
+          model: "dall-e-3",
+          prompt: image_prompt,
+          size: "1024x1024",
+          quality: "standard",
+          n: 1
+        }
+      )
+      
+      # Save the image URL from DALL-E
+      image_url = image_response.dig("data", 0, "url")
+      assignment.update!(image_url: image_url) if image_url
+      
       prompt = PromptGeneratorService.generate_prompt(assignment)
       Sidekiq.logger.info "Generated prompt with length: #{prompt.length}"
       
@@ -78,6 +96,19 @@ class ProcessAssignmentJob < ApplicationJob
 
         # Instead of Turbo broadcast, update assignment status
         assignment.update!(status: 'completed')
+
+        # Replace the existing broadcast with:
+        Turbo::StreamsChannel.broadcast_append_to(
+          "assignments",
+          target: "toasts",
+          partial: "shared/toast",
+          locals: {
+            type: "success",
+            message: "Assignment '#{assignment.title}' is ready!",
+            link_path: Rails.application.routes.url_helpers.assignment_path(assignment),
+            link_text: "View Assignment"
+          }
+        )
       end
     rescue OpenAI::Error => e
       Rails.logger.error "OpenAI API Error: #{e.message}"
@@ -88,5 +119,36 @@ class ProcessAssignmentJob < ApplicationJob
     ensure
       Sidekiq.logger.info "=== Finished ProcessAssignmentJob for assignment_id: #{assignment_id} ==="
     end
+  end
+
+  private
+
+  def generate_image_prompt(assignment)
+    base_prompt = case assignment.subject
+    when "Math"
+      "Create an educational, kid-friendly illustration about #{assignment.subject} that incorporates"
+    when "Art"
+      "Create a vibrant, inspiring artwork that combines #{assignment.subject} with"
+    when "History"
+      "Create a historically accurate but kid-friendly illustration about #{assignment.subject} that includes"
+    when "Reading Comprehension"
+      "Create an engaging book-themed illustration that features"
+    when "Physics"
+      "Create a scientific but fun illustration demonstrating physics concepts with"
+    end
+
+    interests = assignment.interests.presence || "general educational themes"
+    grade_level_term = if assignment.grade_level <= 5
+      "young students"
+    elsif assignment.grade_level <= 8
+      "middle school students"
+    else
+      "high school students"
+    end
+
+    "#{base_prompt} #{interests}. The style should be appropriate for #{grade_level_term}, " \
+    "using bright colors and clear shapes. Make it educational but engaging, avoiding any " \
+    "text or numbers in the image. The style should be modern and slightly cartoonish while " \
+    "maintaining educational value."
   end
 end 

@@ -4,16 +4,45 @@ export default class extends Controller {
   static targets = ["notification"];
 
   connect() {
-    // Hide the notification after 5 seconds
+    this.show();
+
+    if (this.element.classList.contains("auto-hide")) {
+      setTimeout(() => {
+        this.hide();
+      }, 5000);
+    }
+  }
+
+  show() {
+    this.notificationTarget.classList.remove("hidden");
     setTimeout(() => {
-      this.hide();
-    }, 5000);
+      this.notificationTarget.classList.add(
+        "opacity-100",
+        "transform",
+        "translate-y-0"
+      );
+      this.notificationTarget.classList.remove(
+        "opacity-0",
+        "transform",
+        "translate-y-2"
+      );
+    }, 100);
   }
 
   hide() {
-    this.notificationTarget.classList.add("opacity-0", "transition-opacity");
+    this.notificationTarget.classList.add(
+      "opacity-0",
+      "transform",
+      "translate-y-2"
+    );
+    this.notificationTarget.classList.remove(
+      "opacity-100",
+      "transform",
+      "translate-y-0"
+    );
+
     setTimeout(() => {
-      this.notificationTarget.remove();
+      this.notificationTarget.classList.add("hidden");
     }, 500);
   }
 }

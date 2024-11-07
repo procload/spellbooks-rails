@@ -1,4 +1,6 @@
 class Assignment < ApplicationRecord
+  broadcasts_to ->(assignment) { "assignments" }
+  
   has_many :questions, dependent: :destroy
   
   validates :title, presence: true

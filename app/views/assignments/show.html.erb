@@ -3,6 +3,19 @@
     <h1 class="text-3xl font-bold text-gray-900"><%= @assignment.title %></h1>
   </div>
 
+  <% if @assignment.image_url.present? %>
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+      <div class="px-4 py-5 sm:px-6">
+        <h2 class="text-lg leading-6 font-medium text-gray-900">Generated Image</h2>
+      </div>
+      <div class="border-t border-gray-200">
+        <%= image_tag @assignment.image_url, 
+            class: "w-full h-auto object-cover max-w-2xl mx-auto p-4", 
+            alt: "Generated image for #{@assignment.title}" %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
     <div class="px-4 py-5 sm:px-6">
       <h2 class="text-lg leading-6 font-medium text-gray-900">Assignment Details</h2>
