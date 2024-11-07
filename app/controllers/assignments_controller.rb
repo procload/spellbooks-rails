@@ -17,12 +17,35 @@ class AssignmentsController < ApplicationController
 
   def create
     @assignment = Assignment.new(assignment_params)
-    
-    if @assignment.save
-      ProcessAssignmentJob.perform_later(@assignment.id)
-      redirect_to root_path, notice: 'Assignment is being generated...'
-    else
-      render :new
+
+    respond_to do |format|
+      if @assignment.save
+        format.turbo_stream { 
+          flash.now[:notice] = "Assignment was successfully created. Processing has begun."
+          render turbo_stream: [
+            turbo_stream.update("flash", partial: "shared/flash"),
+            turbo_stream.update("new_assignment", partial: "form", locals: { assignment: Assignment.new })
+          ]
+        }
+      else
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.update("new_assignment", 
+            partial: "form", 
+            locals: { assignment: @assignment }
+          )
+        }
+      end
+    end
+  rescue Redis::CannotConnectError => e
+    Rails.logger.error "Redis Connection Error: #{e.message}"
+    respond_to do |format|
+      format.turbo_stream {
+        flash.now[:alert] = "Service temporarily unavailable. Please try again later."
+        render turbo_stream: [
+          turbo_stream.update("flash", partial: "shared/flash"),
+          turbo_stream.update("new_assignment", partial: "form", locals: { assignment: @assignment })
+        ]
+      }
     end
   end
 
@@ -69,6 +92,6 @@ class AssignmentsController < ApplicationController
   end
 
   def assignment_params
-    params.require(:assignment).permit(:title, :subject, :grade_level, :difficulty, :number_of_questions, :interests, :passage)
+    params.require(:assignment).permit(:title, :subject, :grade_level, :difficulty, :number_of_questions, :interests)
   end
 end

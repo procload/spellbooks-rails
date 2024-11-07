@@ -1,15 +1,23 @@
 class ProcessAssignmentJob < ApplicationJob
   queue_as :default
 
+  retry_on Faraday::UnauthorizedError, wait: 5.seconds, attempts: 3
+  retry_on ActiveRecord::RecordNotFound, wait: 5.seconds, attempts: 3
+
   def perform(assignment_id)
+    assignment = Assignment.find_by(id: assignment_id)
+    
+    return unless assignment # Skip if assignment not found
+    
+    client = OpenAI::Client.new(
+      access_token: ENV.fetch('OPENAI_API_KEY'),
+      request_timeout: 240
+    )
+    
     Sidekiq.logger.info "=== Starting ProcessAssignmentJob for assignment_id: #{assignment_id} ==="
     
     begin
-      assignment = Assignment.find(assignment_id)
       Sidekiq.logger.info "Found assignment: #{assignment.title}"
-      
-      client = OpenAI::Client.new
-      Sidekiq.logger.info "Created OpenAI client"
       
       prompt = PromptGeneratorService.generate_prompt(assignment)
       Sidekiq.logger.info "Generated prompt with length: #{prompt.length}"
@@ -71,17 +79,12 @@ class ProcessAssignmentJob < ApplicationJob
         # Instead of Turbo broadcast, update assignment status
         assignment.update!(status: 'completed')
       end
+    rescue OpenAI::Error => e
+      Rails.logger.error "OpenAI API Error: #{e.message}"
+      raise # Re-raise to trigger retry
     rescue StandardError => e
-      Sidekiq.logger.error "!!! Error in ProcessAssignmentJob !!!"
-      Sidekiq.logger.error e.message
-      Sidekiq.logger.error e.backtrace.join("\n")
-      
-      # Update assignment status instead of Turbo broadcast
-      assignment&.update(status: 'failed')
-      
-      # Clean up the failed assignment
-      assignment&.destroy
-      raise e # Re-raise the error for Sidekiq to handle
+      Rails.logger.error "ProcessAssignmentJob Error: #{e.message}"
+      raise
     ensure
       Sidekiq.logger.info "=== Finished ProcessAssignmentJob for assignment_id: #{assignment_id} ==="
     end
