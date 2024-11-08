@@ -24,7 +24,20 @@
 </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+    <!-- Add header -->
+    <header class="bg-white shadow-sm fixed top-0 left-0 right-0 z-10">
+      <nav class="container mx-auto px-5 py-4">
+        <div class="flex items-center justify-center">
+          <%= link_to root_path, class: "flex items-center text-gray-800 hover:text-gray-600", "aria-label": "Spellbooks Rails Redux - Home" do %>
+            <%= render "shared/logo", class: "w-12 h-12" %>
+            <span class="sr-only">Spellbooks Rails Redux</span>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Adjust main padding to account for fixed header -->
+    <main class="container mx-auto mt-28 px-5">
       <%= yield %>
     </main>
 
