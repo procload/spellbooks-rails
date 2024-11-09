@@ -15,7 +15,7 @@
         </div>
         <div class="mt-4">
           <%= link_to 'View All Assignments', assignments_path, 
-              class: 'text-indigo-600 hover:text-indigo-900 font-medium' %>
+              class: 'link-secondaryfont-medium' %>
         </div>
       <% else %>
         <p class="text-gray-600">No assignments yet.</p>
@@ -25,12 +25,10 @@
     <div class="bg-white p-6 rounded-lg shadow-md">
       <h2 class="text-2xl font-bold text-gray-900 mb-4">Quick Actions</h2>
       <div class="space-y-4">
-        <%= link_to new_assignment_path, 
-            class: 'block w-full text-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' do %>
+        <%= link_to new_assignment_path, class: 'btn btn-primary w-full' do %>
           Create New Assignment
         <% end %>
-        <%= link_to assignments_path,
-            class: 'block w-full text-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' do %>
+        <%= link_to assignments_path, class: 'btn btn-secondary w-full' do %>
           Manage Assignments
         <% end %>
       </div>

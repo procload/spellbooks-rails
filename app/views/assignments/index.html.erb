@@ -4,12 +4,13 @@
     <div class="space-x-4">
       <!-- Add test toast button -->
       <%= render partial: "shared/toast", locals: { message: "This is a test message!", type: "success" } %>
-      <button onclick="document.querySelector('[data-controller=toast]').style.display = 'block'" class="px-4 py-2 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+      <button onclick="document.querySelector('[data-controller=toast]').style.display = 'block'" 
+              class="btn btn-secondary">
         Test Toast
       </button>
 
       <%= link_to 'Create New Assignment', new_assignment_path, 
-          class: 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' %>
+          class: 'btn btn-primary' %>
     </div>
   </div>
 
@@ -48,11 +49,11 @@
                     <%= assignment.questions.count %>/<%= assignment.number_of_questions %>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <%= link_to 'View', assignment_path(assignment), class: 'text-indigo-600 hover:text-indigo-900' %>
-                    <%= link_to 'Edit', edit_assignment_path(assignment), class: 'text-blue-600 hover:text-blue-900' %>
+                    <%= link_to 'View', assignment_path(assignment), class: 'link-primary' %>
+                    <%= link_to 'Edit', edit_assignment_path(assignment), class: 'link-primary' %>
                     <%= link_to 'Delete', assignment, method: :delete, 
                         data: { confirm: 'Are you sure?' }, 
-                        class: 'text-red-600 hover:text-red-900' %>
+                        class: 'link-secondary' %>
                   </td>
                 </tr>
               <% end %>

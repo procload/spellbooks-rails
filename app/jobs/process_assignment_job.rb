@@ -19,23 +19,33 @@ class ProcessAssignmentJob < ApplicationJob
     begin
       Sidekiq.logger.info "Found assignment: #{assignment.title}"
       
-      # Generate image with DALL-E 3
-      image_prompt = generate_image_prompt(assignment)
-      Sidekiq.logger.info "Generated image prompt: #{image_prompt}"
-      
-      image_response = client.images.generate(
-        parameters: {
-          model: "dall-e-3",
-          prompt: image_prompt,
-          size: "1024x1024",
-          quality: "standard",
-          n: 1
-        }
-      )
-      
-      # Save the image URL from DALL-E
-      image_url = image_response.dig("data", 0, "url")
-      assignment.update!(image_url: image_url) if image_url
+      # Skip image generation in development unless explicitly enabled
+      unless Rails.env.development? && ENV['SKIP_IMAGE_GENERATION'] == 'true'
+        # Generate image with DALL-E 3
+        image_prompt = generate_image_prompt(assignment)
+        Sidekiq.logger.info "Generated image prompt: #{image_prompt}"
+        
+        image_response = client.images.generate(
+          parameters: {
+            model: "dall-e-3",
+            prompt: image_prompt,
+            size: "1024x1024",
+            quality: "standard",
+            n: 1
+          }
+        )
+        
+        # Save the image URL from DALL-E
+        image_url = image_response.dig("data", 0, "url")
+        if image_url
+          # Instead of just saving the URL, download and attach the image
+          if assignment.attach_image_from_url(image_url)
+            Sidekiq.logger.info "Successfully attached image for assignment #{assignment_id}"
+          else
+            Sidekiq.logger.error "Failed to attach image for assignment #{assignment_id}"
+          end
+        end
+      end
       
       prompt = PromptGeneratorService.generate_prompt(assignment)
       Sidekiq.logger.info "Generated prompt with length: #{prompt.length}"
@@ -150,5 +160,10 @@ class ProcessAssignmentJob < ApplicationJob
     "using bright colors and clear shapes. Make it educational but engaging, avoiding any " \
     "text or numbers in the image. The style should be modern and slightly cartoonish while " \
     "maintaining educational value."
+  end
+
+  def track_dalle_usage
+    Rails.logger.info "DALL-E API call cost: $0.04"
+    # Add to a counter or monitoring service
   end
 end 

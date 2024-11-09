@@ -2,13 +2,183 @@
 @tailwind components;
 @tailwind utilities;
 
-.hidden {
-  display: none;
+@layer base {
+  :root {
+    --background: 40 33% 98%;
+    --foreground: 220 10% 20%;
+    --card: 40 30% 96%;
+    --card-foreground: 220 10% 20%;
+    --popover: 40 33% 98%;
+    --popover-foreground: 220 10% 20%;
+    --primary: 215 90% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 90%;
+    --secondary-foreground: 220 10% 20%;
+    --secondary-bg: 228 20% 96%;
+    --muted: 220 14% 95%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 180 70% 45%;
+    --accent-foreground: 0 0% 100%;
+    --success: 142 72% 29%;
+    --warning: 35 92% 65%;
+    --info: 200 98% 39%;
+    --pending: 35 92% 65%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 250 95% 60%;
+    --chart-1: 250 95% 60%;
+    --chart-2: 180 70% 45%;
+    --chart-3: 142 72% 29%;
+    --chart-4: 35 92% 65%;
+    --chart-5: 0 84% 60%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 60 9.1% 97.8%;
+    --card: 20 14.3% 4.1%;
+    --card-foreground: 60 9.1% 97.8%;
+    --popover: 20 14.3% 4.1%;
+    --popover-foreground: 60 9.1% 97.8%;
+    --primary: 60 9.1% 97.8%;
+    --primary-foreground: 24 9.8% 10%;
+    --secondary: 12 6.5% 15.1%;
+    --secondary-foreground: 60 9.1% 97.8%;
+    --secondary-bg: 228 15% 15%;
+    --muted: 12 6.5% 15.1%;
+    --muted-foreground: 24 5.4% 63.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 12 6.5% 15.1%;
+    --input: 12 6.5% 15.1%;
+    --ring: 24 5.7% 82.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground font-semibold;
+  }
+  p {
+    @apply text-foreground/90;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Fira Sans font utilities */
+  .fira-sans-thin { font-weight: 100; font-style: normal; }
+  .fira-sans-extralight { font-weight: 200; font-style: normal; }
+  .fira-sans-light { font-weight: 300; font-style: normal; }
+  .fira-sans-regular { font-weight: 400; font-style: normal; }
+  .fira-sans-medium { font-weight: 500; font-style: normal; }
+  .fira-sans-semibold { font-weight: 600; font-style: normal; }
+  .fira-sans-bold { font-weight: 700; font-style: normal; }
+  .fira-sans-extrabold { font-weight: 800; font-style: normal; }
+  .fira-sans-black { font-weight: 900; font-style: normal; }
+
+  /* Italic variants */
+  .fira-sans-thin-italic { font-weight: 100; font-style: italic; }
+  .fira-sans-extralight-italic { font-weight: 200; font-style: italic; }
+  .fira-sans-light-italic { font-weight: 300; font-style: italic; }
+  .fira-sans-regular-italic { font-weight: 400; font-style: italic; }
+  .fira-sans-medium-italic { font-weight: 500; font-style: italic; }
+  .fira-sans-semibold-italic { font-weight: 600; font-style: italic; }
+  .fira-sans-bold-italic { font-weight: 700; font-style: italic; }
+  .fira-sans-extrabold-italic { font-weight: 800; font-style: italic; }
+  .fira-sans-black-italic { font-weight: 900; font-style: italic; }
 }
 
 @layer components {
+  /* Primary interactive elements */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 
+           transition-colors duration-200 
+           shadow-sm hover:shadow-md
+           rounded-md px-4 py-2;
+  }
+  
+  .link-primary {
+    @apply text-primary hover:text-primary/80 
+           hover:underline transition-colors duration-200;
+  }
+
+  /* Secondary interactive elements */
+  .btn-secondary {
+    @apply bg-secondary-bg text-secondary-foreground hover:bg-secondary-bg/70
+           transition-colors duration-200 
+           shadow-sm hover:shadow-md
+           rounded-md px-4 py-2;
+  }
+  
+  .link-secondary {
+    @apply text-secondary-foreground hover:text-secondary-foreground/80 
+           hover:underline transition-colors duration-200;
+  }
+
+  /* Shared button styles */
+  .btn {
+    @apply inline-flex items-center justify-center
+           font-medium
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
   /* Style for selected answer */
   input[type="radio"].peer:checked + label {
     @apply ring-2 ring-blue-500 bg-blue-50;
   }
+  .badge {
+    @apply px-2 py-1 rounded-full text-sm font-medium;
+  }
+  .badge-success {
+    @apply bg-success/20 text-success;
+  }
+  .badge-pending {
+    @apply bg-pending/20 text-pending;
+  }
+  .badge-info {
+    @apply bg-info/20 text-info;
+  }
+  .card {
+    @apply bg-card text-card-foreground rounded-lg shadow-sm 
+           hover:shadow-md transition-shadow duration-200 
+           border border-border/50;
+  }
+  .link {
+    @apply text-accent hover:text-accent/80 
+           hover:underline transition-colors duration-200;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+/* Add these styles to your existing CSS */
+.header-compact .header-nav {
+  @apply py-1;
+}
+
+.header-compact .w-12 {
+  @apply w-9 h-9;
 }

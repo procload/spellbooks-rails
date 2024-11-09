@@ -10,8 +10,10 @@
 
 <%= yield :head %>
 
-<%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-<%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+<!-- Add Fira Sans font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
 <link rel="icon" href="/icon.png" type="image/png">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -23,37 +25,33 @@
 <%= javascript_importmap_tags %>
 </head>
 
-  <body>
-    <!-- Add header -->
-    <header class="bg-white shadow-sm fixed top-0 left-0 right-0 z-10">
-      <nav class="container mx-auto px-5 py-4">
+  <body class="bg-background text-foreground">
+    <!-- Update header with new styling -->
+    <header 
+      data-controller="header"
+      class="bg-header-bg fixed top-0 left-0 right-0 z-10 shadow-header transform transition-all duration-300 ease-in-out">
+      <nav class="container mx-auto px-5 transition-all duration-300 ease-in-out py-4 header-nav">
         <div class="flex items-center justify-center">
-          <%= link_to root_path, class: "flex items-center text-gray-800 hover:text-gray-600", "aria-label": "Spellbooks Rails Redux - Home" do %>
-            <%= render "shared/logo", class: "w-12 h-12" %>
+          <%= link_to root_path, class: "flex items-center text-primary hover:text-primary/80 transition-all duration-300 ease-in-out", "aria-label": "Spellbooks Rails Redux - Home" do %>
+            <%= render "shared/logo", class: "w-12 h-12 transition-all duration-300 ease-in-out" %>
             <span class="sr-only">Spellbooks Rails Redux</span>
           <% end %>
         </div>
       </nav>
     </header>
 
-    <!-- Adjust main padding to account for fixed header -->
-    <main class="container mx-auto mt-28 px-5">
+    <!-- Update main content with new styling -->
+    <main class="container mx-auto mt-28 px-5 max-w-assignment">
       <%= yield %>
     </main>
 
-    <!-- Add this div to hold the toasts -->
-    <div id="toasts">
+    <!-- Toast container with new styling -->
+    <div id="toasts" class="fixed bottom-4 right-4 z-50">
     </div>
 
-    <!-- Test Stimulus controller -->
-    <div data-controller="hello">
-      <button data-action="click->hello#greet">
-        Click me!
-      </button>
-    </div>
-
+    <!-- Update flash messages with new styling -->
     <% flash.each do |name, msg| %>
-      <div class="flash <%= name %>" role="alert">
+      <div class="flash <%= name %> fixed top-4 right-4 p-4 rounded-md bg-card text-card-foreground shadow-md" role="alert">
         <%= msg %>
       </div>
     <% end %>

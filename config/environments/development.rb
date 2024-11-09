@@ -28,8 +28,22 @@ Rails.application.configure do
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Store uploaded files on Amazon S3
+  config.active_storage.service = :amazon
+  
+  # Set default URL options for Active Storage
+  Rails.application.routes.default_url_options[:host] = 'localhost'
+  Rails.application.routes.default_url_options[:port] = 3000
+  
+  config.active_storage.default_url_options = {
+    host: "localhost",
+    port: 3000,
+    protocol: 'http'
+  }
+  
+  # Enable better logging for Active Storage
+  config.active_storage.logger = ActiveSupport::Logger.new(STDOUT)
+  config.active_storage.service_urls_expire_in = 5.minutes
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
