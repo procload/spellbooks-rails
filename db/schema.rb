@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_08_113246) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_10_011842) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -48,6 +48,16 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_08_113246) do
     t.index ["question_id"], name: "index_answers_on_question_id"
   end
 
+  create_table "assignment_users", force: :cascade do |t|
+    t.integer "assignment_id", null: false
+    t.integer "user_id", null: false
+    t.string "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignment_id"], name: "index_assignment_users_on_assignment_id"
+    t.index ["user_id"], name: "index_assignment_users_on_user_id"
+  end
+
   create_table "assignments", force: :cascade do |t|
     t.string "title"
     t.string "subject"
@@ -58,8 +68,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_08_113246) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "passage"
-    t.string "status"
     t.string "image_url"
+    t.string "status", default: "pending"
   end
 
   create_table "questions", force: :cascade do |t|
@@ -74,8 +84,28 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_08_113246) do
     t.index ["assignment_id"], name: "index_questions_on_assignment_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email_address", null: false
+    t.string "password_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "answers", "questions"
+  add_foreign_key "assignment_users", "assignments"
+  add_foreign_key "assignment_users", "users"
   add_foreign_key "questions", "assignments"
+  add_foreign_key "sessions", "users"
 end
