@@ -15,18 +15,6 @@ admin = User.create!(
 )
 puts "Created admin user: #{admin.email_address}"
 
-# Create some test users
-puts "Creating test users..."
-test_users = [
-  { email: 'teacher@example.com', password: 'password123' },
-  { email: 'student@example.com', password: 'password123' }
-].map do |user_data|
-  User.create!(
-    email_address: user_data[:email],
-    password: user_data[:password],
-    password_confirmation: user_data[:password]
-  )
-end
 
 # Sample assignments data
 puts "Creating sample assignments..."
@@ -83,6 +71,48 @@ assignments_data.each do |assignment_data|
       )
     end
   end
+end
+
+# Create a teacher
+teacher = User.create!(
+  email_address: "teacher@example.com",
+  password: "password123",
+  role: "teacher"
+)
+
+# Create some students
+students = 3.times.map do |i|
+  User.create!(
+    email_address: "student#{i+1}@example.com",
+    password: "password123",
+    role: "student"
+  )
+end
+
+# Create an assignment
+assignment = Assignment.create!(
+  title: "Math Quiz",
+  subject: "Mathematics",
+  grade_level: 9,
+  difficulty: "Medium",
+  number_of_questions: 10,
+  interests: "Algebra"
+)
+
+# Associate the assignment with the teacher
+AssignmentUser.create!(
+  assignment: assignment,
+  user: teacher,
+  role: "creator"
+)
+
+# Assign to students
+students.each do |student|
+  AssignmentUser.create!(
+    assignment: assignment,
+    user: student,
+    role: "student"
+  )
 end
 
 puts "Seed data created successfully!"

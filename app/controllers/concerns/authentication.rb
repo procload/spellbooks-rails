@@ -40,6 +40,18 @@ module Authentication
       session.delete(:return_to_after_authenticating) || root_url
     end
 
+    def require_teacher
+      unless Current.user&.teacher?
+        redirect_to root_path, alert: "You must be a teacher to access this area"
+      end
+    end
+
+    def require_student
+      unless Current.user&.student?
+        redirect_to root_path, alert: "You must be a student to access this area"
+      end
+    end
+
 
     def start_new_session_for(user)
       user.sessions.create!(user_agent: request.user_agent, ip_address: request.remote_ip).tap do |session|

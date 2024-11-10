@@ -4,6 +4,9 @@ class Assignment < ApplicationRecord
   has_many :questions, dependent: :destroy
   has_one_attached :image
   
+  has_many :assignment_users, dependent: :destroy
+  has_many :users, through: :assignment_users
+  
   validates :title, presence: true
   validates :subject, presence: true
   validates :grade_level, presence: true, inclusion: { in: 0..12 }
@@ -65,6 +68,32 @@ class Assignment < ApplicationRecord
     Rails.cache.fetch("assignment/#{id}/image_variant", expires_in: 1.hour) do
       display_image
     end
+  end
+
+  # Helper methods for teacher/student relationships
+  def teachers
+    users.joins(:assignment_users)
+        .where(assignment_users: { role: 'creator' })
+  end
+  
+  def students
+    users.joins(:assignment_users)
+        .where(assignment_users: { role: 'student' })
+  end
+  
+  def assign_to_students(student_ids, assigning_teacher)
+    return false unless assigning_teacher.teacher?
+    
+    student_ids.each do |student_id|
+      assignment_users.create(
+        user_id: student_id,
+        role: 'student'
+      )
+    end
+    true
+  rescue StandardError => e
+    Rails.logger.error "Error assigning to students: #{e.message}"
+    false
   end
 
   private
