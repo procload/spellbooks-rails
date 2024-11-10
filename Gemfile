@@ -84,3 +84,6 @@ gem "pg", "~> 1.5"
 gem "aws-sdk-s3", require: false  # For Amazon S3 storage
 gem "image_processing", "~> 1.2"  # For image transformations
 gem "active_storage_validations"  # For validating attachments
+
+# Add Redcarpet
+gem 'redcarpet'

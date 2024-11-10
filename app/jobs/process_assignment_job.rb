@@ -104,7 +104,10 @@ class ProcessAssignmentJob < ApplicationJob
         end
         Sidekiq.logger.info "Finished creating questions and answers"
 
-        # Instead of Turbo broadcast, update assignment status
+        # Generate markdown version of the passage
+        GenerateMarkdownJob.perform_later(assignment.id) if assignment.passage.present?
+
+        # Update assignment status
         assignment.update!(status: 'completed')
 
         # Replace the existing broadcast with:

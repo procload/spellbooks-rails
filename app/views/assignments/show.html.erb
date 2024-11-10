@@ -63,12 +63,20 @@
 
   <% if @assignment.passage.present? %>
     <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
-      <div class="px-4 py-5 sm:px-6">
+      <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
         <h2 class="text-lg leading-6 font-medium text-gray-900">Reading Passage</h2>
+        <button onclick="togglePassageFormat()" 
+                class="btn btn-secondary text-sm"
+                id="format-toggle">
+          Show Formatted Version
+        </button>
       </div>
       <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <div class="prose max-w-none">
-          <%= @assignment.passage %>
+        <div id="plain-passage" class="prose max-w-none">
+          <%= simple_format(@assignment.passage) %>
+        </div>
+        <div id="markdown-passage" class="prose max-w-none hidden">
+          <%= markdown(@assignment.markdown_passage) %>
         </div>
       </div>
     </div>
@@ -111,6 +119,22 @@ function ensureSingleCorrect(checkbox) {
     form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
       if (cb !== checkbox) cb.checked = false;
     });
+  }
+}
+
+function togglePassageFormat() {
+  const plainPassage = document.getElementById('plain-passage');
+  const markdownPassage = document.getElementById('markdown-passage');
+  const toggleButton = document.getElementById('format-toggle');
+  
+  if (plainPassage.classList.contains('hidden')) {
+    plainPassage.classList.remove('hidden');
+    markdownPassage.classList.add('hidden');
+    toggleButton.textContent = 'Show Formatted Version';
+  } else {
+    plainPassage.classList.add('hidden');
+    markdownPassage.classList.remove('hidden');
+    toggleButton.textContent = 'Show Plain Version';
   }
 }
 </script> 
