@@ -16,16 +16,18 @@
 
           <div class="space-y-4">
             <h4 class="text-sm font-medium text-gray-700">Answers</h4>
-            <% question.answers.each do |answer| %>
+            <%= f.fields_for :answers do |answer_form| %>
               <div class="flex items-center space-x-4">
-                <%= text_field_tag "answers[#{answer.id}][text]", answer.text, 
-                      class: "flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                <%= answer_form.text_field :text, 
+                    class: "flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
                 <label class="inline-flex items-center">
-                  <%= check_box_tag "answers[#{answer.id}][is_correct]", "1", answer.is_correct, 
-                        class: "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500",
-                        onchange: "ensureSingleCorrect(this)" %>
+                  <%= radio_button_tag "correct_answer", 
+                      answer_form.object.id, 
+                      answer_form.object.is_correct,
+                      class: "h-4 w-4 rounded-full border-gray-300 text-indigo-600 focus:ring-indigo-500" %>
                   <span class="ml-2 text-sm text-gray-600">Correct</span>
                 </label>
+                <%= answer_form.hidden_field :id %>
               </div>
             <% end %>
           </div>
@@ -36,7 +38,8 @@
           </div>
 
           <div class="mt-4 flex justify-end space-x-3">
-            <%= f.submit "Save Changes", class: "btn btn-primary" %>
+            <%= f.submit "Save Changes", class: "btn btn-primary", 
+                data: { action: "click->question#handleSubmit" } %>
             <%= link_to "Cancel", assignment_path(@assignment), 
                   data: { turbo_frame: dom_id(question) },
                   class: "btn btn-secondary" %>
@@ -45,4 +48,4 @@
       </div>
     </div>
   <% end %>
-<% end %> 
+<% end %>

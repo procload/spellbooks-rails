@@ -17,11 +17,19 @@ Rails.application.routes.draw do
   root "home#index"
 
   resources :assignments do
+    member do
+      post :assign_students
+    end
+    
+    resources :submissions, only: [:create], controller: 'assignment_submissions'
+
     resources :questions do
       member do
         post :check_answer
         post :regenerate
       end
+
+      resources :answers, only: [:new, :create, :destroy]
     end
   end
 

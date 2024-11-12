@@ -81,18 +81,24 @@ class Assignment < ApplicationRecord
         .where(assignment_users: { role: 'student' })
   end
   
-  def assign_to_students(student_ids, assigning_teacher)
-    return false unless assigning_teacher.teacher?
+  def assign_to_students(student_ids, current_user)
+    return false unless current_user.teacher?
     
-    student_ids.each do |student_id|
-      assignment_users.create(
-        user_id: student_id,
-        role: 'student'
-      )
+    transaction do
+      # Remove students that are no longer selected
+      assignment_users.students.where.not(user_id: student_ids).destroy_all
+      
+      # Add new students
+      student_ids.each do |student_id|
+        assignment_users.students.find_or_create_by!(
+          user_id: student_id,
+          role: 'student'
+        )
+      end
     end
+    
     true
-  rescue StandardError => e
-    Rails.logger.error "Error assigning to students: #{e.message}"
+  rescue ActiveRecord::RecordInvalid
     false
   end
 

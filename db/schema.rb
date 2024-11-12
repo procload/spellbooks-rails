@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_10_025236) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_10_032153) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -95,6 +95,18 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_10_025236) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "student_responses", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.integer "question_id", null: false
+    t.string "answer_text", null: false
+    t.boolean "correct", default: false
+    t.index ["question_id"], name: "index_student_responses_on_question_id"
+    t.index ["user_id", "question_id"], name: "index_student_responses_on_user_id_and_question_id", unique: true
+    t.index ["user_id"], name: "index_student_responses_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
@@ -111,4 +123,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_10_025236) do
   add_foreign_key "assignment_users", "users"
   add_foreign_key "questions", "assignments"
   add_foreign_key "sessions", "users"
+  add_foreign_key "student_responses", "questions"
+  add_foreign_key "student_responses", "users"
 end

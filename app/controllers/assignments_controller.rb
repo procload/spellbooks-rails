@@ -64,11 +64,31 @@ class AssignmentsController < ApplicationController
   def assign_students
     student_ids = params[:student_ids] || []
     
-    if @assignment.assign_to_students(student_ids, Current.user)
-      redirect_to @assignment, notice: 'Students successfully assigned to this assignment.'
-    else
-      redirect_to @assignment, alert: 'There was an error assigning students.'
+    # Convert student_ids to integers since they'll come as strings from params
+    student_ids = student_ids.map(&:to_i)
+    
+    # Get current student assignments
+    current_student_assignments = @assignment.assignment_users.students
+    
+    # Remove students that were unselected
+    current_student_assignments.each do |assignment_user|
+      unless student_ids.include?(assignment_user.user_id)
+        assignment_user.destroy
+      end
     end
+    
+    # Add newly selected students
+    student_ids.each do |student_id|
+      @assignment.assignment_users.students.find_or_create_by(
+        user_id: student_id,
+        role: 'student'
+      )
+    end
+    
+    redirect_to @assignment, notice: 'Student assignments have been updated.'
+  rescue => e
+    Rails.logger.error "Error assigning students: #{e.message}"
+    redirect_to @assignment, alert: 'There was an error updating student assignments.'
   end
 
   def destroy

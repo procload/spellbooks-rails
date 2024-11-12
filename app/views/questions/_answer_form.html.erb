@@ -1,0 +1,32 @@
+<% if question.answers.any? %>
+  <div class="space-y-2">
+    <%= form_with url: check_answer_assignment_question_path(@assignment, question),
+                method: :post,
+                data: { 
+                  controller: "question-submission",
+                  action: "question-submission#submit"
+                },
+                class: "space-y-3" do |f| %>
+      
+      <%= render "questions/answer_options", 
+          question: question, 
+          form: f, 
+          student_response: student_response %>
+      
+      <div class="mt-4 flex items-center gap-2">
+        <%= f.submit "Submit Answer",
+            class: submit_button_classes,
+            data: { "question-submission-target": "submitButton" } %>
+        
+        <%= render "questions/spinner" %>
+      </div>
+    <% end %>
+    
+    <%= turbo_frame_tag dom_id(question, :feedback) do %>
+      <%= render "questions/feedback", 
+          question: question,
+          correct: student_response&.correct,
+          explanation: question.explanation if student_response %>
+    <% end %>
+  </div>
+<% end %> 

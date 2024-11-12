@@ -6,9 +6,9 @@ class AssignmentSubmissionsController < ApplicationController
     @assignment_user = @assignment.assignment_users.find_by(user: Current.user)
     
     if @assignment_user.update(submission_params)
-      redirect_to @assignment, notice: 'Assignment submitted successfully.'
+      redirect_to @assignment, notice: 'Assignment status updated successfully.'
     else
-      redirect_to @assignment, alert: 'Error submitting assignment.'
+      redirect_to @assignment, alert: 'Error updating assignment status.'
     end
   end
 
@@ -23,6 +23,6 @@ class AssignmentSubmissionsController < ApplicationController
   end
 
   def submission_params
-    params.require(:assignment_submission).permit(:status)
+    params.permit(:status)
   end
 end 

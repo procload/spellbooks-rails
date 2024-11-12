@@ -1,0 +1,11 @@
+<% question.answers.each do |answer| %>
+  <div class="relative">
+    <%= form.radio_button :answer, answer.text,
+        id: "answer_#{question.id}_#{answer.id}",
+        class: "absolute w-full h-full opacity-0 cursor-pointer peer",
+        checked: student_response&.answer_text == answer.text %>
+    <%= form.label "answer_#{answer.text}".parameterize,
+        answer.text,
+        class: answer_label_classes(answer) %>
+  </div>
+<% end %> 
