@@ -29,8 +29,9 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new(assignment_params)
 
     if @assignment.save
-      # Create the teacher-assignment relationship
-      @assignment.assignment_users.create(user: Current.user, role: 'creator')
+      # Create the teacher-assignment relationship through assignment_users
+      @assignment.assignment_users.create!(user: Current.user, role: 'creator')
+      
       redirect_to root_path, notice: "Assignment was successfully created. Processing has begun."
     else
       render :new, status: :unprocessable_entity
