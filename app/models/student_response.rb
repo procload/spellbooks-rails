@@ -4,6 +4,7 @@ class StudentResponse < ApplicationRecord
 
   validates :answer_text, presence: true
   validates :user_id, uniqueness: { scope: :question_id, message: "has already answered this question" }
+  validate :answer_matches_question_options
 
   after_save :update_assignment_progress
   
@@ -31,5 +32,13 @@ class StudentResponse < ApplicationRecord
     return 'completed' if answered == total
     return 'in_progress' if answered > 0
     'not_started'
+  end
+
+  def answer_matches_question_options
+    return if question.nil? || answer_text.blank?
+    
+    unless question.options.include?(answer_text)
+      errors.add(:answer_text, "must be one of the available options")
+    end
   end
 end 

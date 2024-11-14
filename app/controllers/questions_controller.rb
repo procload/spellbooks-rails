@@ -84,57 +84,39 @@ class QuestionsController < ApplicationController
 
   def update
     Rails.logger.info "Starting question update for Question #{@question.id}"
-    Rails.logger.info "Full params: #{params.inspect}"
-    Rails.logger.info "Correct answer param: #{params[:correct_answer]}"
-    Rails.logger.info "Question params before processing: #{question_params.inspect}"
     
-    # Add processing for correct answer
-    if params[:correct_answer].present?
-      answer_id = params[:correct_answer]
-      Rails.logger.info "Setting correct answer ID: #{answer_id}"
-      
-      # Update is_correct values for all answers
-      @question.answers.each do |answer|
-        is_correct = answer.id.to_s == answer_id.to_s
-        answer.update(is_correct: is_correct)
-        Rails.logger.info "Updated answer #{answer.id} is_correct to: #{is_correct}"
+    ActiveRecord::Base.transaction do
+      if params[:correct_answer].present?
+        answer_id = params[:correct_answer]
+        
+        # Update all answers atomically
+        @question.answers.each do |answer|
+          answer.update!(is_correct: (answer.id.to_s == answer_id.to_s))
+        end
       end
-    end
 
-    if @question.update(question_params)
-      Rails.logger.info "Question updated successfully"
-      Rails.logger.info "Final answer states: #{@question.answers.map { |a| "#{a.id}: #{a.is_correct}" }.join(', ')}"
-      
-      respond_to do |format|
-        format.html { redirect_to @assignment, notice: 'Question was successfully updated.' }
-        format.json { render json: { success: true, html: render_to_string(partial: 'question', locals: { question: @question }) } }
-        format.turbo_stream { 
-          Rails.logger.info "Rendering turbo stream response"
-          render turbo_stream: turbo_stream.replace(
-            @question,
-            partial: "questions/question",
-            locals: { question: @question, question_counter: params[:question_counter].to_i }
-          )
-        }
-      end
-    else
-      Rails.logger.error "Failed to update question: #{@question.errors.full_messages}"
-      respond_to do |format|
-        format.html { render :edit }
-        format.json { render json: { success: false, errors: @question.errors.full_messages } }
-        format.turbo_stream { 
-          render turbo_stream: turbo_stream.replace(
-            @question,
-            partial: "questions/form",
-            locals: { question: @question, question_counter: params[:question_counter].to_i }
-          ), status: :unprocessable_entity
-        }
+      if @question.update(question_params)
+        respond_to do |format|
+          format.html { redirect_to @assignment, notice: 'Question was successfully updated.' }
+          format.json { render json: { success: true, html: render_to_string(partial: 'question', locals: { question: @question }) } }
+          format.turbo_stream { 
+            render turbo_stream: turbo_stream.replace(
+              @question,
+              partial: "questions/question",
+              locals: { question: @question, question_counter: params[:question_counter].to_i }
+            )
+          }
+        end
+      else
+        raise ActiveRecord::Rollback
       end
     end
+  rescue ActiveRecord::RecordInvalid => e
+    handle_validation_error(e)
   rescue => e
     Rails.logger.error "Error in question update: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
-    raise
+    handle_error(e)
   end
 
   def destroy
@@ -284,20 +266,49 @@ class QuestionsController < ApplicationController
   def handle_error(error)
     respond_to do |format|
       format.html { 
-        redirect_to assignment_path(@assignment), 
-        alert: "Error submitting answer. Please try again." 
+        flash.now[:alert] = "An error occurred: #{error.message}"
+        render :edit 
       }
       format.json { 
         render json: { 
-          error: "Failed to submit answer",
-          message: error.message 
+          success: false, 
+          error: error.message 
         }, status: :unprocessable_entity 
       }
       format.turbo_stream {
         render turbo_stream: turbo_stream.replace(
-          dom_id(@question, :feedback),
-          html: "<div class='text-red-600'>Error submitting answer. Please try again.</div>"
-        )
+          @question,
+          partial: "questions/form",
+          locals: { 
+            question: @question, 
+            question_counter: params[:question_counter].to_i 
+          }
+        ), status: :unprocessable_entity
+      }
+    end
+  end
+
+  def handle_validation_error(error)
+    respond_to do |format|
+      format.html { 
+        flash.now[:alert] = "Failed to update question: #{error.message}"
+        render :edit 
+      }
+      format.json { 
+        render json: { 
+          success: false, 
+          errors: @question.errors.full_messages 
+        }, status: :unprocessable_entity 
+      }
+      format.turbo_stream { 
+        render turbo_stream: turbo_stream.replace(
+          @question,
+          partial: "questions/form",
+          locals: { 
+            question: @question, 
+            question_counter: params[:question_counter].to_i 
+          }
+        ), status: :unprocessable_entity
       }
     end
   end

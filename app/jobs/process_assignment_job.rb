@@ -89,21 +89,24 @@ class ProcessAssignmentJob < ApplicationJob
         # Save questions and their answers
         content["questions"].each_with_index do |q, index|
           Sidekiq.logger.info "Creating question #{index + 1} of #{content["questions"].length}"
-          question = assignment.questions.create!(
-            content: q["question_text"],
-            explanation: q["explanation"]
-          )
           
-          q["answers"].each_with_index do |answer, ans_index|
-            Sidekiq.logger.info "Creating answer #{ans_index + 1} for question #{index + 1}"
-            question.answers.create!(
-              text: answer["text"],
-              is_correct: answer["is_correct"]
-            )
-          end
-        end
-        Sidekiq.logger.info "Finished creating questions and answers"
+          # Build the question with answers nested
+          question_attributes = {
+            content: q["question_text"],
+            explanation: q["explanation"],
+            answers_attributes: q["answers"].map do |answer|
+              {
+                text: answer["text"],
+                is_correct: answer["is_correct"]
+              }
+            end
+          }
 
+          # Create question with nested answers in one go
+          question = assignment.questions.create!(question_attributes)
+          Sidekiq.logger.info "Created question #{index + 1} with #{question.answers.count} answers"
+        end
+        
         # Generate markdown version of the passage
         GenerateMarkdownJob.perform_later(assignment.id) if assignment.passage.present?
 
