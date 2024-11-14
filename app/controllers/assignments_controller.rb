@@ -1,8 +1,9 @@
 require 'ostruct'
 
 class AssignmentsController < ApplicationController
+  before_action :require_authentication
+  before_action :require_teacher, only: [:new, :create, :edit, :update, :destroy]
   before_action :set_assignment, only: [:show, :edit, :update, :destroy, :assign_students]
-  before_action :require_teacher, only: [:new, :create, :edit, :update, :destroy, :assign_students]
 
   def index
     @assignments = if Current.user.teacher?
@@ -27,19 +28,13 @@ class AssignmentsController < ApplicationController
 
   def create
     @assignment = Assignment.new(assignment_params)
+    @assignment.assignment_users.build(user: Current.user, role: 'creator')
 
     if @assignment.save
-      # Create the teacher-assignment relationship through assignment_users
-      @assignment.assignment_users.create!(user: Current.user, role: 'creator')
-      
-      redirect_to root_path, notice: "Assignment was successfully created. Processing has begun."
+      redirect_to root_path, notice: 'Assignment was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end
-  rescue Redis::CannotConnectError => e
-    Rails.logger.error "Redis Connection Error: #{e.message}"
-    flash.now[:alert] = "Service temporarily unavailable. Please try again later."
-    render :new, status: :service_unavailable
   end
 
   def edit
@@ -115,8 +110,10 @@ class AssignmentsController < ApplicationController
   end
 
   def assignment_params
-    params.require(:assignment).permit(:title, :subject, :grade_level, :difficulty, 
-                                     :number_of_questions, :interests)
+    params.require(:assignment).permit(
+      :title, :subject, :grade_level, :difficulty, 
+      :number_of_questions, :interests
+    )
   end
 
   def generate_prompt(assignment)

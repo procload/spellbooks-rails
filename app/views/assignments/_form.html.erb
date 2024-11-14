@@ -59,7 +59,10 @@
 
     <div>
       <%= f.label :interests, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.text_area :interests, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
+      <%= f.text_area :interests,
+          placeholder: "Enter student interests and topics to cover",
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
+      <p class="mt-1 text-xs text-gray-500">Describe the interests and topics you want to focus on in this assignment</p>
     </div>
   </div>
 

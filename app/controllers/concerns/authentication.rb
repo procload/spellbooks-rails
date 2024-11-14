@@ -23,7 +23,7 @@ module Authentication
 
 
     def resume_session
-      Current.session ||= find_session_by_cookie
+      Current.session ||= Session.find_by(id: session[:session_id]) || find_session_by_cookie
     end
 
     def find_session_by_cookie
@@ -33,7 +33,7 @@ module Authentication
 
     def request_authentication
       session[:return_to_after_authenticating] = request.url
-      redirect_to new_session_path
+      redirect_to new_session_path, notice: 'Please sign in to continue.'
     end
 
     def after_authentication_url

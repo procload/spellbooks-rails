@@ -6,6 +6,7 @@ class Assignment < ApplicationRecord
   
   has_many :assignment_users, dependent: :destroy
   has_many :users, through: :assignment_users
+  has_many :teachers, -> { where(assignment_users: { role: 'creator' }) }, through: :assignment_users, source: :user
   
   validates :title, presence: true, length: { minimum: 3, maximum: 100 }
   validates :subject, presence: true
@@ -14,7 +15,7 @@ class Assignment < ApplicationRecord
   validates :difficulty, presence: true, inclusion: { in: ['Easy', 'Medium', 'Hard'] }
   validates :number_of_questions, presence: true, 
             numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 100 }
-  validates :interests, presence: true
+  validates :interests, presence: true, length: { maximum: 1000 }
   
   # Only validate image if it's attached
   validates :image,
