@@ -14,22 +14,26 @@ module Authentication
 
   private
     def authenticated?
-      resume_session
+      resume_session.present?
     end
 
     def require_authentication
       resume_session || request_authentication
     end
 
-
     def resume_session
-      Current.session ||= Session.find_by(id: session[:session_id]) || find_session_by_cookie
+      if session_record = Session.find_by(id: session[:current_session_id])
+        Current.session = session_record
+        Current.user = session_record.user
+      end
     end
 
     def find_session_by_cookie
-      Session.find_by(id: cookies.signed[:session_id])
+      if session_record = Session.find_by(id: cookies.signed[:session_id])
+        Current.session = session_record
+        Current.user = session_record.user
+      end
     end
-
 
     def request_authentication
       session[:return_to_after_authenticating] = request.url
@@ -52,16 +56,24 @@ module Authentication
       end
     end
 
-
     def start_new_session_for(user)
-      user.sessions.create!(user_agent: request.user_agent, ip_address: request.remote_ip).tap do |session|
-        Current.session = session
-        cookies.signed.permanent[:session_id] = { value: session.id, httponly: true, same_site: :lax }
-      end
+      session_record = user.sessions.create!
+      session[:current_session_id] = session_record.id
+      Current.session = session_record
+      Current.user = user
     end
 
     def terminate_session
-      Current.session.destroy
+      Current.session&.destroy
       cookies.delete(:session_id)
+      Current.reset
+    end
+
+    def authenticate_user
+      if authenticated_user = Current.session&.user
+        Current.user = authenticated_user
+      else
+        redirect_to new_session_path, alert: "Please sign in to continue."
+      end
     end
 end

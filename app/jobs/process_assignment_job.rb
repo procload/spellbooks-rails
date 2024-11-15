@@ -1,4 +1,11 @@
 class ProcessAssignmentJob < ApplicationJob
+  include Rails.application.routes.url_helpers
+  
+  # Add this near the top of the class to set the default URL options
+  def default_url_options
+    Rails.application.config.action_mailer.default_url_options
+  end
+
   queue_as :default
 
   retry_on Faraday::UnauthorizedError, wait: 5.seconds, attempts: 3
@@ -113,17 +120,26 @@ class ProcessAssignmentJob < ApplicationJob
         # Update assignment status
         assignment.update!(status: 'completed')
 
-        # Replace the existing broadcast with:
+        # Broadcast the toast notification with assignment link
         Turbo::StreamsChannel.broadcast_append_to(
           "assignments",
           target: "toasts",
           partial: "shared/toast",
-          locals: {
+          locals: { 
             type: "success",
-            message: "Assignment '#{assignment.title}' is ready!",
-            link_path: Rails.application.routes.url_helpers.assignment_path(assignment),
-            link_text: "View Assignment"
+            message: "Assignment '#{assignment.title}' completed successfully!",
+            link_path: assignment_path(assignment),
+            link_text: "View Assignment",
+            auto_hide: true
           }
+        )
+
+        # Also broadcast the assignment update
+        Turbo::StreamsChannel.broadcast_replace_to(
+          "assignments",
+          target: "assignment_#{assignment.id}",
+          partial: "assignments/assignment",
+          locals: { assignment: assignment }
         )
       end
     rescue OpenAI::Error => e
@@ -131,6 +147,19 @@ class ProcessAssignmentJob < ApplicationJob
       raise # Re-raise to trigger retry
     rescue StandardError => e
       Rails.logger.error "ProcessAssignmentJob Error: #{e.message}"
+      
+      # Broadcast error notification
+      Turbo::StreamsChannel.broadcast_append_to(
+        "assignments",
+        target: "toasts",
+        partial: "shared/toast",
+        locals: { 
+          type: "error",
+          message: "Failed to process assignment: #{e.message}",
+          auto_hide: true
+        }
+      )
+      
       raise
     ensure
       Sidekiq.logger.info "=== Finished ProcessAssignmentJob for assignment_id: #{assignment_id} ==="

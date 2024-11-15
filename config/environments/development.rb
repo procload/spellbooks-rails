@@ -103,4 +103,8 @@ Rails.application.configure do
   config.assets.configure do |env|
     env.cache = ActiveSupport::Cache::NullStore.new
   end
+
+  # Add this to log Turbo Stream broadcasts in development
+  config.action_controller.action_on_unpermitted_parameters = :log
+  config.turbo.debug_logging = true
 end

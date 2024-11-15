@@ -112,7 +112,7 @@ class AssignmentsController < ApplicationController
   def assignment_params
     params.require(:assignment).permit(
       :title, :subject, :grade_level, :difficulty, 
-      :number_of_questions, :interests
+      :number_of_questions, :interests, :published
     )
   end
 
