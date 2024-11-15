@@ -129,4 +129,15 @@ class Assignment < ApplicationRecord
       nil
     end
   end
+
+  scope :published, -> { where(published: true) }
+  scope :unpublished, -> { where(published: false) }
+
+  def publish!
+    update!(published: true)
+  end
+
+  def unpublish!
+    update!(published: false)
+  end
 end

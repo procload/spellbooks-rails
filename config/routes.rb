@@ -1,7 +1,13 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
-  resource :session
+  # User registration and management
+  resources :users, only: [:new, :create]
+  resource :user, only: [:edit, :update]
+  
+  resource :session do
+    delete :destroy, path: 'logout', as: :logout
+  end
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -38,4 +44,6 @@ Rails.application.routes.draw do
 
   # Mount Action Cable server
   mount ActionCable.server => '/cable'
+
+  post 'test_toast', to: 'home#test_toast'
 end

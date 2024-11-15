@@ -6,6 +6,7 @@ FactoryBot.define do
     difficulty { "Medium" }
     number_of_questions { 10 }
     interests { "algebra, geometry, and problem-solving" }
+    published { false }
     
     trait :with_creator do
       transient do
@@ -17,6 +18,10 @@ FactoryBot.define do
           create(:assignment_user, assignment: assignment, user: evaluator.user, role: 'creator')
         end
       end
+    end
+
+    trait :published do
+      published { true }
     end
   end
 end 

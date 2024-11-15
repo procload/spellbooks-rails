@@ -11,6 +11,11 @@ class User < ApplicationRecord
   
   # Validations
   validates :role, inclusion: { in: ROLES }, allow_nil: true
+  validates :first_name, presence: true, length: { maximum: 50 }
+  validates :last_name, presence: true, length: { maximum: 50 }
+  validates :email_address, presence: true, 
+                          uniqueness: true,
+                          format: { with: URI::MailTo::EMAIL_REGEXP }
   
   # Role checking methods
   def teacher?
@@ -28,9 +33,13 @@ class User < ApplicationRecord
   # Get assignments specific to role
   def relevant_assignments
     if teacher?
-      assignment_users.where(role: 'creator').map(&:assignment)
+      assignments.joins(:assignment_users)
+                .where(assignment_users: { role: 'creator' })
+                .distinct
     else
-      assignment_users.where(role: 'student').map(&:assignment)
+      assignments.joins(:assignment_users)
+                .where(assignment_users: { role: 'student' })
+                .distinct
     end
   end
 end
