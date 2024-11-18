@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :assignment_users, dependent: :destroy
   has_many :assignments, through: :assignment_users
+  has_one_attached :profile_picture
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   

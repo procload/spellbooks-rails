@@ -40,7 +40,8 @@ class UsersController < ApplicationController
       :email_address, 
       :password, 
       :password_confirmation,
-      :role
+      :role,
+      :profile_picture
     )
   end
 end 
