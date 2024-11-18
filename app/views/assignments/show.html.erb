@@ -1,7 +1,25 @@
 <div class="container mx-auto px-4 py-8">
+
+  <h1 class="text-2xl font-bold"><%= @assignment.title %></h1>
+  <% if @assignment.passage.present? %>
+    <div class="mt-6 bg-white rounded-lg shadow px-16 py-12">
+      <div class="mb-16">
+        <%= markdown(@assignment.markdown_passage) %>
+      </div>
+    
+    <h2 class="text-3xl font-normal mb-6">Questions</h2>
+      <div class="space-y-4">
+        <% @questions.each_with_index do |question, index| %>
+          <%= render "questions/question", question: question, question_counter: index %>
+        <% end %>
+      </div>
+    </div>
+
+  <% end %>
+
   <div class="mb-8">
     <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold"><%= @assignment.title %></h1>
+      
       
       <% if Current.user.teacher? && @assignment.teachers.include?(Current.user) %>
         <div class="flex gap-4">
@@ -70,37 +88,4 @@
     </div>
   </div>
 
-  <% if @assignment.passage.present? %>
-    <div class="mt-6 bg-white rounded-lg shadow p-6">
-      <h2 class="text-xl font-semibold mb-4">Reading Passage</h2>
-      <%= markdown(@assignment.markdown_passage) %>
-    </div>
-  <% end %>
-
-  <div class="mt-8">
-    <h2 class="text-xl font-semibold mb-4">Questions</h2>
-    <div class="space-y-4">
-      <% @questions.each_with_index do |question, index| %>
-        <%= render "questions/question", question: question, question_counter: index %>
-      <% end %>
-    </div>
-  </div>
 </div>
-
-<script>
-function togglePassageFormat() {
-  const plainPassage = document.getElementById('plain-passage');
-  const markdownPassage = document.getElementById('markdown-passage');
-  const toggleButton = document.getElementById('format-toggle');
-  
-  if (plainPassage.classList.contains('hidden')) {
-    plainPassage.classList.remove('hidden');
-    markdownPassage.classList.add('hidden');
-    toggleButton.textContent = 'Show Formatted Version';
-  } else {
-    plainPassage.classList.add('hidden');
-    markdownPassage.classList.remove('hidden');
-    toggleButton.textContent = 'Show Plain Version';
-  }
-}
-</script> 

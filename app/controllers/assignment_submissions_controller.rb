@@ -1,4 +1,6 @@
 class AssignmentSubmissionsController < ApplicationController
+  # Use assignment layout for all actions
+  layout 'assignment'
   before_action :require_student
   before_action :set_assignment
 

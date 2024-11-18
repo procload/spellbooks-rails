@@ -1,6 +1,9 @@
 require 'ostruct'
 
 class AssignmentsController < ApplicationController
+  # Use assignment layout for all actions
+  layout 'assignment'
+  
   before_action :require_authentication
   before_action :require_teacher, only: [:new, :create, :edit, :update, :destroy]
   before_action :set_assignment, only: [:show, :edit, :update, :destroy, :assign_students]

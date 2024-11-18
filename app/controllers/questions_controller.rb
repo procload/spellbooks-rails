@@ -2,6 +2,9 @@ class QuestionsController < ApplicationController
   include ActionView::RecordIdentifier
   before_action :set_assignment
   before_action :set_question, only: [:show, :edit, :update, :check_answer, :regenerate]
+  
+  # Use assignment layout for all actions
+  layout 'assignment'
 
   def index
     @questions = @assignment.questions

@@ -1,37 +1,33 @@
 <%= turbo_frame_tag dom_id(question) do %>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg" data-controller="question">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h3 class="text-lg leading-6 font-medium text-gray-900">Question <%= question_counter + 1 %></h3>
-      
-      <% if Current.user.teacher? %>
-        <div class="flex space-x-2">
-          <%= link_to "Edit", 
-              edit_assignment_question_path(@assignment, question), 
-              data: { turbo_frame: dom_id(question) },
-              class: question_button_classes %>
-              
-          <%= form_tag regenerate_assignment_question_path(@assignment, question), 
-              method: :post, 
-              class: "inline" do %>
-            <%= hidden_field_tag :question_counter, question_counter %>
-            <%= submit_tag "Regenerate", class: question_button_classes %>
+  <div data-controller="question">
+    <div class="mb-8">
+      <div data-question-target="displayContent">
+        <div class="flex items-start gap-x-3 mb-4">
+          <h3 class="text-xl font-medium flex-grow"><%= question.content %></h3>
+          <% if Current.user.teacher? %>
+            <div class="flex-shrink-0">
+              <%= render "shared/action_dropdown" do %>
+                <%= link_to "Edit",
+                    edit_assignment_question_path(@assignment, question),
+                    data: { turbo_frame: dom_id(question) },
+                    class: "text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer" %>
+                    
+                <%= button_to "Regenerate",
+                    regenerate_assignment_question_path(@assignment, question),
+                    method: :post,
+                    params: { question_counter: question_counter },
+                    class: "w-full text-left text-gray-700 px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer" %>
+              <% end %>
+            </div>
           <% end %>
         </div>
-      <% end %>
-    </div>
-    
-    <div class="border-t border-gray-200">
-      <div class="px-4 py-5 sm:px-6">
-        <div data-question-target="displayContent">
-          <p class="mb-4"><%= question.content %></p>
 
-          <%= render "questions/answer_form", 
-              question: question, 
-              student_response: question.student_responses.find_by(user: Current.user) if Current.user.student? %>
-              
-          <%= render "questions/answer_display", 
-              question: question if Current.user.teacher? %>
-        </div>
+        <%= render "questions/answer_form", 
+            question: question, 
+            student_response: question.student_responses.find_by(user: Current.user) if Current.user.student? %>
+            
+        <%= render "questions/answer_display", 
+            question: question if Current.user.teacher? %>
       </div>
     </div>
   </div>

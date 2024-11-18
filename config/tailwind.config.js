@@ -72,7 +72,7 @@ module.exports = {
         "2xl": "24px",
       },
       maxWidth: {
-        assignment: "950px",
+        assignment: "1040px",
       },
       backgroundColor: {
         header: "#F7F1E8",
