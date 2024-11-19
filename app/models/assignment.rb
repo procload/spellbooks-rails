@@ -56,16 +56,28 @@ class Assignment < ApplicationRecord
   end
 
   def display_image
-    return nil unless image.attached?
-    
-    if Rails.application.config.active_storage.service == :amazon
-      image.url(expires_in: 1.hour)
+    if image.attached?
+      Rails.logger.debug "Generating variant for image: #{image.filename}"
+      if Rails.application.config.active_storage.service == :amazon
+        image.url(expires_in: 1.hour)
+      else
+        image.variant(resize_to_limit: [800, 600])
+      end
     else
-      image.variant(resize_to_limit: [800, 600])
+      Rails.logger.warn "Attempted to display_image but no image is attached"
+      nil
     end
-  rescue StandardError => e
-    Rails.logger.error "Error processing image: #{e.message}"
-    nil
+  end
+
+  def cached_image_variant
+    Rails.cache.fetch("#{cache_key_with_version}/image_variant", expires_in: 1.week) do
+      begin
+        image.variant(resize_to_limit: [400, 300]).processed
+      rescue StandardError => e
+        Rails.logger.error "Image processing failed: #{e.message}"
+        nil
+      end
+    end
   end
 
   # Helper methods for teacher/student relationships
