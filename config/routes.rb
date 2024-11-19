@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   resources :assignments do
     member do
       post :assign_students
+      get :download_pdf
     end
     
     resources :submissions, only: [:create], controller: 'assignment_submissions'

@@ -84,6 +84,10 @@ end
 
 gem "pg", "~> 1.5"
 
+# PDF Generation
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
+
 # Add these gems if not already present
 gem "aws-sdk-s3", require: false  # For Amazon S3 storage
 gem "image_processing", "~> 1.2"  # For image transformations

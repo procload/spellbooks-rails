@@ -6,7 +6,7 @@ class AssignmentsController < ApplicationController
   
   before_action :require_authentication
   before_action :require_teacher, only: [:new, :create, :edit, :update, :destroy]
-  before_action :set_assignment, only: [:show, :edit, :update, :destroy, :assign_students]
+  before_action :set_assignment, only: [:show, :edit, :update, :destroy, :assign_students, :download_pdf]
 
   def index
     @assignments = if Current.user.teacher?
@@ -88,6 +88,24 @@ class AssignmentsController < ApplicationController
   rescue => e
     Rails.logger.error "Error assigning students: #{e.message}"
     redirect_to @assignment, alert: 'There was an error updating student assignments.'
+  end
+
+  def download_pdf
+    @assignment = Assignment.find(params[:id])
+    @questions = @assignment.questions
+    
+    respond_to do |format|
+      format.pdf do
+        render pdf: "assignment_#{@assignment.id}",
+               template: 'assignments/show',
+               formats: [:pdf],
+               layout: 'pdf',
+               disposition: 'attachment',
+               page_size: 'Letter',
+               margin: { top: 20, bottom: 20, left: 20, right: 20 },
+               title: @assignment.title
+      end
+    end
   end
 
   def destroy
