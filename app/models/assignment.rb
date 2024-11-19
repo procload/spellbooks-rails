@@ -25,6 +25,8 @@ class Assignment < ApplicationRecord
             size: { less_than: 5.megabytes },
             if: :image_attached?
 
+  validates :assignment_users, presence: true, on: :update
+
   after_create_commit :process_assignment
   after_update :remove_cached_pdf, if: :relevant_attributes_changed?
 

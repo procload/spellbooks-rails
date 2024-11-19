@@ -33,23 +33,26 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new(assignment_params)
     
     begin
-      if @assignment.save
-        # Success path
-        redirect_to @assignment, notice: 'Assignment was successfully created.'
-      else
-        # Validation failure path
-        render :new, status: :unprocessable_entity
+      ActiveRecord::Base.transaction do
+        if @assignment.save
+          # Create the association between teacher and assignment
+          @assignment.assignment_users.create!(
+            user: Current.user,
+            role: 'creator'
+          )
+          redirect_to @assignment, notice: 'Assignment was successfully created.'
+        else
+          render :new, status: :unprocessable_entity
+        end
       end
     rescue RedisClient::CannotConnectError => e
       # If Redis fails but the record saves, we still want to redirect
       if @assignment.persisted?
         redirect_to @assignment, notice: 'Assignment was created but real-time updates may be delayed.'
       else
-        # If both failed, render the form again
         render :new, status: :unprocessable_entity
       end
     rescue StandardError => e
-      # Log other errors
       Rails.logger.error "Error creating assignment: #{e.message}"
       render :new, status: :unprocessable_entity
     end
