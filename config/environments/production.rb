@@ -52,9 +52,11 @@ Rails.application.configure do
     ssl: true,
     ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
     error_handler: -> (method:, returning:, exception:) {
-      Rails.logger.error "Redis error: #{exception.class}: #{exception.message}"
+      Rails.logger.error "Redis cache error: #{exception.class}: #{exception.message}"
       Rails.error.report(exception, handled: true)
-    }
+    },
+    reconnect_attempts: 3,
+    timeout: 1.0
   }
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
@@ -99,9 +101,11 @@ Rails.application.configure do
   config.active_storage.service_urls_expire_in = 1.hour
 
   # Add near the top of the file:
-  config.action_cable.logger = Logger.new(STDOUT)
-  config.action_cable.log_tags = [
-    :action_cable,
-    -> request { request.uuid }
+  config.action_cable.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+  config.action_cable.url = ENV.fetch("ACTION_CABLE_URL", "wss://#{ENV['HEROKU_APP_NAME']}.herokuapp.com/cable")
+  config.action_cable.allowed_request_origins = [
+    # Add your allowed origins here, for example:
+    /https:\/\/.*\.herokuapp\.com/,
+    /http:\/\/localhost:\d+/
   ]
 end
