@@ -13,7 +13,7 @@ Sidekiq.configure_server do |config|
   server_redis_config = redis_config.merge(
     size: 7  # Larger pool for server
   )
-  config.redis = server_redis_config
+  config.redis = server_redis_config 
 end
 
 Sidekiq.configure_client do |config|
