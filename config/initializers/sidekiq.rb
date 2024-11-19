@@ -1,6 +1,8 @@
 require 'sidekiq'
 
-redis_url = ENV.fetch('REDIS_URL', ENV['SIDEKIQ_REDIS_URL']).to_s.gsub('rediss://', 'redis://')
+redis_url = ENV.fetch('REDIS_URL') { ENV['SIDEKIQ_REDIS_URL'] }
+# Convert URL to TLS if needed
+redis_url = redis_url.to_s.gsub('redis://', 'rediss://') if ENV['REDIS_TLS_URL'].present?
 
 Sidekiq.configure_server do |config|
   config.redis = {

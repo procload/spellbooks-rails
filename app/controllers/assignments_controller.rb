@@ -41,23 +41,28 @@ class AssignmentsController < ApplicationController
         )
         
         begin
-          # If you have any Redis operations, put them here
-          # For now, just redirect since the save was successful
-          redirect_to @assignment, notice: 'Assignment was successfully created.' and return
+          # Attempt to broadcast via Turbo Streams
+          Turbo::StreamsChannel.broadcast_append_to(
+            'assignments',
+            target: 'assignments',
+            partial: 'assignments/assignment',
+            locals: { assignment: @assignment }
+          )
+          redirect_to @assignment, notice: 'Assignment was successfully created.'
         rescue RedisClient::CannotConnectError => e
           Rails.logger.error "Redis error: #{e.message}"
-          # Still redirect since the assignment was created successfully
-          redirect_to @assignment, 
-            notice: 'Assignment was created but real-time updates may be delayed.' and return
+          # Don't attempt another redirect here
+          raise e # Re-raise to be caught by the outer rescue
         end
       else
-        render :new, status: :unprocessable_entity and return
+        render :new, status: :unprocessable_entity
       end
     end
   rescue StandardError => e
     Rails.logger.error "Error creating assignment: #{e.message}"
+    # If we haven't rendered or redirected yet, render the new form
     flash.now[:alert] = 'There was an error creating the assignment.'
-    render :new, status: :unprocessable_entity
+    render :new, status: :unprocessable_entity unless performed?
   end
 
   def edit

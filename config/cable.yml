@@ -12,6 +12,7 @@ test:
 
 production:
   adapter: redis
-  url: <%= ENV['REDIS_TLS_URL'] %>
+  url: <%= ENV.fetch('REDIS_TLS_URL', ENV['REDIS_URL']) %>
   ssl_params:
     verify_mode: <%= OpenSSL::SSL::VERIFY_NONE %>
+  channel_prefix: spellbooks_production
