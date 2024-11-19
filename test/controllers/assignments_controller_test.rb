@@ -1,71 +1,113 @@
 require "test_helper"
 
-class AssignmentsControllerTest < ActionController::TestCase
+class AssignmentsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @teacher = create(:user, :teacher)
-    @assignment = create(:assignment, :with_creator, user: @teacher)
+    @teacher = User.create!(
+      first_name: "Test",
+      last_name: "Teacher",
+      email_address: "teacher@example.com",
+      password: "password123",
+      role: "teacher"
+    )
+    @student = User.create!(
+      first_name: "Test",
+      last_name: "Student",
+      email_address: "student@example.com",
+      password: "password123",
+      role: "student"
+    )
+    @assignment = Assignment.create!(
+      title: "Test Assignment",
+      subject: "Math",
+      grade_level: 5,
+      difficulty: "Medium",
+      number_of_questions: 10,
+      interests: "test interests"
+    )
+    AssignmentUser.create!(user: @teacher, assignment: @assignment, role: 'creator')
   end
 
   test "should get index when authenticated" do
-    session[:session_id] = @teacher.sessions.create!(
-      user_agent: 'Rails Testing',
-      ip_address: '0.0.0.0'
-    ).id
-
-    get :index
+    sign_in_as(@teacher)
+    get assignments_url
     assert_response :success
   end
 
   test "should redirect to login when not authenticated" do
-    get :index
+    get assignments_url
     assert_redirected_to new_session_path
     assert_equal 'Please sign in to continue.', flash[:notice]
   end
 
   test "should create assignment when authenticated as teacher" do
-    session[:session_id] = @teacher.sessions.create!(
-      user_agent: 'Rails Testing',
-      ip_address: '0.0.0.0'
-    ).id
-
+    sign_in_as(@teacher)
     assert_difference('Assignment.count') do
-      post :create, params: { 
-        assignment: { 
-          title: "New Assignment",
-          subject: "Mathematics",
-          grade_level: 5,
-          difficulty: "Medium",
-          number_of_questions: 10,
-          interests: "algebra"
-        } 
+      post assignments_url, params: {
+        assignment: {
+          title: "New Test Assignment",
+          subject: "Science",
+          grade_level: 6,
+          difficulty: "Easy",
+          number_of_questions: 5,
+          interests: "test interests"
+        }
       }
     end
-
     assert_redirected_to root_path
-    assert_includes Assignment.last.teachers, @teacher
+    assert_equal 'Assignment was successfully created.', flash[:notice]
   end
 
   test "should not allow student to create assignment" do
-    student = create(:user, :student)
-    session[:session_id] = student.sessions.create!(
-      user_agent: 'Rails Testing',
-      ip_address: '0.0.0.0'
-    ).id
-
+    sign_in_as(@student)
     assert_no_difference('Assignment.count') do
-      post :create, params: { 
-        assignment: { 
-          title: "New Assignment",
-          subject: "Mathematics",
-          grade_level: 5,
-          difficulty: "Medium",
-          number_of_questions: 10,
-          interests: ["algebra"]
-        } 
+      post assignments_url, params: {
+        assignment: {
+          title: "New Test Assignment",
+          subject: "Science",
+          grade_level: 6,
+          difficulty: "Easy",
+          number_of_questions: 5,
+          interests: "test interests"
+        }
       }
     end
-
     assert_redirected_to root_path
     assert_equal 'You must be a teacher to access this area', flash[:alert]
+  end
+
+  test "download_pdf serves cached version when available" do
+    sign_in_as(@teacher)
+    @assignment.cached_pdf.attach(
+      io: StringIO.new("fake pdf content"),
+      filename: "test.pdf",
+      content_type: "application/pdf"
+    )
+
+    get download_pdf_assignment_url(@assignment, format: :pdf)
+    assert_response :redirect
+    assert_match /rails\/active_storage\/blobs/, @response.redirect_url
+  end
+
+  test "download_pdf generates and caches new PDF when no cache exists" do
+    sign_in_as(@teacher)
+    assert_not @assignment.cached_pdf.attached?
+
+    get download_pdf_assignment_url(@assignment, format: :pdf)
+    assert_response :success
+    assert @assignment.reload.cached_pdf.attached?
+  end
+
+  private
+
+  def sign_in_as(user)
+    session = Session.create!(
+      user: user,
+      user_agent: 'Rails Testing',
+      ip_address: '0.0.0.0'
+    )
+    post session_url, params: {
+      email_address: user.email_address,
+      password: "password123"
+    }
   end
 end

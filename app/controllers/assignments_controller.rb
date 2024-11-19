@@ -96,14 +96,31 @@ class AssignmentsController < ApplicationController
     
     respond_to do |format|
       format.pdf do
-        render pdf: "assignment_#{@assignment.id}",
-               template: 'assignments/show',
-               formats: [:pdf],
-               layout: 'pdf',
-               disposition: 'attachment',
-               page_size: 'Letter',
-               margin: { top: 20, bottom: 20, left: 20, right: 20 },
-               title: @assignment.title
+        if @assignment.cached_pdf.attached?
+          # Return the cached PDF
+          redirect_to rails_blob_path(@assignment.cached_pdf, disposition: 'attachment')
+        else
+          # Generate and cache the PDF
+          pdf = render_to_string(
+            pdf: "assignment_#{@assignment.id}",
+            template: 'assignments/show',
+            formats: [:pdf],
+            layout: 'pdf',
+            disposition: 'attachment',
+            page_size: 'Letter',
+            margin: { top: 20, bottom: 20, left: 20, right: 20 },
+            title: @assignment.title
+          )
+          
+          # Store the generated PDF
+          @assignment.cached_pdf.attach(
+            io: StringIO.new(pdf),
+            filename: "assignment_#{@assignment.id}.pdf",
+            content_type: 'application/pdf'
+          )
+          
+          send_data pdf, filename: "assignment_#{@assignment.id}.pdf", type: 'application/pdf', disposition: 'attachment'
+        end
       end
     end
   end

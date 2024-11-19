@@ -3,6 +3,7 @@ class Assignment < ApplicationRecord
   
   has_many :questions, dependent: :destroy
   has_one_attached :image
+  has_one_attached :cached_pdf
   
   has_many :assignment_users, dependent: :destroy
   has_many :users, through: :assignment_users
@@ -25,6 +26,7 @@ class Assignment < ApplicationRecord
             if: :image_attached?
 
   after_create_commit :process_assignment
+  after_update :remove_cached_pdf, if: :relevant_attributes_changed?
 
   def attach_image_from_url(url)
     require 'open-uri'
@@ -103,6 +105,14 @@ class Assignment < ApplicationRecord
     true
   rescue ActiveRecord::RecordInvalid
     false
+  end
+
+  def remove_cached_pdf
+    cached_pdf.purge if cached_pdf.attached?
+  end
+
+  def relevant_attributes_changed?
+    saved_changes.keys.any? { |attr| ['title', 'subject', 'grade_level', 'difficulty', 'number_of_questions', 'interests'].include?(attr) }
   end
 
   private
