@@ -435,6 +435,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   capybara
+  connection_pool
   debug
   dotenv-rails
   factory_bot_rails

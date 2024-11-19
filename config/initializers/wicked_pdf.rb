@@ -8,13 +8,8 @@
 #
 # https://github.com/mileszs/wicked_pdf/blob/master/README.md
 
-WickedPdf.configure do |config|
-  # Path to the wkhtmltopdf executable: This will work on Heroku
-  config.exe_path = Gem.bin_path('wkhtmltopdf-binary', 'wkhtmltopdf')
-  
-  # Layout file to be used for all PDFs
-  # config.layout = 'pdf.html.erb'
-  
-  # Enable/disable window status icon
-  config.window_status = nil
-end
+WickedPdf.config = {
+  # Make sure PDF styles are only loaded for PDF rendering
+  enable_local_file_access: true,
+  # Any other Wicked PDF configs...
+}

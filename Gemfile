@@ -95,3 +95,6 @@ gem "active_storage_validations"  # For validating attachments
 
 # Add Redcarpet
 gem 'redcarpet'
+
+# Add connection_pool
+gem 'connection_pool'

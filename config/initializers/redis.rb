@@ -1,31 +1,37 @@
 require 'redis'
+require 'connection_pool'
 
-redis_url = ENV.fetch('REDIS_URL', 'redis://localhost:6379/1')
+redis_config = if Rails.env.production?
+  {
+    url: ENV.fetch('REDIS_URL'),
+    ssl: true,
+    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
+    timeout: 5,
+    connect_timeout: 5,
+    reconnect_attempts: 3,
+    retry_interval: 0.5
+  }
+else
+  {
+    url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/1'),
+    timeout: 5,
+    connect_timeout: 5
+  }
+end
+
+$redis = ConnectionPool.new(size: 5, timeout: 5) do
+  Redis.new(redis_config)
+end
 
 begin
-  $redis = if Rails.env.production?
-    Redis.new(
-      url: redis_url,
-      ssl: true,
-      ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
-      timeout: 5,
-      connect_timeout: 5
-    )
-  else
-    Redis.new(
-      url: redis_url,
-      timeout: 5,
-      connect_timeout: 5
-    )
+  $redis.with do |redis|
+    redis.ping
+    Rails.logger.info "Successfully connected to Redis"
   end
-
-  # Add error handling
-  Redis.silence_deprecations = true if defined?(Redis.silence_deprecations)
-
-  # Monitor Redis connection errors
-  $redis.ping
-rescue Redis::CannotConnectError => e
+rescue Redis::BaseConnectionError => e
   Rails.logger.error "Failed to connect to Redis: #{e.message}"
   Rails.error.report(e, handled: true)
-  nil # Return nil instead of raising to allow the app to start
-end 
+  raise if Rails.env.production?
+end
+
+Redis.silence_deprecations = true if defined?(Redis.silence_deprecations) 

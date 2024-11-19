@@ -1,54 +1,40 @@
 require 'sidekiq'
-require 'uri'
 
 redis_config = if Rails.env.production?
-  redis_url = ENV['REDIS_TEMPORARY_URL'] || ENV['REDIS_URL']
-  uri = URI.parse(redis_url)
-  
   {
-    url: redis_url,
-    network_timeout: 15,
-    pool_timeout: 15,
-    reconnect_attempts: 5,
-    ssl_params: {
-      verify_mode: OpenSSL::SSL::VERIFY_NONE
-    }
+    url: ENV.fetch('REDIS_URL'),
+    ssl: true,
+    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
+    network_timeout: 5,
+    pool_timeout: 5,
+    reconnect_attempts: 3,
+    size: 7  # Pool size for Sidekiq client
   }
 else
-  { url: 'redis://localhost:6379/1' }
-end
-
-if Rails.env.production?
-  sanitized_url = redis_config[:url].gsub(/\/\/.*@/, '//[FILTERED]@')
-  puts "Connecting to Redis at: #{sanitized_url}"
+  {
+    url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/1'),
+    size: 5
+  }
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = redis_config
+  config.redis = redis_config.merge(size: 12) # Larger pool for server
   config.logger.level = Logger::INFO
   
-  # Add error handling
   config.on(:startup) do
-    puts "Sidekiq server starting..."
+    Rails.logger.info "Sidekiq server starting..."
   end
   
   config.on(:shutdown) do
-    puts "Sidekiq server shutting down..."
+    Rails.logger.info "Sidekiq server shutting down..."
+  end
+
+  config.error_handlers << Proc.new do |ex, ctx_hash|
+    Rails.logger.error "Sidekiq error: #{ex.message}"
+    Rails.error.report(ex, handled: true, context: ctx_hash)
   end
 end
 
 Sidekiq.configure_client do |config|
   config.redis = redis_config
-end
-
-# Test Redis connection on startup
-if Rails.env.production?
-  begin
-    redis = Redis.new(redis_config)
-    redis.ping
-    puts "Successfully connected to Redis"
-  rescue => e
-    puts "Failed to connect to Redis: #{e.message}"
-    puts "Redis config: #{redis_config.merge(url: '[FILTERED]').inspect}"
-  end
 end 
