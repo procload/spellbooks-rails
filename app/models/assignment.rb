@@ -70,14 +70,25 @@ class Assignment < ApplicationRecord
   end
 
   def cached_image_variant
-    Rails.cache.fetch("#{cache_key_with_version}/image_variant", expires_in: 1.week) do
+    cache_key = "#{cache_key_with_version}/image_variant"
+    
+    Rails.cache.fetch(cache_key, expires_in: 1.week, skip_nil: true) do
       begin
+        return nil unless image.attached?
         image.variant(resize_to_limit: [400, 300]).processed
       rescue StandardError => e
         Rails.logger.error "Image processing failed: #{e.message}"
         nil
       end
     end
+  rescue Redis::BaseError => e
+    Rails.logger.error "Redis error in cached_image_variant: #{e.message}"
+    begin
+      return image.variant(resize_to_limit: [400, 300]).processed if image.attached?
+    rescue StandardError => e
+      Rails.logger.error "Fallback image processing failed: #{e.message}"
+    end
+    nil
   end
 
   # Helper methods for teacher/student relationships
