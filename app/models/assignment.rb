@@ -71,7 +71,12 @@ class Assignment < ApplicationRecord
 
   def cached_image_variant
     Rails.cache.fetch("#{cache_key_with_version}/image_variant", expires_in: 1.week) do
-      image.variant(resize_to_limit: [400, 300]).processed
+      begin
+        image.variant(resize_to_limit: [400, 300]).processed
+      rescue StandardError => e
+        Rails.logger.error "Image processing failed: #{e.message}"
+        nil
+      end
     end
   end
 

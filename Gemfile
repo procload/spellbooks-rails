@@ -48,6 +48,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem 'factory_bot_rails'
+  gem 'dotenv-rails'
 end
 
 group :development do
@@ -98,3 +99,6 @@ gem 'redcarpet'
 
 # Add connection_pool
 gem 'connection_pool'
+
+# Add libvips
+gem "ruby-vips", ">= 2.1.0"
