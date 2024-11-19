@@ -8,14 +8,14 @@ begin
       url: redis_url,
       ssl: true,
       ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
-      timeout: 1,
-      reconnect_attempts: 2
+      timeout: 5,
+      connect_timeout: 5
     )
   else
     Redis.new(
       url: redis_url,
-      timeout: 1,
-      reconnect_attempts: 2
+      timeout: 5,
+      connect_timeout: 5
     )
   end
 
@@ -27,4 +27,5 @@ begin
 rescue Redis::CannotConnectError => e
   Rails.logger.error "Failed to connect to Redis: #{e.message}"
   Rails.error.report(e, handled: true)
+  nil # Return nil instead of raising to allow the app to start
 end 

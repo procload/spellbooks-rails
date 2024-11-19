@@ -55,8 +55,8 @@ Rails.application.configure do
       Rails.logger.error "Redis cache error: #{exception.class}: #{exception.message}"
       Rails.error.report(exception, handled: true)
     },
-    reconnect_attempts: 3,
-    timeout: 1.0
+    connect_timeout: 5,
+    timeout: 5
   }
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
