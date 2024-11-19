@@ -16,7 +16,7 @@ gem "bootsnap", require: false
 
 # Redis and Sidekiq
 gem 'redis', '~> 5.3.0'
-gem 'hiredis-client'
+# gem 'hiredis-client'
 gem 'sidekiq'
 gem 'connection_pool'
 

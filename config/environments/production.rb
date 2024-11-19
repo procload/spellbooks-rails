@@ -48,16 +48,18 @@ Rails.application.configure do
 
   # Replace the default in-process memory cache store with a durable alternative.
   config.cache_store = :redis_cache_store, {
-  url: ENV['REDIS_URL'],
-  reconnect_attempts: 3,
-  timeout: 5,
-  pool_size: 5,
-  error_handler: -> (method:, returning:, exception:) {
-    Rails.logger.error "Redis cache error: #{exception.class}: #{exception.message}"
-    Rails.error.report(exception, handled: true)
-    nil
+    url: ENV['REDIS_URL'],
+    driver: :ruby,
+    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
+    reconnect_attempts: 3,
+    timeout: 5,
+    pool_size: 5,
+    error_handler: -> (method:, returning:, exception:) {
+      Rails.logger.error "Redis cache error: #{exception.class}: #{exception.message}"
+      Rails.error.report(exception, handled: true)
+      nil
+    }
   }
-}
 
 
 
