@@ -50,7 +50,11 @@ Rails.application.configure do
   config.cache_store = :redis_cache_store, {
     url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/1'),
     ssl: true,
-    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
+    error_handler: -> (method:, returning:, exception:) {
+      Rails.logger.error "Redis error: #{exception.class}: #{exception.message}"
+      Rails.error.report(exception, handled: true)
+    }
   }
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
@@ -93,4 +97,11 @@ Rails.application.configure do
 
   # Enable serving of images through CDN
   config.active_storage.service_urls_expire_in = 1.hour
+
+  # Add near the top of the file:
+  config.action_cable.logger = Logger.new(STDOUT)
+  config.action_cable.log_tags = [
+    :action_cable,
+    -> request { request.uuid }
+  ]
 end
