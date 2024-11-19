@@ -55,7 +55,7 @@ class AssignmentsController < ApplicationController
         end
 
         # Always redirect on successful save, even if broadcast failed
-        redirect_to @assignment, notice: 'Assignment was successfully created.' and return
+        redirect_to root_path, notice: 'Assignment was successfully created.' and return
       else
         render :new, status: :unprocessable_entity and return
       end

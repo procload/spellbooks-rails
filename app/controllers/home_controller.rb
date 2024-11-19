@@ -4,6 +4,7 @@ class HomeController < ApplicationController
   def index
     if authenticated? && Current.user
       @assignments = Current.user.relevant_assignments
+      @stream_name = Turbo::StreamsChannel.verified_stream_name("assignments")
       render 'dashboard'
     else
       render 'landing'

@@ -1,4 +1,12 @@
-<div data-controller="toast" class="fixed bottom-4 right-4 z-50 <%= 'auto-hide' if local_assigns[:auto_hide] %>">
+<% 
+  # Add more detailed debug logging
+  Rails.logger.info "[Toast Partial] Rendering toast with type: #{type}, message: #{message}"
+  Rails.logger.info "[Toast Partial] Current user: #{Current.user&.id}"
+  Rails.logger.info "[Toast Partial] Link path: #{defined?(link_path) ? link_path : 'none'}"
+%>
+<div data-controller="toast" 
+     class="fixed bottom-4 right-4 z-50 <%= 'auto-hide' if local_assigns[:auto_hide] %>"
+     data-toast-debug="<%= message %>">
   <div data-toast-target="notification" 
        class="hidden opacity-0 transform translate-y-2 transition-all duration-500 ease-in-out rounded-lg shadow-lg p-4 w-96
               <%= case type&.to_s

@@ -2,18 +2,13 @@
   <nav class="container mx-auto px-5 py-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
-        <% if local_assigns[:show_back_button] %>
-          <%= link_to :back, class: "text-primary hover:text-primary/80" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-          <% end %>
+        <%= link_to root_path, class: "flex items-center text-primary hover:text-primary/80" do %>
+          <%= render "shared/logo", class: "w-12 h-12" %>
+          <span class="ml-3 text-xl font-semibold">Spellbooks</span>
+        <% end %>
+        
+        <% if content_for?(:page_title) %>
           <h1 class="text-xl font-semibold"><%= content_for(:page_title) %></h1>
-        <% else %>
-          <%= link_to root_path, class: "flex items-center text-primary hover:text-primary/80" do %>
-            <%= render "shared/logo", class: "w-12 h-12" %>
-            <span class="ml-3 text-xl font-semibold">Spellbooks</span>
-          <% end %>
         <% end %>
       </div>
       

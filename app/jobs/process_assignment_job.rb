@@ -12,7 +12,9 @@ class ProcessAssignmentJob < ApplicationJob
   retry_on ActiveRecord::RecordNotFound, wait: 5.seconds, attempts: 3
 
   def perform(assignment_id)
-    assignment = Assignment.find_by(id: assignment_id)
+    Rails.logger.info "[ProcessAssignmentJob] Starting job for assignment #{assignment_id}"
+    
+    assignment = Assignment.find(assignment_id)
     
     return unless assignment # Skip if assignment not found
     
@@ -120,27 +122,36 @@ class ProcessAssignmentJob < ApplicationJob
         # Update assignment status
         assignment.update!(status: 'completed')
 
-        # Broadcast the toast notification with assignment link
-        Turbo::StreamsChannel.broadcast_append_to(
-          "assignments",
-          target: "toasts",
-          partial: "shared/toast",
-          locals: { 
-            type: "success",
-            message: "Assignment '#{assignment.title}' completed successfully!",
-            link_path: assignment_path(assignment),
-            link_text: "View Assignment",
-            auto_hide: true
-          }
-        )
+        # Get the teacher (creator) of the assignment
+        teacher = assignment.teachers.first
+        if teacher
+          Rails.logger.info "[ProcessAssignmentJob] Broadcasting toast notification to teacher: #{teacher.id}"
+          Turbo::StreamsChannel.broadcast_append_to(
+            "assignments",
+            target: "toasts",
+            partial: "shared/toast",
+            locals: { 
+              type: "success",
+              message: "Assignment '#{assignment.title}' is ready!",
+              link_path: assignment_path(assignment),
+              link_text: "View Assignment",
+              auto_hide: true
+            }
+          )
+          Rails.logger.info "[ProcessAssignmentJob] Toast notification broadcast complete"
+        else
+          Rails.logger.error "[ProcessAssignmentJob] No teacher found for assignment #{assignment.id}"
+        end
 
-        # Also broadcast the assignment update
+        # Broadcast the assignment update separately
+        Rails.logger.info "[ProcessAssignmentJob] Broadcasting assignment update"
         Turbo::StreamsChannel.broadcast_replace_to(
           "assignments",
           target: "assignment_#{assignment.id}",
           partial: "assignments/assignment",
           locals: { assignment: assignment }
         )
+        Rails.logger.info "[ProcessAssignmentJob] Assignment update broadcast complete"
       end
     rescue OpenAI::Error => e
       Rails.logger.error "OpenAI API Error: #{e.message}"
@@ -164,6 +175,9 @@ class ProcessAssignmentJob < ApplicationJob
     ensure
       Sidekiq.logger.info "=== Finished ProcessAssignmentJob for assignment_id: #{assignment_id} ==="
     end
+  rescue => e
+    Rails.logger.error "[ProcessAssignmentJob] Error: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
   end
 
   private

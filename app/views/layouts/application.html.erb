@@ -4,7 +4,10 @@
   <%= render "shared/head" %>
 </head>
 
-<body class="bg-background text-foreground">
+<body class="bg-background text-foreground" 
+      data-controller="debug"
+      <%= "data-controller='turbo-stream' data-turbo-stream-channel-value='#{Turbo::StreamsChannel.signed_stream_name("assignments")}'" if Current.user %>>
+  
   <%= render "shared/header" %>
 
   <main class="container mx-auto mt-28 px-5 max-w-assignment">
@@ -12,7 +15,7 @@
   </main>
 
   <%= render 'shared/flash_messages' %>
-  <div id="toasts" class="fixed bottom-4 right-4 z-50"></div>
-  <%= turbo_stream_from "assignments" %>
+  
+  <div id="toasts" class="fixed bottom-4 right-4 z-50" data-turbo-permanent></div>
 </body>
 </html>
