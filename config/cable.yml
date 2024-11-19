@@ -16,3 +16,7 @@ production:
   ssl_params:
     verify_mode: <%= OpenSSL::SSL::VERIFY_NONE %>
   channel_prefix: spellbooks_production
+  connect_timeout: 5
+  read_timeout: 5
+  write_timeout: 5
+  reconnect_attempts: 3

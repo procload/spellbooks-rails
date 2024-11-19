@@ -48,21 +48,22 @@ class AssignmentsController < ApplicationController
             partial: 'assignments/assignment',
             locals: { assignment: @assignment }
           )
-          redirect_to @assignment, notice: 'Assignment was successfully created.'
-        rescue RedisClient::CannotConnectError => e
-          Rails.logger.error "Redis error: #{e.message}"
-          # Don't attempt another redirect here
-          raise e # Re-raise to be caught by the outer rescue
+        rescue RedisClient::CannotConnectError, Redis::CannotConnectError, Errno::ECONNREFUSED => e
+          # Log the error but don't let it prevent assignment creation
+          Rails.logger.error "Redis broadcast error: #{e.message}"
+          # Continue with the redirect
         end
+
+        # Always redirect on successful save, even if broadcast failed
+        redirect_to @assignment, notice: 'Assignment was successfully created.' and return
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_entity and return
       end
     end
   rescue StandardError => e
     Rails.logger.error "Error creating assignment: #{e.message}"
-    # If we haven't rendered or redirected yet, render the new form
     flash.now[:alert] = 'There was an error creating the assignment.'
-    render :new, status: :unprocessable_entity unless performed?
+    render :new, status: :unprocessable_entity
   end
 
   def edit
