@@ -31,11 +31,26 @@ class AssignmentsController < ApplicationController
 
   def create
     @assignment = Assignment.new(assignment_params)
-    @assignment.assignment_users.build(user: Current.user, role: 'creator')
-
-    if @assignment.save
-      redirect_to root_path, notice: 'Assignment was successfully created.'
-    else
+    
+    begin
+      if @assignment.save
+        # Success path
+        redirect_to @assignment, notice: 'Assignment was successfully created.'
+      else
+        # Validation failure path
+        render :new, status: :unprocessable_entity
+      end
+    rescue RedisClient::CannotConnectError => e
+      # If Redis fails but the record saves, we still want to redirect
+      if @assignment.persisted?
+        redirect_to @assignment, notice: 'Assignment was created but real-time updates may be delayed.'
+      else
+        # If both failed, render the form again
+        render :new, status: :unprocessable_entity
+      end
+    rescue StandardError => e
+      # Log other errors
+      Rails.logger.error "Error creating assignment: #{e.message}"
       render :new, status: :unprocessable_entity
     end
   end
