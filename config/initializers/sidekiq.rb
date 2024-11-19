@@ -1,20 +1,15 @@
 require 'sidekiq'
 
-redis_config = {
-  url: ENV.fetch('REDIS_URL') { 'redis://127.0.0.1:6379/0' },
-  password: ENV['REDIS_PASSWORD']
-}.compact
-
 Sidekiq.configure_server do |config|
-  config.redis = redis_config
-  config.logger.level = Logger::DEBUG
+  config.redis = { 
+    url: ENV['SIDEKIQ_REDIS_URL'],
+    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+  }
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = redis_config
+  config.redis = { 
+    url: ENV['SIDEKIQ_REDIS_URL'],
+    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+  }
 end
-
-# Enable Sidekiq logging in development
-if Rails.env.development?
-  Sidekiq.logger.level = Logger::DEBUG
-end 
