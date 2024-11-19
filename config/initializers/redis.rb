@@ -9,8 +9,7 @@ begin
       ssl: true,
       ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
       timeout: 1,
-      reconnect_attempts: 2,
-      reconnect_delay: 0.5
+      reconnect_attempts: 2
     )
   else
     Redis.new(
