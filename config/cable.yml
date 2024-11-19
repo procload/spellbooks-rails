@@ -18,4 +18,3 @@ production:
   ssl_params:
     verify_mode: <%= OpenSSL::SSL::VERIFY_NONE %>
   timeout: 5
-  connect_timeout: 5
