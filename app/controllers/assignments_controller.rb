@@ -32,30 +32,32 @@ class AssignmentsController < ApplicationController
   def create
     @assignment = Assignment.new(assignment_params)
     
-    begin
-      ActiveRecord::Base.transaction do
-        if @assignment.save
-          # Create the association between teacher and assignment
-          @assignment.assignment_users.create!(
-            user: Current.user,
-            role: 'creator'
-          )
-          redirect_to @assignment, notice: 'Assignment was successfully created.'
-        else
-          render :new, status: :unprocessable_entity
+    ActiveRecord::Base.transaction do
+      if @assignment.save
+        # Create the association between teacher and assignment
+        @assignment.assignment_users.create!(
+          user: Current.user,
+          role: 'creator'
+        )
+        
+        begin
+          # If you have any Redis operations, put them here
+          # For now, just redirect since the save was successful
+          redirect_to @assignment, notice: 'Assignment was successfully created.' and return
+        rescue RedisClient::CannotConnectError => e
+          Rails.logger.error "Redis error: #{e.message}"
+          # Still redirect since the assignment was created successfully
+          redirect_to @assignment, 
+            notice: 'Assignment was created but real-time updates may be delayed.' and return
         end
-      end
-    rescue RedisClient::CannotConnectError => e
-      # If Redis fails but the record saves, we still want to redirect
-      if @assignment.persisted?
-        redirect_to @assignment, notice: 'Assignment was created but real-time updates may be delayed.'
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_entity and return
       end
-    rescue StandardError => e
-      Rails.logger.error "Error creating assignment: #{e.message}"
-      render :new, status: :unprocessable_entity
     end
+  rescue StandardError => e
+    Rails.logger.error "Error creating assignment: #{e.message}"
+    flash.now[:alert] = 'There was an error creating the assignment.'
+    render :new, status: :unprocessable_entity
   end
 
   def edit
