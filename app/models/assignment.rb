@@ -56,38 +56,15 @@ class Assignment < ApplicationRecord
   end
 
   def display_image
-    if image.attached?
-      Rails.logger.debug "Generating variant for image: #{image.filename}"
-      if Rails.application.config.active_storage.service == :amazon
-        image.url(expires_in: 1.hour)
-      else
-        image.variant(resize_to_limit: [800, 600])
-      end
-    else
-      Rails.logger.warn "Attempted to display_image but no image is attached"
-      nil
-    end
-  end
-
-  def cached_image_variant
-    cache_key = "#{cache_key_with_version}/image_variant"
+    return nil unless image.attached?
     
-    Rails.cache.fetch(cache_key, expires_in: 1.week, skip_nil: true) do
-      begin
-        return nil unless image.attached?
-        image.variant(resize_to_limit: [400, 300]).processed
-      rescue StandardError => e
-        Rails.logger.error "Image processing failed: #{e.message}"
-        nil
-      end
+    if Rails.application.config.active_storage.service == :amazon
+      image.url(expires_in: 1.hour)
+    else
+      image.variant(resize_to_limit: [800, 600])
     end
-  rescue Redis::BaseError => e
-    Rails.logger.error "Redis error in cached_image_variant: #{e.message}"
-    begin
-      return image.variant(resize_to_limit: [400, 300]).processed if image.attached?
-    rescue StandardError => e
-      Rails.logger.error "Fallback image processing failed: #{e.message}"
-    end
+  rescue StandardError => e
+    Rails.logger.error "Error processing image: #{e.message}"
     nil
   end
 
