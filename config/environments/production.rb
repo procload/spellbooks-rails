@@ -106,10 +106,10 @@ Rails.application.configure do
 
   # Add near the top of the file:
   config.action_cable.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
-  config.action_cable.url = ENV.fetch("ACTION_CABLE_URL", "wss://#{ENV['HEROKU_APP_NAME']}.herokuapp.com/cable")
+  config.action_cable.url = ENV.fetch("ACTION_CABLE_URL", "wss://spellbooks-8860acf3451f.herokuapp.com/cable")
   config.action_cable.allowed_request_origins = [
-    # Add your allowed origins here, for example:
-    /https:\/\/.*\.herokuapp\.com/,
+    'https://spellbooks-8860acf3451f.herokuapp.com',
+    # Keep localhost for development testing if needed
     /http:\/\/localhost:\d+/
   ]
 end
