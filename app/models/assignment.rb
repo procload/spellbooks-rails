@@ -70,8 +70,8 @@ class Assignment < ApplicationRecord
   end
 
   def cached_image_variant
-    Rails.cache.fetch("assignment/#{id}/image_variant", expires_in: 1.hour) do
-      display_image
+    Rails.cache.fetch("#{cache_key_with_version}/image_variant", expires_in: 1.week) do
+      image.variant(resize_to_limit: [400, 300]).processed
     end
   end
 
