@@ -4,18 +4,39 @@
   <%= render "shared/head" %>
 </head>
 
-<body class="bg-background text-foreground" 
-      data-controller="debug"
-      <%= "data-controller='turbo-stream' data-turbo-stream-channel-value='#{Turbo::StreamsChannel.signed_stream_name("assignments")}'" if Current.user %>>
+<body class="bg-background text-foreground"
+      data-controller="debug turbo-stream"
+      <% if Current.user %>
+        data-turbo-stream-assignments-channel-value="<%= Turbo::StreamsChannel.signed_stream_name("assignments") %>"
+        <% if Current.user.teacher? %>
+          data-turbo-stream-teacher-channel-value="<%= Turbo::StreamsChannel.signed_stream_name("assignments") %>"
+        <% end %>
+      <% end %>>
   
-  <%= render "shared/header" %>
+  <%= render "shared/header", show_back_button: content_for?(:show_back_button) %>
 
   <main class="container mx-auto mt-28 px-5 max-w-assignment">
+    <%= button_to "Send Test Notification", 
+        test_notification_path, 
+        class: "bg-blue-500 text-white px-4 py-2 rounded" %>
     <%= yield %>
   </main>
 
-  <%= render 'shared/flash_messages' %>
-  
-  <div id="toasts" class="fixed bottom-4 right-4 z-50" data-turbo-permanent></div>
+  <%= turbo_stream_from "assignments" %>
+  <% if authenticated? %>
+    <%= turbo_stream_from "user_#{Current.user.id}_notifications" %>
+    <div id="notifications" 
+         class="fixed z-50 pointer-events-none"
+         data-turbo-permanent>
+    </div>
+  <% end %>
+
+  <% if Rails.env.development? %>
+    <script>
+      console.log('Session ID:', '<%= cookies.encrypted[:current_session_id] %>');
+      console.log('Authenticated:', '<%= authenticated? %>');
+      console.log('Current User:', '<%= Current.user&.id %>');
+    </script>
+  <% end %>
 </body>
 </html>

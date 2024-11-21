@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     member do
       post :assign_students
       get :download_pdf
+      patch :update_status
     end
     
     resources :submissions, only: [:create], controller: 'assignment_submissions'
@@ -47,4 +48,6 @@ Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
 
   post 'test_toast', to: 'home#test_toast'
+  
+  post 'test_notification', to: 'home#test_notification'
 end

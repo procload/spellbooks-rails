@@ -126,32 +126,33 @@ class ProcessAssignmentJob < ApplicationJob
         teacher = assignment.teachers.first
         if teacher
           Rails.logger.info "[ProcessAssignmentJob] Broadcasting toast notification to teacher: #{teacher.id}"
+          
+          # First broadcast to the general assignments channel for the assignment update
+          Turbo::StreamsChannel.broadcast_replace_to(
+            "assignments",
+            target: "assignment_#{assignment.id}",
+            partial: "assignments/assignment",
+            locals: { assignment: assignment }
+          )
+          
+          # Then broadcast the toast notification
           Turbo::StreamsChannel.broadcast_append_to(
             "assignments",
-            target: "toasts",
-            partial: "shared/toast",
+            target: "notifications",
+            partial: "shared/notification",
             locals: { 
               type: "success",
               message: "Assignment '#{assignment.title}' is ready!",
               link_path: assignment_path(assignment),
               link_text: "View Assignment",
-              auto_hide: true
+              auto_hide: true,
+              duration: 5000
             }
           )
           Rails.logger.info "[ProcessAssignmentJob] Toast notification broadcast complete"
         else
           Rails.logger.error "[ProcessAssignmentJob] No teacher found for assignment #{assignment.id}"
         end
-
-        # Broadcast the assignment update separately
-        Rails.logger.info "[ProcessAssignmentJob] Broadcasting assignment update"
-        Turbo::StreamsChannel.broadcast_replace_to(
-          "assignments",
-          target: "assignment_#{assignment.id}",
-          partial: "assignments/assignment",
-          locals: { assignment: assignment }
-        )
-        Rails.logger.info "[ProcessAssignmentJob] Assignment update broadcast complete"
       end
     rescue OpenAI::Error => e
       Rails.logger.error "OpenAI API Error: #{e.message}"
@@ -159,17 +160,19 @@ class ProcessAssignmentJob < ApplicationJob
     rescue StandardError => e
       Rails.logger.error "ProcessAssignmentJob Error: #{e.message}"
       
-      # Broadcast error notification
-      Turbo::StreamsChannel.broadcast_append_to(
-        "assignments",
-        target: "toasts",
-        partial: "shared/toast",
-        locals: { 
-          type: "error",
-          message: "Failed to process assignment: #{e.message}",
-          auto_hide: true
-        }
-      )
+      if teacher
+        # Broadcast error notification
+        Turbo::StreamsChannel.broadcast_append_to(
+          "assignments",
+          target: "toasts",
+          partial: "shared/toast",
+          locals: { 
+            type: "error",
+            message: "Failed to process assignment: #{e.message}",
+            auto_hide: true
+          }
+        )
+      end
       
       raise
     ensure

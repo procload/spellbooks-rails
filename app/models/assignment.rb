@@ -1,4 +1,6 @@
 class Assignment < ApplicationRecord
+  include AssignmentBroadcastable
+  
   broadcasts_to ->(assignment) { "assignments" }
   
   has_many :questions, dependent: :destroy
@@ -29,6 +31,11 @@ class Assignment < ApplicationRecord
 
   after_create_commit :process_assignment
   after_update :remove_cached_pdf, if: :relevant_attributes_changed?
+
+  attr_accessor :updated_by_id
+  
+  validates :status, presence: true, 
+                    inclusion: { in: %w[pending in_progress completed] }
 
   def attach_image_from_url(url)
     require 'open-uri'

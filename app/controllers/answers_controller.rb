@@ -1,7 +1,4 @@
 class AnswersController < ApplicationController
-  # Use assignment layout for all actions
-  layout 'assignment'
-  
   before_action :set_question
   before_action :require_teacher
   

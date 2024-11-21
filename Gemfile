@@ -35,6 +35,9 @@ gem "tailwindcss-rails", "~> 3.0"
 gem 'ruby-openai'
 gem 'redcarpet'
 
+# Pundit
+gem 'pundit'
+
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "brakeman", require: false

@@ -1,0 +1,32 @@
+<%= turbo_frame_tag "notification_#{SecureRandom.hex(8)}" do %>
+  <div data-controller="notification"
+       data-notification-type-value="<%= local_assigns.fetch(:type, 'info') %>"
+       data-notification-auto-hide-value="<%= local_assigns.fetch(:auto_hide, true) %>"
+       data-notification-duration-value="<%= local_assigns.fetch(:duration, 5000) %>"
+       class="fixed z-50 <%= local_assigns.fetch(:position, 'bottom-4 right-4') %>">
+    
+    <div data-notification-target="content"
+         class="hidden opacity-0 transform translate-y-2 transition-all duration-300 ease-in-out 
+                rounded-lg shadow-lg p-4 w-96
+                <%= type_classes(local_assigns.fetch(:type, 'info')) %>">
+      <div class="flex items-start space-x-4">
+        <%= render "shared/notification_icon", type: local_assigns.fetch(:type, 'info') %>
+        
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium"><%= local_assigns.fetch(:message, '') %></p>
+          <% if local_assigns[:link_path] && local_assigns[:link_text] %>
+            <%= link_to link_text, link_path, 
+                class: "mt-1 text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
+          <% end %>
+        </div>
+
+        <button data-action="notification#hide" 
+                class="flex-shrink-0 rounded-md text-gray-400 hover:text-gray-500 
+                       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <span class="sr-only">Close</span>
+          
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>

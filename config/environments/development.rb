@@ -107,4 +107,15 @@ Rails.application.configure do
   # Add this to log Turbo Stream broadcasts in development
   config.action_controller.action_on_unpermitted_parameters = :log
   config.turbo.debug_logging = true
+
+  # Allow ActionCable requests from any origin
+  config.action_cable.disable_request_forgery_protection = true
+  
+  # Use Redis adapter in development
+  config.action_cable.url = "ws://localhost:3000/cable"
+  config.action_cable.allowed_request_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    /http:\/\/localhost:.*/
+  ]
 end

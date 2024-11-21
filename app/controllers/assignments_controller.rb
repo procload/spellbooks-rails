@@ -1,9 +1,6 @@
 require 'ostruct'
 
 class AssignmentsController < ApplicationController
-  # Use assignment layout for all actions
-  layout 'assignment'
-  
   before_action :require_authentication
   before_action :require_teacher, only: [:new, :create, :edit, :update, :destroy]
   before_action :set_assignment, only: [:show, :edit, :update, :destroy, :assign_students, :download_pdf]
@@ -34,34 +31,30 @@ class AssignmentsController < ApplicationController
     
     ActiveRecord::Base.transaction do
       if @assignment.save
-        # Create the association between teacher and assignment
         @assignment.assignment_users.create!(
           user: Current.user,
           role: 'creator'
         )
         
-        begin
-          # Attempt to broadcast via Turbo Streams
-          Turbo::StreamsChannel.broadcast_append_to(
-            'assignments',
-            target: 'assignments',
-            partial: 'assignments/assignment',
-            locals: { assignment: @assignment }
-          )
-        rescue RedisClient::CannotConnectError, Redis::CannotConnectError, Errno::ECONNREFUSED => e
-          # Log the error but don't let it prevent assignment creation
-          Rails.logger.error "Redis broadcast error: #{e.message}"
-          # Continue with the redirect
-        end
+        # Broadcast initial state
+        Turbo::StreamsChannel.broadcast_append_to(
+          'assignments',
+          target: 'assignments',
+          partial: 'assignments/assignment',
+          locals: { assignment: @assignment }
+        )
 
-        # Always redirect on successful save, even if broadcast failed
-        redirect_to root_path, notice: 'Assignment was successfully created.' and return
+        # Kick off the processing job
+        ProcessAssignmentJob.perform_later(@assignment.id)
+        
+        # Keep the flash message for immediate feedback
+        redirect_to root_path, notice: 'Assignment is being generated...'
       else
-        render :new, status: :unprocessable_entity and return
+        render :new, status: :unprocessable_entity
       end
     end
   rescue StandardError => e
-    Rails.logger.error "Error creating assignment: #{e.message}"
+    Rails.logger.error "[Assignments] Error creating assignment: #{e.message}"
     flash.now[:alert] = 'There was an error creating the assignment.'
     render :new, status: :unprocessable_entity
   end
@@ -162,6 +155,38 @@ class AssignmentsController < ApplicationController
     else
       redirect_to @assignment, alert: 'There was an error deleting this assignment.'
     end
+  end
+
+  def update_status
+    @assignment = Assignment.find(params[:id])
+    authorize @assignment
+
+    @assignment.updated_by_id = Current.user.id
+    
+    if @assignment.update(status: params[:status])
+      head :ok
+    else
+      render json: { error: @assignment.errors.full_messages.join(', ') }, 
+             status: :unprocessable_entity
+    end
+  end
+
+  # Add this method temporarily to test the toast system
+  def test_toast
+    return unless Current.user.teacher?
+    
+    Turbo::StreamsChannel.broadcast_prepend_to(
+      "assignments:#{Current.user.id}",
+      target: "toasts",
+      partial: "shared/toast",
+      locals: {
+        type: "info",
+        message: "Test toast message",
+        auto_hide: true
+      }
+    )
+    
+    head :ok
   end
 
   private
