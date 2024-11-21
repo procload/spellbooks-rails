@@ -113,4 +113,24 @@ Rails.application.configure do
     # Keep localhost for development testing if needed
     /http:\/\/localhost:\d+/
   ]
+
+  # Email configuration for SendGrid
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.sendgrid.net',
+    port: 587,
+    domain: 'yourdomain.com', # replace with your actual domain
+    user_name: 'apikey',
+    password: ENV['SENDGRID_API_KEY'],
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
+
+  # Set your application's domain for mailer URLs
+  config.action_mailer.default_url_options = { 
+    host: ENV['APPLICATION_HOST'], # e.g., 'your-app.herokuapp.com'
+    protocol: 'https'
+  }
 end
