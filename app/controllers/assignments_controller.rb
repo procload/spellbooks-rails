@@ -162,23 +162,6 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # Add this method temporarily to test the toast system
-  def test_toast
-    return unless Current.user.teacher?
-    
-    Turbo::StreamsChannel.broadcast_prepend_to(
-      "assignments:#{Current.user.id}",
-      target: "toasts",
-      partial: "shared/toast",
-      locals: {
-        type: "info",
-        message: "Test toast message",
-        auto_hide: true
-      }
-    )
-    
-    head :ok
-  end
 
   private
 

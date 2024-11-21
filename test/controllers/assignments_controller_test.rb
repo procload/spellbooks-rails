@@ -29,12 +29,12 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should get index when authenticated" do
     sign_in_as(@teacher)
-    get assignments_url
+    get assignments_path
     assert_response :success
   end
 
   test "should redirect to login when not authenticated" do
-    get assignments_url
+    get assignments_path
     assert_redirected_to new_session_path
     assert_equal 'Please sign in to continue.', flash[:notice]
   end
@@ -42,7 +42,7 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
   test "should create assignment when authenticated as teacher" do
     sign_in_as(@teacher)
     assert_difference('Assignment.count') do
-      post assignments_url, params: {
+      post assignments_path, params: {
         assignment: {
           title: "New Test Assignment",
           subject: "Science",
@@ -54,13 +54,13 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_redirected_to root_path
-    assert_equal 'Assignment was successfully created.', flash[:notice]
+    assert_equal 'Assignment is being generated...', flash[:notice]
   end
 
   test "should not allow student to create assignment" do
     sign_in_as(@student)
     assert_no_difference('Assignment.count') do
-      post assignments_url, params: {
+      post assignments_path, params: {
         assignment: {
           title: "New Test Assignment",
           subject: "Science",
@@ -83,7 +83,7 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
       content_type: "application/pdf"
     )
 
-    get download_pdf_assignment_url(@assignment, format: :pdf)
+    get download_pdf_assignment_path(@assignment, format: :pdf)
     assert_response :redirect
     assert_match /rails\/active_storage\/blobs/, @response.redirect_url
   end
@@ -92,7 +92,7 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(@teacher)
     assert_not @assignment.cached_pdf.attached?
 
-    get download_pdf_assignment_url(@assignment, format: :pdf)
+    get download_pdf_assignment_path(@assignment, format: :pdf)
     assert_response :success
     assert @assignment.reload.cached_pdf.attached?
   end
@@ -100,12 +100,7 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
   private
 
   def sign_in_as(user)
-    session = Session.create!(
-      user: user,
-      user_agent: 'Rails Testing',
-      ip_address: '0.0.0.0'
-    )
-    post session_url, params: {
+    post session_path, params: {
       email_address: user.email_address,
       password: "password123"
     }

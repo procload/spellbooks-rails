@@ -18,14 +18,7 @@
     
     <div class="mt-8">
       <h2 class="text-lg font-medium text-gray-900 mb-4">Your Assignments</h2>
-      <% if @assignments.any? %>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <%= render partial: 'assignments/assignment_card', collection: @assignments, as: :assignment %>
-        </div>
-      <% else %>
-        <p class="text-gray-500">No assignments yet.</p>
-      <% end %>
+      <%= render "assignments/assignment_list", assignments: @assignments %>
     </div>
-
   </div>
 </div> 

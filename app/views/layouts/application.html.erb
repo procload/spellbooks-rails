@@ -11,12 +11,6 @@
     <%= yield %>
   </main>
 
-  <% if Rails.env.development? %>
-    <script>
-      console.log('Session ID:', '<%= cookies.encrypted[:current_session_id] %>');
-      console.log('Authenticated:', '<%= authenticated? %>');
-      console.log('Current User:', '<%= Current.user&.id %>');
-    </script>
-  <% end %>
+  <%= render "shared/development_debug" %>
 </body>
 </html>

@@ -1,0 +1,7 @@
+<%= turbo_stream.replace dom_id(question) do %>
+  <%= render partial: "questions/question", 
+             locals: { 
+               question: question, 
+               question_counter: params[:question_counter].to_i 
+             } %>
+<% end %> 

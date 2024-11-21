@@ -1,0 +1,14 @@
+<div class="mt-6 bg-white rounded-lg shadow px-16 py-12">
+  <% if assignment.passage.present? %>
+    <div class="mb-16">
+      <%= markdown(assignment.markdown_passage) %>
+    </div>
+  <% end %>
+
+  <h2 class="text-3xl font-normal mb-6">Questions</h2>
+  <div class="space-y-4">
+    <% questions.each_with_index do |question, index| %>
+      <%= render "questions/question", question: question, question_counter: index %>
+    <% end %>
+  </div>
+</div> 

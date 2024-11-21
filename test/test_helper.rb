@@ -1,7 +1,6 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
-require "factory_bot_rails"
 
 class ActiveSupport::TestCase
   include FactoryBot::Syntax::Methods
@@ -13,31 +12,33 @@ class ActiveSupport::TestCase
   fixtures :all
 end
 
-# Add support for integration tests
 class ActionDispatch::IntegrationTest
-  def sign_in_as(user)
-    # Create a session record
-    session_record = user.sessions.create!(
-      user_agent: 'Rails Testing',
-      ip_address: '0.0.0.0'
-    )
+  include Rails.application.routes.url_helpers
 
-    # Manually sign the session ID using Rails' message verifier
-    signed_session_id = Rails.application.message_verifier(:session_id).generate(session_record.id)
-
-    # Set the signed cookie
-    # If you're using Capybara, make sure it's properly configured
-    cookies[:session_id] = signed_session_id
-
-    # Set Current.session for the duration of the test
-    Current.session = session_record
+  def default_url_options
+    { host: "localhost", port: 3000 }
   end
 
-  def assert_require_authentication
-    assert_redirected_to new_session_path
-    assert_equal 'Please sign in to continue.', flash[:notice]
+  def sign_in_as(user)
+    post session_path, params: {
+      email_address: user.email_address,
+      password: "password123"
+    }
   end
 end
 
-# Remove or comment out this line
-# FactoryBot.find_definitions
+# Configure Action Cable for tests
+module ActionCable
+  module Connection
+    class TestCase
+      include ActionCable::TestHelper
+    end
+  end
+end
+
+Rails.application.configure do
+  config.action_cable.disable_request_forgery_protection = true
+end
+
+# Configure Active Job for tests
+ActiveJob::Base.queue_adapter = :test

@@ -46,20 +46,9 @@
       <% if @assignments.any? %>
         <div class="mt-12">
           <h2 class="text-2xl font-bold text-gray-900 mb-6">Featured Assignments</h2>
-          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <%= render partial: "assignments/assignment_card", collection: @assignments, as: :assignment %>
-          </div>
+          <%= render "assignments/assignment_list", assignments: @assignments %>
         </div>
       <% end %>
     </div>
   <% end %>
-
-  <%# Add this test section %>
-  <div class="mt-4 p-4 bg-gray-50 rounded-lg">
-    <h3 class="text-lg font-medium mb-4">Toast Test Section</h3>
-    <%= button_to "Test Toast Notification",
-                  test_toast_path,
-                  class: "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600",
-                  data: { turbo_stream: true } %>
-  </div>
 </div>

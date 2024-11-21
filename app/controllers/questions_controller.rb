@@ -1,5 +1,6 @@
 class QuestionsController < ApplicationController
   include ActionView::RecordIdentifier
+  include ErrorHandling
   before_action :set_assignment
   before_action :set_question, only: [:show, :edit, :update, :check_answer, :regenerate]
   
@@ -70,9 +71,7 @@ class QuestionsController < ApplicationController
     end
 
   rescue StandardError => e
-    Rails.logger.error "Error in check_answer: #{e.message}"
-    Rails.logger.error e.backtrace.join("\n")
-    handle_error(e)
+    handle_turbo_stream_error(@question, e, params[:question_counter].to_i)
   end
 
   def edit
@@ -112,11 +111,9 @@ class QuestionsController < ApplicationController
       end
     end
   rescue ActiveRecord::RecordInvalid => e
-    handle_validation_error(e)
-  rescue => e
-    Rails.logger.error "Error in question update: #{e.message}"
-    Rails.logger.error e.backtrace.join("\n")
-    handle_error(e)
+    handle_validation_error(@question, e)
+  rescue StandardError => e
+    handle_turbo_stream_error(@question, e, params[:question_counter].to_i)
   end
 
   def destroy
@@ -185,14 +182,7 @@ class QuestionsController < ApplicationController
         end
       end
     rescue StandardError => e
-      Rails.logger.error "Error regenerating question: #{e.message}"
-      Rails.logger.error "Full error details: #{e.inspect}"
-      Rails.logger.error "Backtrace: #{e.backtrace.join("\n")}"
-      
-      render turbo_stream: turbo_stream.replace(dom_id(@question), 
-        partial: "question", 
-        locals: { question: @question, question_counter: params[:question_counter].to_i }
-      ), status: :unprocessable_entity
+      handle_turbo_stream_error(@question, e, params[:question_counter].to_i)
     end
   end
 
@@ -259,56 +249,6 @@ class QuestionsController < ApplicationController
           dom_id(@question, :feedback),
           html: "<div class='text-red-600'>Failed to save your answer. Please try again.</div>"
         )
-      }
-    end
-  end
-
-  def handle_error(error)
-    respond_to do |format|
-      format.html { 
-        flash.now[:alert] = "An error occurred: #{error.message}"
-        render :edit 
-      }
-      format.json { 
-        render json: { 
-          success: false, 
-          error: error.message 
-        }, status: :unprocessable_entity 
-      }
-      format.turbo_stream {
-        render turbo_stream: turbo_stream.replace(
-          @question,
-          partial: "questions/form",
-          locals: { 
-            question: @question, 
-            question_counter: params[:question_counter].to_i 
-          }
-        ), status: :unprocessable_entity
-      }
-    end
-  end
-
-  def handle_validation_error(error)
-    respond_to do |format|
-      format.html { 
-        flash.now[:alert] = "Failed to update question: #{error.message}"
-        render :edit 
-      }
-      format.json { 
-        render json: { 
-          success: false, 
-          errors: @question.errors.full_messages 
-        }, status: :unprocessable_entity 
-      }
-      format.turbo_stream { 
-        render turbo_stream: turbo_stream.replace(
-          @question,
-          partial: "questions/form",
-          locals: { 
-            question: @question, 
-            question_counter: params[:question_counter].to_i 
-          }
-        ), status: :unprocessable_entity
       }
     end
   end

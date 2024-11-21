@@ -5,15 +5,7 @@
       <div class="text-sm text-gray-500">
         <%= assignment.subject %> • Grade <%= assignment.grade_level %> • 
         <%= pluralize(assignment.questions.count, 'question') %>
-        <% if assignment.status == 'completed' %>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            Completed
-          </span>
-        <% else %>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-            Processing
-          </span>
-        <% end %>
+        <%= render "assignments/status_badge", assignment: assignment %>
       </div>
     </div>
     
