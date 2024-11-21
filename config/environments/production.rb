@@ -121,7 +121,7 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address: 'smtp.sendgrid.net',
     port: 587,
-    domain: 'yourdomain.com', # replace with your actual domain
+    domain: 'spellbooks.ai', # replace with your actual domain
     user_name: 'apikey',
     password: ENV['SENDGRID_API_KEY'],
     authentication: :plain,

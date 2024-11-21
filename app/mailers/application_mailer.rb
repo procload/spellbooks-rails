@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: ENV.fetch('MAILER_FROM_EMAIL', 'noreply@yourdomain.com')
+  default from: ENV.fetch('MAILER_FROM_EMAIL', 'noreply@spellbooks.ai')
   layout "mailer"
 end
