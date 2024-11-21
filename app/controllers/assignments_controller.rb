@@ -36,18 +36,9 @@ class AssignmentsController < ApplicationController
           role: 'creator'
         )
         
-        # Broadcast initial state
-        Turbo::StreamsChannel.broadcast_append_to(
-          'assignments',
-          target: 'assignments',
-          partial: 'assignments/assignment',
-          locals: { assignment: @assignment }
-        )
-
         # Kick off the processing job
         ProcessAssignmentJob.perform_later(@assignment.id)
         
-        # Keep the flash message for immediate feedback
         redirect_to root_path, notice: 'Assignment is being generated...'
       else
         render :new, status: :unprocessable_entity

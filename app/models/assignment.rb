@@ -1,8 +1,4 @@
 class Assignment < ApplicationRecord
-  include AssignmentBroadcastable
-  
-  broadcasts_to ->(assignment) { "assignments" }
-  
   has_many :questions, dependent: :destroy
   has_one_attached :image
   has_one_attached :cached_pdf

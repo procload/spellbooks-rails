@@ -43,11 +43,4 @@ Rails.application.routes.draw do
 
   # Mount Sidekiq web interface
   mount Sidekiq::Web => '/sidekiq'
-
-  # Mount Action Cable server
-  mount ActionCable.server => '/cable'
-
-  post 'test_toast', to: 'home#test_toast'
-  
-  post 'test_notification', to: 'home#test_notification'
 end

@@ -1,73 +1,59 @@
-<%= form_with model: assignment, local: true, class: "space-y-6" do |f| %>
+<%= form_with(model: assignment, class: "contents") do |form| %>
   <% if assignment.errors.any? %>
-    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6" role="alert">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <!-- You can add an error icon here if desired -->
-        </div>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-red-800">
-            <%= pluralize(assignment.errors.count, "error") %> prohibited this assignment from being saved:
-          </h3>
-          <div class="mt-2 text-sm text-red-700">
-            <ul class="list-disc list-inside">
-              <% assignment.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
-              <% end %>
-            </ul>
-          </div>
-        </div>
-      </div>
+    <div class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+      <h2><%= pluralize(assignment.errors.count, "error") %> prohibited this assignment from being saved:</h2>
+
+      <ul>
+        <% assignment.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
     </div>
   <% end %>
 
-  <div class="space-y-4">
-    <div>
-      <%= f.label :title, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.text_field :title, 
-          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 #{assignment.errors[:title].any? ? 'border-red-300' : ''}" %>
-      <% if assignment.errors[:title].any? %>
-        <p class="mt-1 text-sm text-red-600"><%= assignment.errors[:title].join(', ') %></p>
-      <% end %>
-    </div>
-
-    <div>
-      <%= f.label :subject, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.select :subject, 
-          ['Math', 'Art', 'History', 'Reading Comprehension', 'Physics'],
-          { include_blank: 'Select a subject' },
-          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 #{assignment.errors[:subject].any? ? 'border-red-300' : ''}" %>
-      <% if assignment.errors[:subject].any? %>
-        <p class="mt-1 text-sm text-red-600"><%= assignment.errors[:subject].join(', ') %></p>
-      <% end %>
-    </div>
-
-    <div>
-      <%= f.label :grade_level, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.number_field :grade_level, in: 0..12, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
-    </div>
-
-    <div>
-      <%= f.label :difficulty, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.select :difficulty, ['Easy', 'Medium', 'Hard'], {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
-    </div>
-
-    <div>
-      <%= f.label :number_of_questions, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.number_field :number_of_questions, in: 1..100, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
-    </div>
-
-    <div>
-      <%= f.label :interests, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.text_area :interests,
-          placeholder: "Enter student interests and topics to cover",
-          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
-      <p class="mt-1 text-xs text-gray-500">Describe the interests and topics you want to focus on in this assignment</p>
-    </div>
+  <div class="my-5">
+    <%= form.label :title %>
+    <%= form.text_field :title, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="flex justify-end space-x-4">
-    <%= link_to "Cancel", assignments_path, class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" %>
-    <%= f.submit class: "px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" %>
+  <div class="my-5">
+    <%= form.label :subject %>
+    <%= form.select :subject, 
+        ['Math', 'Reading Comprehension', 'History', 'Science', 'Art', 'Physics'],
+        {},
+        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :grade_level %>
+    <%= form.number_field :grade_level, 
+        in: 0..12, 
+        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :difficulty %>
+    <%= form.select :difficulty, 
+        ['Easy', 'Medium', 'Hard'],
+        {},
+        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :number_of_questions %>
+    <%= form.number_field :number_of_questions, 
+        in: 1..10,
+        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :interests, "Student Interests (to make the content more engaging)" %>
+    <%= form.text_area :interests, 
+        rows: 4,
+        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
   </div>
 <% end %> 

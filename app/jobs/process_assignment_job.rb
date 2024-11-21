@@ -124,33 +124,7 @@ class ProcessAssignmentJob < ApplicationJob
 
         # Get the teacher (creator) of the assignment
         teacher = assignment.teachers.first
-        if teacher
-          Rails.logger.info "[ProcessAssignmentJob] Broadcasting toast notification to teacher: #{teacher.id}"
-          
-          # First broadcast to the general assignments channel for the assignment update
-          Turbo::StreamsChannel.broadcast_replace_to(
-            "assignments",
-            target: "assignment_#{assignment.id}",
-            partial: "assignments/assignment",
-            locals: { assignment: assignment }
-          )
-          
-          # Then broadcast the toast notification
-          Turbo::StreamsChannel.broadcast_append_to(
-            "assignments",
-            target: "notifications",
-            partial: "shared/notification",
-            locals: { 
-              type: "success",
-              message: "Assignment '#{assignment.title}' is ready!",
-              link_path: assignment_path(assignment),
-              link_text: "View Assignment",
-              auto_hide: true,
-              duration: 5000
-            }
-          )
-          Rails.logger.info "[ProcessAssignmentJob] Toast notification broadcast complete"
-        else
+        unless teacher
           Rails.logger.error "[ProcessAssignmentJob] No teacher found for assignment #{assignment.id}"
         end
       end
@@ -159,21 +133,6 @@ class ProcessAssignmentJob < ApplicationJob
       raise # Re-raise to trigger retry
     rescue StandardError => e
       Rails.logger.error "ProcessAssignmentJob Error: #{e.message}"
-      
-      if teacher
-        # Broadcast error notification
-        Turbo::StreamsChannel.broadcast_append_to(
-          "assignments",
-          target: "toasts",
-          partial: "shared/toast",
-          locals: { 
-            type: "error",
-            message: "Failed to process assignment: #{e.message}",
-            auto_hide: true
-          }
-        )
-      end
-      
       raise
     ensure
       Sidekiq.logger.info "=== Finished ProcessAssignmentJob for assignment_id: #{assignment_id} ==="
