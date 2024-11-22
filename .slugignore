@@ -1,24 +1,42 @@
-# Ignore development and test databases
+# Development
+.env*
+.git
+.github
+.gitignore
+.rspec
+/spec
+README.md
+/test
+/doc
+/docs
+
+# Temporary files
+/tmp
+/log
+*.log
+
+# Development gems
+.bundle
+/vendor/bundle/ruby/*/gems/*/doc
+/vendor/bundle/ruby/*/gems/*/examples
+/vendor/bundle/ruby/*/gems/*/samples
+/vendor/bundle/ruby/*/gems/*/test
+/vendor/bundle/ruby/*/gems/*/tests
+/vendor/bundle/ruby/*/gems/*/spec
+/vendor/bundle/ruby/*/gems/*/specs
+/vendor/bundle/ruby/*/gems/*/.git
+/vendor/bundle/ruby/*/cache
+/vendor/bundle/ruby/*/gems/*/ext
+/vendor/bundle/ruby/*/gems/*/ports
+
+# Assets and images that will be precompiled
+/app/assets/images
+/app/assets/fonts
+/node_modules
+/public/assets
+/public/packs-test
 /storage/*.sqlite3
 /storage/*.sqlite3-*
-
-# Ignore all logfiles and tempfiles
-/log/*
-/tmp/*
-
-# Ignore test files
-/test/*
-/spec/*
-
-# Ignore documentation
-/doc/*
-/docs/*
-
-# Ignore any precompiled assets
-/public/assets/*
-/public/packs/*
-
-# Ignore system files
 .DS_Store
 *.swp
 *.swo
