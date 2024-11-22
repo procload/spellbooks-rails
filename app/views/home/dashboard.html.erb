@@ -1,24 +1,22 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
   <div class="py-8">
-    <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-semibold text-gray-900">
-        Welcome back, <%= Current.user.first_name %>!
-      </h1>
-      
-      <% if Current.user.teacher? %>
-        <%= link_to new_assignment_path, 
-            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Create New Assignment
-        <% end %>
+    <h1 class="text-4xl font-medium mb-8">Homework Dashboard</h1>
+
+    <!-- Subject Tabs -->
+    <div class="mb-8 space-x-2">
+      <%= link_to "All", root_path(subject: nil), 
+          class: "px-4 py-2 #{params[:subject].nil? ? 'bg-spellbooks-element' : 'bg-spellbooks-sidebar'} rounded-full hover:bg-spellbooks-element-hover transition-colors" %>
+      <% Assignment.distinct.pluck(:subject).compact.each do |subject| %>
+        <%= link_to subject, root_path(subject: subject), 
+            class: "px-4 py-2 #{params[:subject] == subject ? 'bg-spellbooks-element' : 'bg-spellbooks-sidebar'} rounded-full hover:bg-spellbooks-element-hover transition-colors" %>
       <% end %>
     </div>
-    
-    <div class="mt-8">
-      <h2 class="text-lg font-medium text-gray-900 mb-4">Your Assignments</h2>
-      <%= render "assignments/assignment_list", assignments: @assignments %>
+
+    <h2 class="text-lg font-medium mb-4">Upcoming Assignments</h2>
+
+    <!-- Assignment Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <%= render partial: "assignments/assignment_card", collection: @assignments, as: :assignment %>
     </div>
   </div>
-</div> 
+</div>

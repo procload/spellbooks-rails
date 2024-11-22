@@ -64,6 +64,21 @@ module.exports = {
           opaque: "#F7F1E8",
         },
         "secondary-bg": "hsl(var(--secondary-bg))",
+        spellbooks: {
+          base: "#faf7f2",
+          sidebar: "#f0ece7",
+          element: {
+            DEFAULT: "#e6e2dd",
+            hover: "#d1ccc7"
+          },
+          subject: {
+            math: "#fef0f0",
+            science: "#fef7e8",
+            english: "#f5f0fe",
+            history: "#eefaf3",
+            default: "#eff8fe"
+          }
+        }
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -2,15 +2,23 @@
 <html>
 <head>
   <%= render "shared/head" %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Fira Sans', sans-serif;
+    }
+  </style>
 </head>
 
-<body class="bg-background text-foreground">
-  <%= render "shared/header", show_back_button: content_for?(:show_back_button) %>
-
-  <main class="container mx-auto mt-28 px-5 max-w-assignment">
-    <%= yield %>
-  </main>
-
+<body class="bg-[#faf7f2] text-[#4a4a4a]">
+  <div class="flex min-h-screen">
+    <%= render "shared/sidebar" %>
+    <main class="flex-1 p-8">
+      <%= yield %>
+    </main>
+  </div>
   <%= render "shared/development_debug" %>
 </body>
 </html>

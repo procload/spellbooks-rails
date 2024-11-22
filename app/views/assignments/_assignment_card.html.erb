@@ -1,18 +1,33 @@
-<div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-  <%= link_to assignment_path(assignment) do %>
-    <%= render "assignments/card_image", assignment: assignment %>
-    
-    <div class="p-4">
-      <div class="flex justify-between items-start">
-        <div>
-          <h3 class="font-medium text-gray-900"><%= assignment.title %></h3>
-          <div class="text-sm text-gray-500 mt-1">
-            <%= assignment.subject %> • Grade <%= assignment.grade_level %> • 
-            <%= pluralize(assignment.questions.count, 'question') %>
-            <%= render "assignments/status_badge", assignment: assignment %>
-          </div>
+<%= link_to assignment_path(assignment), class: "block" do %>
+  <div class="<%= assignment_card_color(assignment.subject) %> p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex justify-between items-start gap-4">
+      <div class="flex-grow">
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-medium"><%= assignment.subject %></span>
+          <span class="bg-spellbooks-sidebar px-2 py-1 rounded-full text-sm">
+            <%= assignment_due_text(assignment) %>
+          </span>
         </div>
+        <h3 class="text-xl font-medium mb-2"><%= assignment.title %></h3>
+        <p class="text-sm text-gray-600">
+          <%= truncate(assignment.interests, length: 100) %>
+          <% if assignment.number_of_questions > 0 %>
+            • <%= pluralize(assignment.number_of_questions, 'question') %>
+          <% end %>
+        </p>
       </div>
+      
+      <% if assignment.image.attached? %>
+        <div class="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden">
+          <% if variant = assignment.cached_image_variant %>
+            <%= image_tag variant, class: "w-full h-full object-cover", alt: assignment.title %>
+          <% else %>
+            <div class="w-full h-full bg-spellbooks-sidebar flex items-center justify-center">
+              <p class="text-gray-400 text-xs">Image unavailable</p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-</div> 
+  </div>
+<% end %>
