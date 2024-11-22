@@ -3,7 +3,7 @@ ruby "3.3.5"
 
 gem "rails", "8.0.0.rc2"
 gem "propshaft"
-gem "pg", "~> 1.5"  # PostgreSQL is required for Heroku
+gem "pg", "~> 1.5"
 gem "puma", ">= 5.0"
 gem "importmap-rails"
 gem "turbo-rails"
@@ -23,28 +23,31 @@ gem 'pundit'
 gem "tailwindcss-rails", "~> 3.0"
 gem 'redcarpet'
 
-group :production do
-  # AWS S3 and Image Processing - only needed in production
-  gem "aws-sdk-s3", require: false
-  gem "image_processing", "~> 1.2"
-  gem "active_storage_validations"
-  gem "ruby-vips", ">= 2.1.0"
+# PDF Generation
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
 
-  # PDF Generation - only needed in production
-  gem 'wicked_pdf'
-  gem 'wkhtmltopdf-binary'
+# File handling and validation
+gem "active_storage_validations"
+gem "image_processing", "~> 1.2"
+gem "ruby-vips", ">= 2.1.0"
+
+# Production-only gems
+group :production do
+  # AWS S3
+  gem "aws-sdk-s3", require: false
 end
 
-# OpenAI can be loaded on-demand
+# AI features
 gem 'ruby-openai', require: false
 
 group :development, :test do
-  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  gem "debug", platforms: %i[ mri windows ], require: false
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
   gem 'factory_bot_rails'
   gem 'dotenv-rails'
-  gem "sqlite3", ">= 2.1"  # Move sqlite3 to development/test only
+  gem "sqlite3", ">= 2.1"
 end
 
 group :development do

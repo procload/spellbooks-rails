@@ -28,8 +28,8 @@ Rails.application.configure do
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 
-  # Store uploaded files on Amazon S3
-  config.active_storage.service = :amazon
+  # Use local disk service for Active Storage in development
+  config.active_storage.service = :local
   
   # Set default URL options for Active Storage
   Rails.application.routes.default_url_options[:host] = 'localhost'

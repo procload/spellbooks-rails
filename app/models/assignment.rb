@@ -75,11 +75,17 @@ class Assignment < ApplicationRecord
   end
 
   def cached_image_variant
-    if image.attached?
+    return nil unless image.attached?
+    
+    begin
       image.variant(
         resize_to_limit: [800, 600],
         saver: { quality: 90 }
       ).processed
+    rescue ActiveStorage::FileNotFoundError => e
+      Rails.logger.error "Image file not found for Assignment #{id}: #{e.message}"
+      image.purge if Rails.env.development? # Clean up the attachment if file is missing
+      nil
     end
   end
 
