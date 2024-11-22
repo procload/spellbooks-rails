@@ -8,8 +8,8 @@
 #
 # https://github.com/mileszs/wicked_pdf/blob/master/README.md
 
-WickedPdf.config = {
+WickedPdf.configure do |config|
   # Make sure PDF styles are only loaded for PDF rendering
-  enable_local_file_access: true,
+  config.enable_local_file_access = true
   # Any other Wicked PDF configs...
-}
+end
