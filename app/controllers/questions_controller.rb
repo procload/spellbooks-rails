@@ -46,14 +46,6 @@ class QuestionsController < ApplicationController
         format.turbo_stream {
           render turbo_stream: [
             turbo_stream.replace(
-              dom_id(@question),
-              partial: "questions/question",
-              locals: { 
-                question: @question,
-                question_counter: params[:question_counter].to_i || 0
-              }
-            ),
-            turbo_stream.replace(
               dom_id(@question, :feedback),
               partial: "questions/feedback",
               locals: { 

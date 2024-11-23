@@ -14,8 +14,8 @@
 
 <body class="bg-[#faf7f2] text-[#4a4a4a]">
   <div class="flex min-h-screen">
-    <%= render "shared/sidebar" %>
-    <main class="flex-1 p-8">
+    <%= render "shared/sidebar" if authenticated? && Current.user %>
+    <main class="<%= authenticated? && Current.user ? 'flex-1' : 'w-full' %> p-8">
       <%= yield %>
     </main>
   </div>

@@ -2,13 +2,22 @@
   <div class="py-8">
     <h1 class="text-4xl font-medium mb-8">Homework Dashboard</h1>
 
-    <!-- Subject Tabs -->
-    <div class="mb-8 space-x-2">
-      <%= link_to "All", root_path(subject: nil), 
-          class: "px-4 py-2 #{params[:subject].nil? ? 'bg-spellbooks-element' : 'bg-spellbooks-sidebar'} rounded-full hover:bg-spellbooks-element-hover transition-colors" %>
-      <% Assignment.distinct.pluck(:subject).compact.each do |subject| %>
-        <%= link_to subject, root_path(subject: subject), 
-            class: "px-4 py-2 #{params[:subject] == subject ? 'bg-spellbooks-element' : 'bg-spellbooks-sidebar'} rounded-full hover:bg-spellbooks-element-hover transition-colors" %>
+    <div class="flex justify-between items-center mb-8">
+      <!-- Subject Tabs -->
+      <div class="space-x-2">
+        <%= link_to "All", root_path(subject: nil), 
+            class: "px-4 py-2 #{params[:subject].nil? ? 'bg-spellbooks-element' : 'bg-spellbooks-sidebar'} rounded-full hover:bg-spellbooks-element-hover transition-colors" %>
+        <% Assignment.distinct.pluck(:subject).compact.each do |subject| %>
+          <%= link_to subject, root_path(subject: subject), 
+              class: "px-4 py-2 #{params[:subject] == subject ? 'bg-spellbooks-element' : 'bg-spellbooks-sidebar'} rounded-full hover:bg-spellbooks-element-hover transition-colors" %>
+        <% end %>
+      </div>
+
+      <!-- Create Assignment Button for Teachers -->
+      <% if Current.user&.teacher? %>
+        <%= link_to new_assignment_path, class: "px-6 py-3 bg-spellbooks-element text-spellbooks-text rounded-lg hover:bg-spellbooks-element-hover transition-colors" do %>
+          Create New Assignment
+        <% end %>
       <% end %>
     </div>
 

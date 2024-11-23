@@ -1,34 +1,69 @@
 <%= turbo_frame_tag dom_id(question) do %>
-  <div data-controller="question">
+  <div data-controller="question-submission">
     <div class="mb-8">
       <div data-question-target="displayContent">
-        <div class="flex items-start gap-x-3 mb-4">
-          <h3 class="text-xl font-medium flex-grow"><%= question.content %></h3>
-          <% if Current.user.teacher? %>
-            <div class="flex-shrink-0">
-              <%= render "shared/action_dropdown" do %>
-                <%= link_to "Edit",
-                    edit_assignment_question_path(@assignment, question),
-                    data: { turbo_frame: dom_id(question) },
-                    class: "text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer" %>
-                    
-                <%= button_to "Regenerate",
-                    regenerate_assignment_question_path(@assignment, question),
-                    method: :post,
-                    params: { question_counter: question_counter },
-                    class: "w-full text-left text-gray-700 px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer" %>
+        <h3 class="text-lg font-medium mb-2"><%= question_counter + 1 %>. <%= question.content %></h3>
+        <% if Current.user.student? %>
+          <%= form_with url: check_answer_assignment_question_path(@assignment, question),
+                      method: :post,
+                      data: { 
+                        question_submission_target: "form"
+                      } do |f| %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <% question.answers.each do |answer| %>
+                <button 
+                  type="submit"
+                  name="answer"
+                  value="<%= answer.text %>"
+                  data-question-submission-target="answerButton"
+                  data-action="click->question-submission#selectAnswer"
+                  class="w-full bg-white border-2 border-gray-200
+                         text-left p-4 rounded-lg transition-all duration-200
+                         hover:border-blue-400 hover:bg-blue-50
+                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  <%= answer.text %>
+                </button>
+              <% end %>
+            </div>
+
+            <div data-question-submission-target="spinner" class="hidden">
+              <%= render "questions/spinner" %>
+            </div>
+
+            <div id="<%= dom_id(question, :feedback) %>">
+              <% if @student_response %>
+                <%= render "questions/feedback", 
+                    question: question,
+                    correct: @student_response.correct,
+                    explanation: question.explanation %>
               <% end %>
             </div>
           <% end %>
-        </div>
+        <% else %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <% question.answers.each do |answer| %>
+              <div class="<%= answer.is_correct ? 'bg-success/20' : 'bg-secondary' %> text-left p-4 rounded-lg">
+                <%= answer.text %>
+              </div>
+            <% end %>
+          </div>
 
-        <%= render "questions/answer_form", 
-            question: question, 
-            student_response: question.student_responses.find_by(user: Current.user) if Current.user.student? %>
-            
-        <%= render "questions/answer_display", 
-            question: question if Current.user.teacher? %>
+          <% if Current.user.teacher? %>
+            <div class="mt-4 flex gap-4">
+              <%= link_to "Edit",
+                  edit_assignment_question_path(@assignment, question),
+                  data: { turbo_frame: dom_id(question) },
+                  class: "text-warning hover:text-warning/90" %>
+                  
+              <%= button_to "Regenerate",
+                  regenerate_assignment_question_path(@assignment, question),
+                  method: :post,
+                  params: { question_counter: question_counter },
+                  class: "text-info hover:text-info/90" %>
+            </div>
+          <% end %>
+        <% end %>
       </div>
     </div>
   </div>
-<% end %> 
+<% end %>

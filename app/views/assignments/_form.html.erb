@@ -1,8 +1,7 @@
-<%= form_with(model: assignment, class: "contents") do |form| %>
+<%= form_with(model: assignment, class: "bg-white rounded-lg shadow-soft p-6 mb-8 space-y-6") do |form| %>
   <% if assignment.errors.any? %>
-    <div class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+    <div class="bg-destructive/10 text-destructive px-3 py-2 font-medium rounded-lg">
       <h2><%= pluralize(assignment.errors.count, "error") %> prohibited this assignment from being saved:</h2>
-
       <ul>
         <% assignment.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -11,49 +10,79 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :title %>
-    <%= form.text_field :title, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Title -->
+  <div>
+    <%= form.label :title, class: "block text-lg font-medium mb-2" %>
+    <%= form.text_field :title, class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element", placeholder: "Enter assignment title" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :subject %>
+  <!-- Subject -->
+  <div>
+    <%= form.label :subject, class: "block text-lg font-medium mb-2" %>
     <%= form.select :subject, 
-        ['Math', 'Reading Comprehension', 'History', 'Science', 'Art', 'Physics'],
-        {},
-        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+        ['Math', 'Science', 'English', 'History', 'Art'],
+        { prompt: "Select a subject" },
+        class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element bg-white" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :grade_level %>
-    <%= form.number_field :grade_level, 
-        in: 0..12, 
-        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Grade -->
+  <div>
+    <%= form.label :grade_level, class: "block text-lg font-medium mb-2" %>
+    <%= form.select :grade_level,
+        [["Kindergarten", 0]] + (1..12).map { |n| ["#{n.ordinalize} Grade", n] },
+        { prompt: "Select a grade" },
+        class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element bg-white" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :difficulty %>
-    <%= form.select :difficulty, 
-        ['Easy', 'Medium', 'Hard'],
-        {},
-        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Difficulty -->
+  <div>
+    <%= form.label :difficulty, class: "block text-lg font-medium mb-2" %>
+    <%= form.select :difficulty,
+        ['Easy', 'Medium', 'Hard', 'Advanced'],
+        { prompt: "Select difficulty" },
+        class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element bg-white" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :number_of_questions %>
-    <%= form.number_field :number_of_questions, 
-        in: 1..10,
-        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Number of Questions -->
+  <div>
+    <%= form.label :number_of_questions, class: "block text-lg font-medium mb-2" %>
+    <%= form.number_field :number_of_questions,
+        in: 1..100,
+        class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element",
+        placeholder: "Enter number of questions" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :interests, "Student Interests (to make the content more engaging)" %>
-    <%= form.text_area :interests, 
-        rows: 4,
-        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Interests -->
+  <div data-controller="interests">
+    <%= form.label :interests, class: "block text-lg font-medium mb-2" %>
+    <div class="flex flex-wrap gap-2 mb-2" data-interests-target="tags"></div>
+    <div class="flex">
+      <%= form.text_field :interests, 
+          class: "hidden",
+          data: { interests_target: "field" } %>
+      <input type="text"
+             data-interests-target="input"
+             data-action="keydown->interests#add"
+             class="flex-grow p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element"
+             placeholder="Add interests (press Enter to add)">
+    </div>
+    <div class="mt-2">
+      <p class="text-sm font-medium mb-1">Suggested interests:</p>
+      <div class="flex flex-wrap gap-2">
+        <% ['Industrial Revolution', 'Technology', 'Social Change', 'Economics'].each do |interest| %>
+          <button type="button" 
+                  data-action="click->interests#addSuggested"
+                  class="px-3 py-1 bg-spellbooks-sidebar text-foreground rounded-full text-sm hover:bg-spellbooks-element transition-colors">
+            <%= interest %>
+          </button>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-  <div class="inline">
-    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+  <!-- Submit Buttons -->
+  <div class="flex justify-end space-x-4">
+    <%= link_to "Cancel", root_path, class: "px-6 py-3 bg-spellbooks-sidebar text-foreground rounded-lg hover:bg-spellbooks-element transition-colors" %>
+    <%= form.submit "Create Assignment", class: "px-6 py-3 bg-spellbooks-element text-foreground rounded-lg hover:bg-spellbooks-element-hover transition-colors" %>
   </div>
-<% end %> 
+<% end %>
