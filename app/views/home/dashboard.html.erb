@@ -5,11 +5,11 @@
     <div class="flex justify-between items-center mb-8">
       <!-- Subject Tabs -->
       <div class="space-x-2">
-        <%= link_to "All", root_path(subject: nil), 
-            class: "px-4 py-2 #{params[:subject].nil? ? 'bg-spellbooks-element' : 'bg-spellbooks-sidebar'} rounded-full hover:bg-spellbooks-element-hover transition-colors" %>
-        <% Assignment.distinct.pluck(:subject).compact.each do |subject| %>
-          <%= link_to subject, root_path(subject: subject), 
-              class: "px-4 py-2 #{params[:subject] == subject ? 'bg-spellbooks-element' : 'bg-spellbooks-sidebar'} rounded-full hover:bg-spellbooks-element-hover transition-colors" %>
+        <%= link_to "All", dashboard_path, 
+            class: "px-4 py-2 #{params[:subject].nil? ? 'bg-spellbooks-element text-white font-medium shadow-sm' : 'bg-spellbooks-sidebar hover:bg-spellbooks-element-hover'} rounded-full transition-colors" %>
+        <% @available_subjects.each do |subject| %>
+          <%= link_to subject, dashboard_path(subject: subject), 
+              class: "px-4 py-2 #{params[:subject] == subject ? 'bg-spellbooks-element text-white font-medium shadow-sm' : 'bg-spellbooks-sidebar hover:bg-spellbooks-element-hover'} rounded-full transition-colors" %>
         <% end %>
       </div>
 
@@ -21,11 +21,15 @@
       <% end %>
     </div>
 
-    <h2 class="text-lg font-medium mb-4">Upcoming Assignments</h2>
+    <h2 class="text-lg font-medium mb-4">Recent Assignments</h2>
 
     <!-- Assignment Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <%= render partial: "assignments/assignment_card", collection: @assignments, as: :assignment %>
+      <% @assignments.each do |assignment| %>
+        <div class="relative">
+          <%= render "assignments/assignment_card", assignment: assignment %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
 
+  get 'dashboard', to: 'home#dashboard', as: :dashboard
+
   resources :assignments do
     member do
       post :assign_students

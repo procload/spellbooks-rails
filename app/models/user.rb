@@ -37,10 +37,12 @@ class User < ApplicationRecord
       assignments.joins(:assignment_users)
                 .where(assignment_users: { role: 'creator' })
                 .distinct
+                .order(created_at: :desc)
     else
       assignments.joins(:assignment_users)
                 .where(assignment_users: { role: 'student' })
                 .distinct
+                .order(created_at: :desc)
     end
   end
 
