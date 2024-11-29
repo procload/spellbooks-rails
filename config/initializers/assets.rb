@@ -11,3 +11,6 @@ Rails.application.config.assets.precompile.delete('pdf.css')
 
 # Only precompile PDF styles when explicitly requested by wicked_pdf
 Rails.application.config.assets.precompile += ['pdf.css']
+
+# Add print styles to the precompile list
+Rails.application.config.assets.precompile += %w( print.css )

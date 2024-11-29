@@ -4,6 +4,7 @@ class HomeController < ApplicationController
   def index
     if authenticated? && Current.user
       @assignments = Current.user.relevant_assignments
+      @available_subjects = Assignment.published.distinct.pluck(:subject).compact
       render 'dashboard'
     else
       render 'landing'
@@ -22,6 +23,6 @@ class HomeController < ApplicationController
       @assignments = @assignments.where(subject: params[:subject])
     end
     
-    @available_subjects = Assignment.distinct.pluck(:subject).compact
+    @available_subjects = Assignment.published.distinct.pluck(:subject).compact
   end
 end

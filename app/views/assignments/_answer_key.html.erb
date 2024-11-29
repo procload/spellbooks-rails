@@ -1,0 +1,14 @@
+<div class="answer-item">
+  <strong><%= index + 1 %>.</strong>
+  <div class="answer-details">
+    <div class="correct-answer">
+      Correct Answer: <%= question.answers.find_by(is_correct: true)&.text %>
+    </div>
+    
+    <% if question.explanation.present? %>
+      <div class="explanation">
+        <strong>Explanation:</strong> <%= question.explanation %>
+      </div>
+    <% end %>
+  </div>
+</div> 

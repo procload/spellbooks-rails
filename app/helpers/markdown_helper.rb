@@ -2,24 +2,24 @@ module MarkdownHelper
   def markdown(text)
     return '' if text.blank?
     
-    renderer = Redcarpet::Render::HTML.new(
+    options = {
+      filter_html: true,
       hard_wrap: true,
-      link_attributes: { target: '_blank' }
-    )
-    
-    markdown = Redcarpet::Markdown.new(
-      renderer,
+      link_attributes: { rel: 'nofollow', target: "_blank" },
+      space_after_headers: true,
+      fenced_code_blocks: true
+    }
+
+    extensions = {
       autolink: true,
-      tables: true,
-      fenced_code_blocks: true,
-      strikethrough: true,
       superscript: true,
-      underline: true,
-      highlight: true,
-      quote: true,
-      footnotes: true
-    )
-    
+      disable_indented_code_blocks: true,
+      tables: true
+    }
+
+    renderer = Redcarpet::Render::HTML.new(options)
+    markdown = Redcarpet::Markdown.new(renderer, extensions)
+
     markdown.render(text).html_safe
   end
 end 

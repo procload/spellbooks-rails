@@ -1,0 +1,14 @@
+<div class="question">
+  <div class="question-content">
+    <strong><%= index + 1 %>.</strong>
+    <%= question.content %>
+  </div>
+  
+  <div class="answers">
+    <% question.answers.shuffle.each_with_index do |answer, letter_index| %>
+      <div class="answer-option">
+        <%= ('A'..'Z').to_a[letter_index] %>. <%= answer.text %>
+      </div>
+    <% end %>
+  </div>
+</div> 

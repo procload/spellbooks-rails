@@ -11,7 +11,9 @@ puts "Creating default admin user..."
 admin = User.create!(
   email_address: 'admin@example.com',
   password: 'password123',
-  password_confirmation: 'password123'
+  password_confirmation: 'password123',
+  first_name: 'Admin',
+  last_name: 'User'
 )
 puts "Created admin user: #{admin.email_address}"
 
@@ -27,7 +29,8 @@ assignments_data = [
     number_of_questions: 5,
     interests: "games, puzzles",
     status: "completed",
-    passage: "Let's learn about fractions through pizza slices!"
+    passage: "Let's learn about fractions through pizza slices!",
+    published: true
   },
   {
     title: "Ancient Egypt",
@@ -37,7 +40,8 @@ assignments_data = [
     number_of_questions: 4,
     interests: "archaeology, pyramids",
     status: "completed",
-    passage: "Discover the mysteries of ancient Egyptian civilization..."
+    passage: "Discover the mysteries of ancient Egyptian civilization...",
+    published: true
   },
   {
     title: "Basic Forces",
@@ -47,7 +51,8 @@ assignments_data = [
     number_of_questions: 3,
     interests: "rockets, space",
     status: "completed",
-    passage: "Understanding Newton's laws of motion..."
+    passage: "Understanding Newton's laws of motion...",
+    published: true
   }
 ]
 
@@ -56,19 +61,27 @@ assignments_data.each do |assignment_data|
   puts "Creating assignment: #{assignment_data[:title]}"
   assignment = Assignment.create!(assignment_data)
 
-  # Create sample questions for each assignment
+  # Create sample questions with answers in a transaction
   assignment_data[:number_of_questions].times do |i|
-    question = assignment.questions.create!(
-      content: "Sample question #{i + 1} for #{assignment.title}",
-      explanation: "This is the explanation for question #{i + 1}"
-    )
-
-    # Create 4 answers for each question (1 correct, 3 incorrect)
-    4.times do |j|
-      question.answers.create!(
-        text: "Answer option #{j + 1}",
-        is_correct: (j == 0) # First answer is correct
+    ActiveRecord::Base.transaction do
+      question = assignment.questions.new(
+        content: "Sample question #{i + 1} for #{assignment.title}",
+        explanation: "This is the explanation for question #{i + 1}"
       )
+
+      # Create 4 answers for the question
+      answers_data = [
+        { text: "Correct answer for question #{i + 1}", is_correct: true },
+        { text: "Incorrect answer 1 for question #{i + 1}", is_correct: false },
+        { text: "Incorrect answer 2 for question #{i + 1}", is_correct: false },
+        { text: "Incorrect answer 3 for question #{i + 1}", is_correct: false }
+      ]
+
+      answers_data.each do |answer_data|
+        question.answers.build(answer_data)
+      end
+
+      question.save!
     end
   end
 end
@@ -77,7 +90,9 @@ end
 teacher = User.create!(
   email_address: "teacher@example.com",
   password: "password123",
-  role: "teacher"
+  role: "teacher",
+  first_name: "Test",
+  last_name: "Teacher"
 )
 
 # Create some students
@@ -85,7 +100,9 @@ students = 3.times.map do |i|
   User.create!(
     email_address: "student#{i+1}@example.com",
     password: "password123",
-    role: "student"
+    role: "student",
+    first_name: "Student",
+    last_name: "#{i+1}"
   )
 end
 
@@ -96,7 +113,8 @@ assignment = Assignment.create!(
   grade_level: 9,
   difficulty: "Medium",
   number_of_questions: 10,
-  interests: "Algebra"
+  interests: "Algebra",
+  published: true
 )
 
 # Associate the assignment with the teacher

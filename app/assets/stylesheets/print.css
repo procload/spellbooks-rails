@@ -1,0 +1,221 @@
+/* Base styles */
+.print-page {
+  margin: 0;
+  padding: 30px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 12pt;
+  line-height: 1.6;
+  background: #f0f0f0;
+  color: #000;
+}
+
+.print-page .print-view {
+  max-width: 8.5in;
+  margin: 0 auto;
+  padding: 0.5in;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Assignment header */
+.print-page .assignment-metadata {
+  margin-bottom: 40px;
+  border-bottom: 2px solid #000;
+  padding-bottom: 20px;
+}
+
+.print-page .assignment-metadata h1 {
+  font-size: 24pt;
+  margin: 0 0 20px 0;
+  font-weight: bold;
+}
+
+.print-page .assignment-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.print-page .metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* Reading passage */
+.print-page .assignment-passage {
+  margin: 30px 0;
+  padding: 25px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+.print-page .passage-image {
+  float: right;
+  margin: 0 0 20px 25px;
+  width: 45%;
+}
+
+.print-page .passage-image img {
+  width: 100%;
+  height: auto;
+  max-height: 350px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.print-page .assignment-passage h2 {
+  font-size: 16pt;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+  clear: both;
+}
+
+.print-page .assignment-passage p {
+  font-size: 12pt;
+  line-height: 1.8;
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+/* Clear float after the passage */
+.print-page .assignment-passage::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Questions section */
+.print-page .questions {
+  margin-top: 30px;
+}
+
+.print-page .question {
+  margin: 35px 0;
+  page-break-inside: avoid;
+}
+
+.print-page .question-content {
+  font-size: 13pt;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.print-page .question-content strong {
+  font-size: 14pt;
+  margin-right: 12px;
+  font-weight: normal;
+}
+
+/* Answer options */
+.print-page .answers {
+  margin-left: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px 40px;
+}
+
+.print-page .answer-option {
+  margin: 0;
+  padding: 8px 0 8px 35px;
+  font-size: 12pt;
+  position: relative;
+  border: none;
+  border-radius: 0;
+}
+
+.print-page .answer-option::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border: 2px solid #888;
+  border-radius: 50%;
+}
+
+/* Answer key */
+.print-page .answer-key {
+  margin-top: 40px;
+  border-top: 2px solid #000;
+  padding-top: 20px;
+  break-before: page;
+  page-break-before: always;
+}
+
+.print-page .answer-key h2 {
+  font-size: 18pt;
+  margin: 0 0 25px 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.print-page .answer-item {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.print-page .answer-details {
+  margin-left: 25px;
+}
+
+.print-page .correct-answer {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.print-page .explanation {
+  font-style: italic;
+  color: #444;
+  margin-top: 8px;
+}
+
+/* Utility classes */
+.print-page .answer-key-spacer {
+  break-after: page;
+  page-break-after: always;
+  visibility: hidden;
+  height: 0;
+}
+
+/* Print-specific styles */
+@media print {
+  .print-page {
+    background: none;
+    padding: 0;
+  }
+
+  .print-page .print-view {
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .print-page .passage-image {
+    width: 40%;
+  }
+  
+  .print-page .passage-image img {
+    max-height: 300px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    margin: 0.5in;
+  }
+
+  .print-page * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+ 

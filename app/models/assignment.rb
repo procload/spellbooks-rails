@@ -129,6 +129,10 @@ class Assignment < ApplicationRecord
     saved_changes.keys.any? { |attr| ['title', 'subject', 'grade_level', 'difficulty', 'number_of_questions', 'interests'].include?(attr) }
   end
 
+  def markdown_passage
+    self[:markdown_passage].presence || passage
+  end
+
   private
 
   def image_attached?

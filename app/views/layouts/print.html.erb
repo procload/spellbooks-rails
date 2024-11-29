@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= @assignment.title %> - Print Version</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <%= stylesheet_link_tag "print", media: "all" %>
+</head>
+<body>
+  <%= yield %>
+</body>
+</html> 

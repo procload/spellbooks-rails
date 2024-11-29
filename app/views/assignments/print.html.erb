@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= @assignment.title %> - Print Version</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <%= stylesheet_link_tag "print", media: "all" %>
+</head>
+<body class="print-page">
+  <div class="print-view">
+    <div class="assignment-metadata">
+      <h1><%= @assignment.title %></h1>
+      
+      <div class="assignment-details">
+        <p><strong>Name:</strong> ________________________________</p>
+        <p><strong>Date:</strong> ________________________________</p>
+        
+        <div class="metadata-grid">
+          <p><strong>Subject:</strong> <%= @assignment.subject %></p>
+          <p><strong>Grade Level:</strong> <%= @assignment.grade_level %></p>
+          <p><strong>Difficulty:</strong> <%= @assignment.difficulty %></p>
+        </div>
+      </div>
+    </div>
+
+    <% if @assignment.passage.present? %>
+      <div class="assignment-passage">
+        <h2>Reading Passage</h2>
+        
+        <% if @assignment.image.attached? %>
+          <div class="passage-image">
+            <%= image_tag @assignment.display_image %>
+          </div>
+        <% end %>
+        
+        <%= markdown(@assignment.markdown_passage || @assignment.passage) %>
+      </div>
+    <% end %>
+
+    <div class="questions">
+      <% @questions.each_with_index do |question, index| %>
+        <%= render 'questions', question: question, index: index %>
+      <% end %>
+    </div>
+
+    <% if Current.user&.teacher? %>
+      <div class="answer-key-spacer"></div>
+      
+      <div class="answer-key">
+        <h2>Answer Key</h2>
+        <% @questions.each_with_index do |question, index| %>
+          <%= render 'answer_key', question: question, index: index %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</body>
+</html> 

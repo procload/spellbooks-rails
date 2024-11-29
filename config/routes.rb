@@ -29,6 +29,7 @@ Rails.application.routes.draw do
       post :assign_students
       get :download_pdf
       patch :update_status
+      get :print
     end
     
     resources :submissions, only: [:create], controller: 'assignment_submissions'
