@@ -23,10 +23,6 @@ gem 'pundit'
 gem "tailwindcss-rails", "~> 3.0"
 gem 'redcarpet'
 
-# PDF Generation
-gem 'wicked_pdf'
-gem 'wkhtmltopdf-binary'
-
 # File handling and validation
 gem "active_storage_validations"
 gem "image_processing", "~> 1.2"

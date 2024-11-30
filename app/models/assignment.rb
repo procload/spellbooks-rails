@@ -1,7 +1,6 @@
 class Assignment < ApplicationRecord
   has_many :questions, dependent: :destroy
   has_one_attached :image
-  has_one_attached :cached_pdf
   
   has_many :assignment_users, dependent: :destroy
   has_many :users, through: :assignment_users

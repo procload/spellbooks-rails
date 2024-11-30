@@ -27,7 +27,6 @@ Rails.application.routes.draw do
   resources :assignments do
     member do
       post :assign_students
-      get :download_pdf
       patch :update_status
       get :print
     end
