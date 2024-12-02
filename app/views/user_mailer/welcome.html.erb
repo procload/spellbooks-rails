@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1 style="color: #333; margin-bottom: 20px;">Welcome to Spellbooks, <%= @user.first_name %>!</h1>
+      
+      <p style="color: #666; font-size: 16px; line-height: 1.5;">
+        Thank you for creating an account. We're excited to have you join our community!
+      </p>
+      
+      <p style="color: #666; font-size: 16px; line-height: 1.5;">
+        You can now sign in to your account using your email address (<%= @user.email_address %>) and the password you created.
+      </p>
+
+      <div style="margin-top: 30px;">
+        <%= link_to "Sign In", new_session_url, 
+            style: "display: inline-block; padding: 10px 20px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 5px;" %>
+      </div>
+    </div>
+  </body>
+</html>

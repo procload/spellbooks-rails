@@ -1,9 +1,20 @@
 :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY", 2) %>
 :timeout: 25
 :max_retries: 3
+:poll_interval_average: 15
 
+# Specify queue weights for priority
+# Higher numbers = higher priority
 :queues:
-  - default
-  - mailers
-  - active_storage_analysis
-  - active_storage_purge
+  - [critical, 3]
+  - [mailers, 2]
+  - [default, 1]
+  - [active_storage_analysis, 1]
+  - [active_storage_purge, 1]
+
+:scheduler:
+  :schedule:
+    cleanup_failed_jobs:
+      cron: "0 0 * * *" # Run daily at midnight
+      class: Sidekiq::DeadSet
+      args: [1000] # Keep last 1000 failed jobs

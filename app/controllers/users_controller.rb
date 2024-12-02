@@ -9,6 +9,9 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     
     if @user.save
+      # Send welcome email
+      UserMailer.welcome(@user).deliver_later
+      
       # Start a session for the new user
       start_new_session_for @user
       redirect_to after_authentication_url, notice: 'Welcome! Your account has been created.'
