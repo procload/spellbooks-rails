@@ -4,64 +4,142 @@
 
 @layer base {
   :root {
-    --background: 40 33% 98%;
-    --foreground: 220 10% 20%;
-    --card: 40 30% 96%;
-    --card-foreground: 220 10% 20%;
-    --popover: 40 33% 98%;
-    --popover-foreground: 220 10% 20%;
-    --primary: 215 90% 50%;
+    /* Brand Colors - Lochmara (Primary) */
+    --lochmara-50: 207 90% 98%;
+    --lochmara-100: 207 85% 94%;
+    --lochmara-200: 207 80% 86%;
+    --lochmara-300: 207 75% 75%;
+    --lochmara-400: 207 70% 60%;
+    --lochmara-500: 207 63% 46%;
+    --lochmara-600: 207 68% 39%;
+    --lochmara-700: 207 73% 32%;
+    --lochmara-800: 207 78% 27%;
+    --lochmara-900: 207 83% 22%;
+    --lochmara-950: 207 88% 15%;
+
+    /* Brand Colors - Punch (Secondary) */
+    --punch-50: 3 100% 98%;
+    --punch-100: 3 95% 94%;
+    --punch-200: 3 90% 86%;
+    --punch-300: 3 85% 75%;
+    --punch-400: 3 80% 60%;
+    --punch-500: 3 86% 60%;
+    --punch-600: 3 82% 51%;
+    --punch-700: 3 77% 42%;
+    --punch-800: 3 72% 35%;
+    --punch-900: 3 67% 29%;
+    --punch-950: 3 62% 23%;
+
+    /* Brand Colors - Bunker (Neutral) */
+    --bunker-50: 220 10% 98%;
+    --bunker-100: 220 15% 94%;
+    --bunker-200: 220 20% 86%;
+    --bunker-300: 220 25% 74%;
+    --bunker-400: 220 30% 60%;
+    --bunker-500: 220 35% 48%;
+    --bunker-600: 220 40% 39%;
+    --bunker-700: 220 45% 32%;
+    --bunker-800: 220 50% 27%;
+    --bunker-900: 220 55% 22%;
+    --bunker-950: 220 60% 15%;
+
+    /* Base Theme */
+    --background: var(--bunker-50);
+    --foreground: var(--bunker-900);
+
+    /* Layout Components */
+    --card: var(--background);
+    --card-foreground: var(--foreground);
+    --popover: var(--background);
+    --popover-foreground: var(--foreground);
+
+    /* Interactive Components */
+    --primary: var(--lochmara-600);
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 90%;
-    --secondary-foreground: 220 10% 20%;
-    --secondary-bg: 228 20% 96%;
-    --muted: 220 14% 95%;
-    --muted-foreground: 220 10% 45%;
-    --accent: 180 70% 45%;
-    --accent-foreground: 0 0% 100%;
+    --primary-muted: var(--lochmara-100);
+    --primary-hover: var(--lochmara-700);
+
+    --secondary: var(--punch-500);
+    --secondary-foreground: var(--bunker-50);
+    --secondary-muted: var(--punch-100);
+    --secondary-hover: var(--punch-600);
+
+    /* UI States */
+    --muted: var(--bunker-100);
+    --muted-foreground: var(--bunker-600);
+    --accent: var(--lochmara-400);
+    --accent-foreground: var(--bunker-50);
+    --accent-muted: var(--lochmara-100);
+
+    /* Feedback States */
     --success: 142 72% 29%;
-    --warning: 35 92% 65%;
-    --info: 200 98% 39%;
-    --pending: 35 92% 65%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 250 95% 60%;
-    --chart-1: 250 95% 60%;
-    --chart-2: 180 70% 45%;
-    --chart-3: 142 72% 29%;
-    --chart-4: 35 92% 65%;
-    --chart-5: 0 84% 60%;
+    --success-foreground: var(--bunker-50);
+    --success-muted: 142 72% 95%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: var(--bunker-900);
+    --warning-muted: 38 92% 95%;
+
+    --error: var(--punch-500);
+    --error-foreground: var(--bunker-50);
+    --error-muted: var(--punch-100);
+
+    --info: var(--lochmara-500);
+    --info-foreground: var(--bunker-50);
+    --info-muted: var(--lochmara-100);
+
+    /* Form Elements */
+    --input: var(--bunker-100);
+    --input-border: var(--bunker-200);
+    --input-placeholder: var(--bunker-500);
+    --input-ring: var(--lochmara-500);
+
+    /* Borders and Rings */
+    --border: var(--bunker-200);
+    --ring: var(--lochmara-500);
+
+    /* Other */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 60 9.1% 97.8%;
-    --card: 20 14.3% 4.1%;
-    --card-foreground: 60 9.1% 97.8%;
-    --popover: 20 14.3% 4.1%;
-    --popover-foreground: 60 9.1% 97.8%;
-    --primary: 60 9.1% 97.8%;
-    --primary-foreground: 24 9.8% 10%;
-    --secondary: 12 6.5% 15.1%;
-    --secondary-foreground: 60 9.1% 97.8%;
-    --secondary-bg: 228 15% 15%;
-    --muted: 12 6.5% 15.1%;
-    --muted-foreground: 24 5.4% 63.9%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 60 9.1% 97.8%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 60 9.1% 97.8%;
-    --border: 12 6.5% 15.1%;
-    --input: 12 6.5% 15.1%;
-    --ring: 24 5.7% 82.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Base Theme */
+    --background: var(--bunker-950);
+    --foreground: var(--bunker-50);
+
+    /* Layout Components */
+    --card: var(--bunker-900);
+    --card-foreground: var(--bunker-50);
+    --popover: var(--bunker-900);
+    --popover-foreground: var(--bunker-50);
+
+    /* Interactive Components */
+    --primary: var(--lochmara-500);
+    --primary-foreground: 0 0% 100%;
+    --primary-muted: var(--lochmara-800);
+    --primary-hover: var(--lochmara-600);
+
+    --secondary: var(--punch-400);
+    --secondary-foreground: var(--bunker-950);
+    --secondary-muted: var(--punch-900);
+    --secondary-hover: var(--punch-300);
+
+    /* UI States */
+    --muted: var(--bunker-800);
+    --muted-foreground: var(--bunker-400);
+    --accent: var(--lochmara-400);
+    --accent-foreground: var(--bunker-950);
+    --accent-muted: var(--lochmara-900);
+
+    /* Form Elements */
+    --input: var(--bunker-800);
+    --input-border: var(--bunker-700);
+    --input-placeholder: var(--bunker-400);
+    --input-ring: var(--lochmara-400);
+
+    /* Borders and Rings */
+    --border: var(--bunker-800);
+    --ring: var(--lochmara-400);
   }
 }
 
@@ -116,68 +194,119 @@
 }
 
 @layer components {
-  /* Primary interactive elements */
-  .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90 
-           transition-colors duration-200 
-           shadow-sm hover:shadow-md
-           rounded-md px-4 py-2;
-  }
-  
-  .link-primary {
-    @apply text-primary hover:text-primary/80 
-           hover:underline transition-colors duration-200;
-  }
-
-  /* Secondary interactive elements */
-  .btn-secondary {
-    @apply bg-secondary-bg text-secondary-foreground hover:bg-secondary-bg/70
-           transition-colors duration-200 
-           shadow-sm hover:shadow-md
-           rounded-md px-4 py-2;
-  }
-  
-  .link-secondary {
-    @apply text-secondary-foreground hover:text-secondary-foreground/80 
-           hover:underline transition-colors duration-200;
-  }
-
-  /* Shared button styles */
+  /* Base Button Styles */
   .btn {
     @apply inline-flex items-center justify-center
            font-medium
            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50
-           disabled:opacity-50 disabled:cursor-not-allowed;
+           disabled:opacity-50 disabled:cursor-not-allowed
+           transition-colors duration-200
+           rounded-md px-4 py-2;
   }
 
-  /* Style for selected answer */
-  input[type="radio"].peer:checked + label {
-    @apply ring-2 ring-blue-500 bg-blue-50;
+  /* Primary Button */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary-hover
+           shadow-sm hover:shadow-md;
   }
-  .badge {
-    @apply px-2 py-1 rounded-full text-sm font-medium;
+
+  /* Secondary Button */
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary-hover
+           shadow-sm hover:shadow-md;
   }
-  .badge-success {
-    @apply bg-success/20 text-success;
+
+  /* Ghost Button */
+  .btn-ghost {
+    @apply bg-transparent text-foreground hover:bg-muted
+           px-3 py-1.5;
   }
-  .badge-pending {
-    @apply bg-pending/20 text-pending;
+
+  /* Icon Button */
+  .btn-icon {
+    @apply inline-flex items-center justify-center
+           p-2 rounded-full
+           text-foreground hover:bg-muted
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50
+           disabled:opacity-50 disabled:cursor-not-allowed
+           transition-colors duration-200;
   }
-  .badge-info {
-    @apply bg-info/20 text-info;
+
+  /* Button Sizes */
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
   }
+
+  .btn-lg {
+    @apply px-6 py-3 text-lg;
+  }
+
+  /* Outline Variants */
+  .btn-primary-outline {
+    @apply border-2 border-primary bg-transparent text-primary
+           hover:bg-primary-muted;
+  }
+
+  .btn-secondary-outline {
+    @apply border-2 border-secondary bg-transparent text-secondary
+           hover:bg-secondary-muted;
+  }
+
+  /* Form Submit Inputs */
+  input[type="submit"].btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary-hover
+           shadow-sm hover:shadow-md cursor-pointer;
+  }
+
+  input[type="submit"].btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary-hover
+           shadow-sm hover:shadow-md cursor-pointer;
+  }
+
+  /* Link Variants */
+  .link-primary {
+    @apply text-primary hover:text-primary-hover 
+           hover:underline transition-colors duration-200;
+  }
+
+  .link-secondary {
+    @apply text-secondary hover:text-secondary-hover 
+           hover:underline transition-colors duration-200;
+  }
+
+  /* Form Elements */
+  .input {
+    @apply bg-input border-input-border text-foreground
+           placeholder:text-input-placeholder
+           focus:ring-2 focus:ring-input-ring focus:border-transparent;
+  }
+
+  /* Cards */
   .card {
     @apply bg-card text-card-foreground rounded-lg shadow-sm 
            hover:shadow-md transition-shadow duration-200 
            border border-border/50;
   }
-  .link {
-    @apply text-accent hover:text-accent/80 
-           hover:underline transition-colors duration-200;
+
+  /* Badges */
+  .badge {
+    @apply px-2 py-1 rounded-full text-sm font-medium;
   }
 
-  .header-nav button:focus {
-    @apply outline-none ring-2 ring-primary ring-offset-2;
+  .badge-success {
+    @apply bg-success-muted text-success;
+  }
+
+  .badge-warning {
+    @apply bg-warning-muted text-warning;
+  }
+
+  .badge-error {
+    @apply bg-error-muted text-error;
+  }
+
+  .badge-info {
+    @apply bg-info-muted text-info;
   }
 }
 
