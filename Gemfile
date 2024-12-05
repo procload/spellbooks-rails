@@ -36,6 +36,7 @@ end
 
 # AI features
 gem 'ruby-openai', require: false
+gem 'anthropic'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: false

@@ -1,5 +1,6 @@
 class ProcessAssignmentJob < ApplicationJob
   include Rails.application.routes.url_helpers
+  require Rails.root.join('app/services/llm.rb')
   
   # Add this near the top of the class to set the default URL options
   def default_url_options
@@ -18,10 +19,8 @@ class ProcessAssignmentJob < ApplicationJob
     
     return unless assignment # Skip if assignment not found
     
-    client = OpenAI::Client.new(
-      access_token: ENV.fetch('OPENAI_API_KEY'),
-      request_timeout: 240
-    )
+    llm_provider = ::LLM::Factory.create_provider
+    image_provider = ::LLM::Factory.create_image_provider
     
     Sidekiq.logger.info "=== Starting ProcessAssignmentJob for assignment_id: #{assignment_id} ==="
     
@@ -34,18 +33,8 @@ class ProcessAssignmentJob < ApplicationJob
         image_prompt = generate_image_prompt(assignment)
         Sidekiq.logger.info "Generated image prompt: #{image_prompt}"
         
-        image_response = client.images.generate(
-          parameters: {
-            model: "dall-e-3",
-            prompt: image_prompt,
-            size: "1024x1024",
-            quality: "standard",
-            n: 1
-          }
-        )
+        image_url = image_provider.generate_image(prompt: image_prompt)
         
-        # Save the image URL from DALL-E
-        image_url = image_response.dig("data", 0, "url")
         if image_url
           # Instead of just saving the URL, download and attach the image
           if assignment.attach_image_from_url(image_url)
@@ -59,32 +48,18 @@ class ProcessAssignmentJob < ApplicationJob
       prompt = PromptGeneratorService.generate_prompt(assignment)
       Sidekiq.logger.info "Generated prompt with length: #{prompt.length}"
       
-      Rails.logger.info "Making OpenAI API request..."
-      response = client.chat(
-        parameters: {
-          model: "gpt-4o-2024-08-06",
-          messages: [
-            { 
-              role: "system", 
-              content: "You are a helpful AI assistant that generates educational content. Generate a passage and multiple choice questions based on the given parameters. The response must strictly follow the JSON schema provided."
-            },
-            { role: "user", content: prompt }
-          ],
-          response_format: {
-            type: "json_schema",
-            json_schema: {
-              "strict": true,
-              "name": "Assignment",
-              "description": "Generates an educational assignment",
-              "schema": ::ASSIGNMENT_SCHEMA,
-            }	
-          }	
-        }
-      )
-      Sidekiq.logger.info "Received response from OpenAI"
+      Rails.logger.info "Making LLM API request..."
+      Rails.logger.info "Assignment Schema: #{::ASSIGNMENT_SCHEMA.inspect}"
       
-      content = response.dig("choices", 0, "message", "content")
-      Sidekiq.logger.info "Raw content type: #{content.class}"
+      content = llm_provider.chat(
+        system_prompt: "You are a helpful AI assistant that generates educational content. Generate a passage and multiple choice questions based on the given parameters. The response must strictly follow the JSON schema provided.",
+        messages: [{ role: "user", content: prompt }]
+      )
+      
+      Sidekiq.logger.info "Received response from LLM provider"
+      Sidekiq.logger.info "Raw response type: #{content.class}"
+      Sidekiq.logger.info "Raw response preview: #{content.is_a?(String) ? content[0..100] : content.inspect}"
+      
       content = JSON.parse(content) if content.is_a?(String)
       Sidekiq.logger.info "Parsed content successfully"
       
