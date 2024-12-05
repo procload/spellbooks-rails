@@ -141,6 +141,11 @@
     --border: var(--bunker-800);
     --ring: var(--lochmara-400);
   }
+
+  /* Set Plus Jakarta Sans as the default font */
+  html {
+    @apply font-sans;
+  }
 }
 
 @layer base {
@@ -163,27 +168,35 @@
     text-wrap: balance;
   }
   
-  /* Fira Sans font utilities */
-  .fira-sans-thin { font-weight: 100; font-style: normal; }
-  .fira-sans-extralight { font-weight: 200; font-style: normal; }
-  .fira-sans-light { font-weight: 300; font-style: normal; }
-  .fira-sans-regular { font-weight: 400; font-style: normal; }
-  .fira-sans-medium { font-weight: 500; font-style: normal; }
-  .fira-sans-semibold { font-weight: 600; font-style: normal; }
-  .fira-sans-bold { font-weight: 700; font-style: normal; }
-  .fira-sans-extrabold { font-weight: 800; font-style: normal; }
-  .fira-sans-black { font-weight: 900; font-style: normal; }
+  /* Plus Jakarta Sans font utilities */
+  .jakarta-thin { font-weight: 200; font-style: normal; }
+  .jakarta-extralight { font-weight: 300; font-style: normal; }
+  .jakarta-light { font-weight: 400; font-style: normal; }
+  .jakarta-regular { font-weight: 500; font-style: normal; }
+  .jakarta-medium { font-weight: 600; font-style: normal; }
+  .jakarta-semibold { font-weight: 700; font-style: normal; }
+  .jakarta-bold { font-weight: 800; font-style: normal; }
 
-  /* Italic variants */
-  .fira-sans-thin-italic { font-weight: 100; font-style: italic; }
-  .fira-sans-extralight-italic { font-weight: 200; font-style: italic; }
-  .fira-sans-light-italic { font-weight: 300; font-style: italic; }
-  .fira-sans-regular-italic { font-weight: 400; font-style: italic; }
-  .fira-sans-medium-italic { font-weight: 500; font-style: italic; }
-  .fira-sans-semibold-italic { font-weight: 600; font-style: italic; }
-  .fira-sans-bold-italic { font-weight: 700; font-style: italic; }
-  .fira-sans-extrabold-italic { font-weight: 800; font-style: italic; }
-  .fira-sans-black-italic { font-weight: 900; font-style: italic; }
+  /* Plus Jakarta Sans Italic variants */
+  .jakarta-thin-italic { font-weight: 200; font-style: italic; }
+  .jakarta-extralight-italic { font-weight: 300; font-style: italic; }
+  .jakarta-light-italic { font-weight: 400; font-style: italic; }
+  .jakarta-regular-italic { font-weight: 500; font-style: italic; }
+  .jakarta-medium-italic { font-weight: 600; font-style: italic; }
+  .jakarta-semibold-italic { font-weight: 700; font-style: italic; }
+  .jakarta-bold-italic { font-weight: 800; font-style: italic; }
+
+  /* Merriweather font utilities */
+  .merriweather-light { font-weight: 300; font-style: normal; }
+  .merriweather-regular { font-weight: 400; font-style: normal; }
+  .merriweather-bold { font-weight: 700; font-style: normal; }
+  .merriweather-black { font-weight: 900; font-style: normal; }
+
+  /* Merriweather Italic variants */
+  .merriweather-light-italic { font-weight: 300; font-style: italic; }
+  .merriweather-regular-italic { font-weight: 400; font-style: italic; }
+  .merriweather-bold-italic { font-weight: 700; font-style: italic; }
+  .merriweather-black-italic { font-weight: 900; font-style: italic; }
 
   .line-clamp-2 {
     display: -webkit-box;
@@ -307,6 +320,16 @@
 
   .badge-info {
     @apply bg-info-muted text-info;
+  }
+
+  /* Utility class for passage text */
+  .passage-text {
+    @apply font-serif;
+  }
+
+  /* Utility class for UI elements */
+  .ui-text {
+    @apply font-sans;
   }
 }
 

@@ -11,7 +11,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Fira Sans", ...defaultTheme.fontFamily.sans],
+        sans: ["Plus Jakarta Sans", ...defaultTheme.fontFamily.sans],
+        serif: ["Merriweather", ...defaultTheme.fontFamily.serif],
       },
       colors: {
         // Brand Colors - Direct Access
