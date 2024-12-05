@@ -13,12 +13,10 @@
 </head>
 
 <body class="bg-bunker-50 text-bunker-700">
-  <div class="flex min-h-screen">
-    <%= render "shared/sidebar" if authenticated? && Current.user %>
-    <main class="<%= authenticated? && Current.user ? 'flex-1' : 'w-full' %> p-8">
-      <%= yield %>
-    </main>
-  </div>
+  <%= render "shared/header" if authenticated? && Current.user %>
+  <main class="w-full p-8 mt-20">
+    <%= yield %>
+  </main>
   <%= render "shared/development_debug" %>
 </body>
 </html>

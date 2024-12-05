@@ -1,23 +1,26 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["menu", "button"];
+  static targets = ["menu"];
 
-  connect() {
-    document.addEventListener("click", this.handleClickOutside.bind(this));
-  }
-
-  disconnect() {
-    document.removeEventListener("click", this.handleClickOutside.bind(this));
-  }
-
-  toggle(event) {
-    event.stopPropagation();
+  toggle() {
     this.menuTarget.classList.toggle("hidden");
   }
 
+  connect() {
+    this.clickOutsideHandler = this.handleClickOutside.bind(this);
+    document.addEventListener("click", this.clickOutsideHandler);
+  }
+
+  disconnect() {
+    document.removeEventListener("click", this.clickOutsideHandler);
+  }
+
   handleClickOutside(event) {
-    if (!this.element.contains(event.target)) {
+    if (
+      !this.element.contains(event.target) &&
+      !this.menuTarget.classList.contains("hidden")
+    ) {
       this.menuTarget.classList.add("hidden");
     }
   }
