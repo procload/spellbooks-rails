@@ -3,7 +3,7 @@ require 'ostruct'
 class AssignmentsController < ApplicationController
   before_action :require_authentication
   before_action :require_teacher, only: [:new, :create, :edit, :update, :destroy]
-  before_action :set_assignment, only: [:show, :edit, :update, :destroy, :assign_students, :download_pdf]
+  before_action :set_assignment, only: [:show, :edit, :update, :destroy, :assign_students]
 
   def index
     @assignments = if Current.user.teacher?
@@ -98,11 +98,6 @@ class AssignmentsController < ApplicationController
   rescue => e
     Rails.logger.error "Error assigning students: #{e.message}"
     redirect_to @assignment, alert: 'There was an error updating student assignments.'
-  end
-
-  def download_pdf
-    redirect_to assignment_path(@assignment), 
-      alert: "Please use your browser's print function to generate a PDF"
   end
 
   def destroy

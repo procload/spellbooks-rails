@@ -15,9 +15,6 @@ class Question < ApplicationRecord
   
   attr_accessor :skip_answer_validations
   
-  after_update :purge_assignment_pdf
-  after_destroy :purge_assignment_pdf
-
   def correct_answer?(answer_text)
     answers.exists?(text: answer_text, is_correct: true)
   end
@@ -43,9 +40,5 @@ class Question < ApplicationRecord
     if correct_count != 1
       errors.add(:base, "Question must have exactly one correct answer")
     end
-  end
-
-  def purge_assignment_pdf
-    assignment.remove_cached_pdf if assignment.present?
   end
 end
