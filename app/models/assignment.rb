@@ -24,7 +24,6 @@ class Assignment < ApplicationRecord
 
   validates :assignment_users, presence: true, on: :update
 
-  after_create_commit :process_assignment
   after_update :remove_cached_pdf, if: :relevant_attributes_changed?
 
   attr_accessor :updated_by_id
@@ -132,14 +131,24 @@ class Assignment < ApplicationRecord
     self[:markdown_passage].presence || passage
   end
 
+  def enqueue_processing
+    return false if status != 'pending'
+    
+    with_lock do
+      if status == 'pending'
+        update!(status: 'in_progress')
+        ProcessAssignmentJob.perform_later(id)
+        true
+      else
+        false
+      end
+    end
+  end
+
   private
 
   def image_attached?
     image.attached?
-  end
-
-  def process_assignment
-    ProcessAssignmentJob.perform_later(id)
   end
 
   def process_image

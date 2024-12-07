@@ -1,3 +1,3 @@
 module LLM
-  # Base module for LLM services
+  class Error < StandardError; end
 end 

@@ -29,7 +29,7 @@ LLMConfig.configure do |config|
     },
     anthropic: {
       api_key: Rails.application.credentials.dig(:anthropic, :api_key),
-      model: "claude-3-haiku-20240307",
+      model: "claude-3-5-sonnet-latest",
       timeout: 240
     }
   }

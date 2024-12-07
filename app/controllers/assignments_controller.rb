@@ -28,7 +28,8 @@ class AssignmentsController < ApplicationController
 
   def create
     @assignment = Assignment.new(assignment_params)
-    
+    @assignment.status = 'pending' # Set initial status
+
     ActiveRecord::Base.transaction do
       if @assignment.save
         @assignment.assignment_users.create!(
@@ -36,10 +37,11 @@ class AssignmentsController < ApplicationController
           role: 'creator'
         )
         
-        # Kick off the processing job
-        ProcessAssignmentJob.perform_later(@assignment.id)
-        
-        redirect_to root_path, notice: 'Assignment is being generated...'
+        if @assignment.enqueue_processing
+          redirect_to root_path, notice: 'Assignment is being generated...'
+        else
+          redirect_to root_path, alert: 'Assignment could not be processed at this time.'
+        end
       else
         render :new, status: :unprocessable_entity
       end

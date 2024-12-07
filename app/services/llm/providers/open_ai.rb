@@ -9,7 +9,7 @@ module LLM
         )
       end
 
-      def chat(messages:, system_prompt: nil, max_tokens: 1000, response_format: nil)
+      def chat(messages:, system_prompt: nil, max_tokens: 8192, response_format: nil)
         params = {
           model: "gpt-4o-2024-08-06",
           messages: [
