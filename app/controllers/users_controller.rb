@@ -8,6 +8,12 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     
+    # Allow only teachers to sign up through this action
+    if @user.role != 'teacher'
+      redirect_to new_session_path, alert: 'Only teachers can create accounts directly.'
+      return
+    end
+    
     if @user.save
       # Send welcome email
       UserMailer.welcome(@user).deliver_later
@@ -34,6 +40,21 @@ class UsersController < ApplicationController
     end
   end
 
+  def new_student
+    @student = User.new
+  end
+
+  def create_student
+    @student = Current.user.students.build(student_params)
+    @student.role = 'student'
+    
+    if @student.save
+      redirect_to students_path, notice: 'Student account has been created.'
+    else
+      render :new_student, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def user_params
@@ -44,6 +65,17 @@ class UsersController < ApplicationController
       :password, 
       :password_confirmation,
       :role,
+      :profile_picture
+    )
+  end
+
+  def student_params
+    params.require(:user).permit(
+      :first_name, 
+      :last_name, 
+      :email_address, 
+      :password, 
+      :password_confirmation,
       :profile_picture
     )
   end

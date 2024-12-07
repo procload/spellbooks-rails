@@ -2,7 +2,12 @@ require 'sidekiq/web'
 
 Rails.application.routes.draw do
   # User registration and management
-  resources :users, only: [:new, :create]
+  resources :users, only: [:new, :create, :edit, :update] do
+    collection do
+      get 'new_student'
+      post 'create_student'
+    end
+  end
   resource :user, only: [:edit, :update]
   
   resource :session do
@@ -45,4 +50,6 @@ Rails.application.routes.draw do
 
   # Mount Sidekiq web interface
   mount Sidekiq::Web => '/sidekiq'
+
+  resources :students, only: [:index, :new, :create]
 end

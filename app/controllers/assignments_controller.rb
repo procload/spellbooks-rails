@@ -19,7 +19,13 @@ class AssignmentsController < ApplicationController
 
   def show
     @questions = @assignment.questions
-    @students = User.students if Current.user.teacher?
+    if Current.user.teacher?
+      @students = Current.user.students
+    else
+      unless @assignment.assignment_users.students.exists?(user: Current.user)
+        redirect_to root_path, alert: "You don't have access to this assignment"
+      end
+    end
   end
 
   def new
@@ -73,33 +79,14 @@ class AssignmentsController < ApplicationController
 
   # New action for assigning students to an assignment
   def assign_students
+    @assignment = Assignment.find(params[:id])
     student_ids = params[:student_ids] || []
     
-    # Convert student_ids to integers since they'll come as strings from params
-    student_ids = student_ids.map(&:to_i)
-    
-    # Get current student assignments
-    current_student_assignments = @assignment.assignment_users.students
-    
-    # Remove students that were unselected
-    current_student_assignments.each do |assignment_user|
-      unless student_ids.include?(assignment_user.user_id)
-        assignment_user.destroy
-      end
+    if @assignment.assign_to_students(student_ids, Current.user)
+      redirect_to @assignment, notice: 'Student assignments have been updated.'
+    else
+      redirect_to @assignment, alert: 'There was an error updating student assignments.'
     end
-    
-    # Add newly selected students
-    student_ids.each do |student_id|
-      @assignment.assignment_users.students.find_or_create_by(
-        user_id: student_id,
-        role: 'student'
-      )
-    end
-    
-    redirect_to @assignment, notice: 'Student assignments have been updated.'
-  rescue => e
-    Rails.logger.error "Error assigning students: #{e.message}"
-    redirect_to @assignment, alert: 'There was an error updating student assignments.'
   end
 
   def destroy

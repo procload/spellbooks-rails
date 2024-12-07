@@ -34,6 +34,73 @@
       </div>
 
       <% if Current.user.teacher? && @assignment.teachers.include?(Current.user) %>
+        <!-- Student Assignment Section -->
+        <div class="mt-12 border-t pt-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Assign to Students</h3>
+          
+          <% if @students.any? %>
+            <%= form_with url: assign_students_assignment_path(@assignment), method: :post, class: "space-y-4" do |f| %>
+              <div class="bg-white shadow-sm rounded-lg divide-y divide-gray-200">
+                <div class="p-4">
+                  <fieldset>
+                    <legend class="sr-only">Select students</legend>
+                    <div class="space-y-2">
+                      <% @students.each do |student| %>
+                        <div class="relative flex items-center">
+                          <%= check_box_tag "student_ids[]", 
+                              student.id, 
+                              @assignment.students.include?(student),
+                              id: dom_id(student),
+                              class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+                          <%= label_tag dom_id(student), class: "ml-3 text-sm font-medium text-gray-700" do %>
+                            <%= student.first_name %> <%= student.last_name %>
+                            <span class="text-gray-500">(<%= student.email_address %>)</span>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <%= f.submit "Update Student Assignments", 
+                    class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="text-center py-6 bg-gray-50 rounded-lg">
+              <p class="text-gray-500">You haven't added any students yet.</p>
+              <%= link_to "Add Students", new_student_path, 
+                  class: "mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700" %>
+            </div>
+          <% end %>
+
+          <!-- Assigned Students List -->
+          <div class="mt-8">
+            <h4 class="text-sm font-medium text-gray-500 mb-4">Currently Assigned Students</h4>
+            <% if @assignment.students.any? %>
+              <div class="bg-gray-50 rounded-lg divide-y divide-gray-200">
+                <% @assignment.students.each do |student| %>
+                  <div class="p-4 flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">
+                        <%= student.first_name %> <%= student.last_name %>
+                      </p>
+                      <p class="text-sm text-gray-500"><%= student.email_address %></p>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      Status: <%= student.assignment_users.find_by(assignment: @assignment)&.status&.humanize || 'Pending' %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-sm text-gray-500">No students are currently assigned to this assignment.</p>
+            <% end %>
+          </div>
+        </div>
+
         <div class="mt-8 flex gap-4">
           <%= link_to "Edit", edit_assignment_path(@assignment), 
               class: "bg-warning hover:bg-warning/90 text-destructive-foreground font-bold py-2 px-4 rounded" %>
@@ -44,7 +111,5 @@
         </div>
       <% end %>
     </div>
-
-    <!-- Rest of the show view content... -->
   </main>
 </div>

@@ -101,16 +101,22 @@ class Assignment < ApplicationRecord
   def assign_to_students(student_ids, current_user)
     return false unless current_user.teacher?
     
+    student_ids = Array(student_ids).map(&:to_i)
+    
     transaction do
       # Remove students that are no longer selected
       assignment_users.students.where.not(user_id: student_ids).destroy_all
       
       # Add new students
       student_ids.each do |student_id|
-        assignment_users.students.find_or_create_by!(
-          user_id: student_id,
-          role: 'student'
-        )
+        # Only assign students that belong to this teacher
+        if current_user.students.exists?(student_id)
+          assignment_users.students.find_or_create_by!(
+            user_id: student_id,
+            role: 'student',
+            status: 'pending'
+          )
+        end
       end
     end
     

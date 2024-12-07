@@ -8,10 +8,12 @@ FactoryBot.define do
 
     trait :teacher do
       role { "teacher" }
+      teacher { nil }
     end
 
     trait :student do
       role { "student" }
+      association :teacher, factory: :user, role: 'teacher'
     end
   end
 end 

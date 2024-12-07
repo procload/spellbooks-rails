@@ -6,4 +6,14 @@ class UserMailer < ApplicationMailer
       subject: "Welcome to Spellbooks!"
     )
   end
+
+  def student_credentials(user, password)
+    @user = user
+    @password = password
+    
+    mail(
+      to: @user.email_address,
+      subject: "Your Spellbooks Account Details"
+    )
+  end
 end

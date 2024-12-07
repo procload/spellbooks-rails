@@ -52,4 +52,17 @@ class User < ApplicationRecord
       password_reset_sent_at: Time.current
     )
   end
+
+  # Associations
+  has_many :students, class_name: 'User', foreign_key: 'teacher_id', dependent: :destroy
+  belongs_to :teacher, class_name: 'User', optional: true
+
+  def can_access_assignment?(assignment)
+    return true if teacher?
+    assignment_users.exists?(assignment: assignment, role: 'student')
+  end
+
+  def assignment_status(assignment)
+    assignment_users.find_by(assignment: assignment)&.status
+  end
 end
