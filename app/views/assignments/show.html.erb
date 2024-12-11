@@ -79,9 +79,9 @@
           <!-- Assigned Students List -->
           <div class="mt-8">
             <h4 class="text-sm font-medium text-gray-500 mb-4">Currently Assigned Students</h4>
-            <% if @assignment.students.any? %>
+            <% if @assignment.students.distinct.any? %>
               <div class="bg-gray-50 rounded-lg divide-y divide-gray-200">
-                <% @assignment.students.each do |student| %>
+                <% @assignment.students.distinct.each do |student| %>
                   <div class="p-4 flex items-center justify-between">
                     <div>
                       <p class="text-sm font-medium text-gray-900">
@@ -90,7 +90,14 @@
                       <p class="text-sm text-gray-500"><%= student.email_address %></p>
                     </div>
                     <div class="text-sm text-gray-500">
-                      Status: <%= student.assignment_users.find_by(assignment: @assignment)&.status&.humanize || 'Pending' %>
+                      <% progress = @assignment.student_progress(student) %>
+                      <% if progress %>
+                        <p>Status: <%= progress[:status].humanize %></p>
+                        <p>Progress: <%= progress[:answered_questions] %>/<%= progress[:total_questions] %> questions</p>
+                        <p>Correct: <%= progress[:correct_answers] %>/<%= progress[:answered_questions] if progress[:answered_questions] > 0 %></p>
+                      <% else %>
+                        <p>Status: Not started</p>
+                      <% end %>
                     </div>
                   </div>
                 <% end %>

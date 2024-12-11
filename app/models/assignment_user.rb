@@ -12,6 +12,8 @@ class AssignmentUser < ApplicationRecord
   scope :creators, -> { where(role: 'creator') }
   scope :students, -> { where(role: 'student') }
   
+  has_many :student_answers, dependent: :destroy
+  
   before_create :set_default_status
 
   private

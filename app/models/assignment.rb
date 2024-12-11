@@ -96,6 +96,7 @@ class Assignment < ApplicationRecord
   def students
     users.joins(:assignment_users)
         .where(assignment_users: { role: 'student' })
+        .distinct
   end
   
   def assign_to_students(student_ids, current_user)
@@ -107,15 +108,16 @@ class Assignment < ApplicationRecord
       # Remove students that are no longer selected
       assignment_users.students.where.not(user_id: student_ids).destroy_all
       
-      # Add new students
+      # Add new students without creating duplicates
       student_ids.each do |student_id|
         # Only assign students that belong to this teacher
         if current_user.students.exists?(student_id)
           assignment_users.students.find_or_create_by!(
             user_id: student_id,
-            role: 'student',
-            status: 'pending'
-          )
+            role: 'student'
+          ) do |au|
+            au.status = 'pending'
+          end
         end
       end
     end
@@ -123,6 +125,20 @@ class Assignment < ApplicationRecord
     true
   rescue ActiveRecord::RecordInvalid
     false
+  end
+
+  def student_progress(student)
+    return nil unless student
+    
+    assignment_user = assignment_users.find_by(user: student, role: 'student')
+    return nil unless assignment_user
+    
+    {
+      status: assignment_user.status,
+      answered_questions: assignment_user.student_answers.count,
+      total_questions: questions.count,
+      correct_answers: assignment_user.student_answers.where(correct: true).count
+    }
   end
 
   def remove_cached_pdf

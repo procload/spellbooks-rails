@@ -1,20 +1,23 @@
 class Answer < ApplicationRecord
-  belongs_to :question, touch: true
-  has_many :student_responses, 
-           ->(answer) { where(answer_text: answer.text) },
-           class_name: 'StudentResponse',
-           foreign_key: 'question_id',
-           primary_key: 'question_id',
-           dependent: :destroy
+  belongs_to :question
+  belongs_to :assignment_user, optional: true
   
-  validates :text, presence: true, length: { minimum: 1, maximum: 1000 }
-  validates :is_correct, inclusion: { in: [true, false] }
+  validates :content, presence: true
   
-  after_save :touch_question
+  after_save :update_assignment_user_status, if: :assignment_user_id?
   
   private
   
-  def touch_question
-    question.touch if question.present?
+  def update_assignment_user_status
+    total_questions = assignment_user.assignment.questions.count
+    answered_questions = assignment_user.answers.count
+    
+    if answered_questions == 0
+      assignment_user.update(status: 'pending')
+    elsif answered_questions < total_questions
+      assignment_user.update(status: 'in_progress')
+    else
+      assignment_user.update(status: 'completed')
+    end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_07_150835) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_11_111823) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -56,6 +56,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_07_150835) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"
+    t.index ["assignment_id", "user_id", "role"], name: "index_assignment_users_on_assignment_user_and_role", unique: true
     t.index ["assignment_id"], name: "index_assignment_users_on_assignment_id"
     t.index ["user_id"], name: "index_assignment_users_on_user_id"
   end
@@ -98,6 +99,18 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_07_150835) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "student_answers", force: :cascade do |t|
+    t.integer "assignment_user_id", null: false
+    t.integer "question_id", null: false
+    t.text "answer"
+    t.boolean "correct", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignment_user_id", "question_id"], name: "index_student_answers_on_assignment_user_id_and_question_id", unique: true
+    t.index ["assignment_user_id"], name: "index_student_answers_on_assignment_user_id"
+    t.index ["question_id"], name: "index_student_answers_on_question_id"
+  end
+
   create_table "student_responses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -131,6 +144,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_07_150835) do
   add_foreign_key "assignment_users", "users"
   add_foreign_key "questions", "assignments"
   add_foreign_key "sessions", "users"
+  add_foreign_key "student_answers", "assignment_users"
+  add_foreign_key "student_answers", "questions"
   add_foreign_key "student_responses", "questions"
   add_foreign_key "student_responses", "users"
 end
