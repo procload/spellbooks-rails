@@ -9,7 +9,7 @@ class UserMailerTest < ActionMailer::TestCase
       email.deliver_now
     end
 
-    assert_equal ["no-reply@example.com"], email.from
+    assert_equal ["noreply@spellbooks.ai"], email.from
     assert_equal [user.email_address], email.to
     assert_equal "Welcome to Spellbooks!", email.subject
   end
@@ -23,9 +23,12 @@ class UserMailerTest < ActionMailer::TestCase
       email.deliver_now
     end
 
-    assert_equal ["no-reply@example.com"], email.from
+    assert_equal ["noreply@spellbooks.ai"], email.from
     assert_equal [student.email_address], email.to
     assert_equal "Your Spellbooks Account Details", email.subject
-    assert_includes email.body.to_s, password
+    
+    # Check both HTML and text parts
+    assert_includes email.html_part.body.to_s, password
+    assert_includes email.text_part.body.to_s, password
   end
 end

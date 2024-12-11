@@ -14,6 +14,7 @@ end
 
 class ActionDispatch::IntegrationTest
   include Rails.application.routes.url_helpers
+  include ActiveJob::TestHelper
 
   def default_url_options
     { host: "localhost", port: 3000 }

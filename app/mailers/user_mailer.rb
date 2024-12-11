@@ -14,6 +14,9 @@ class UserMailer < ApplicationMailer
     mail(
       to: @user.email_address,
       subject: "Your Spellbooks Account Details"
-    )
+    ) do |format|
+      format.html
+      format.text
+    end
   end
 end

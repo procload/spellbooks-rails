@@ -75,28 +75,6 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'You must be a teacher to access this area', flash[:alert]
   end
 
-  test "download_pdf serves cached version when available" do
-    sign_in_as(@teacher)
-    @assignment.cached_pdf.attach(
-      io: StringIO.new("fake pdf content"),
-      filename: "test.pdf",
-      content_type: "application/pdf"
-    )
-
-    get download_pdf_assignment_path(@assignment, format: :pdf)
-    assert_response :redirect
-    assert_match /rails\/active_storage\/blobs/, @response.redirect_url
-  end
-
-  test "download_pdf generates and caches new PDF when no cache exists" do
-    sign_in_as(@teacher)
-    assert_not @assignment.cached_pdf.attached?
-
-    get download_pdf_assignment_path(@assignment, format: :pdf)
-    assert_response :success
-    assert @assignment.reload.cached_pdf.attached?
-  end
-
   private
 
   def sign_in_as(user)

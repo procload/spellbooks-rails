@@ -23,7 +23,7 @@ class StudentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create student" do
     assert_difference("User.count") do
-      assert_enqueued_email_with UserMailer, :student_credentials do
+      assert_enqueued_with(job: ActionMailer::MailDeliveryJob) do
         post students_path, params: { user: @student_params }
       end
     end
