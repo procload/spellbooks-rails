@@ -1,0 +1,24 @@
+<div class="group">
+  <label class="block">
+    <input type="<%= local_assigns.fetch(:type, 'radio') %>"
+           name="<%= local_assigns.fetch(:name, 'subject') %>"
+           value="<%= local_assigns.fetch(:value, '') %>"
+           class="sr-only peer"
+           <%= 'checked' if local_assigns[:checked] %>
+           <%= 'disabled' if local_assigns[:disabled] %>>
+    
+    <div class="flex flex-col items-center p-4 gap-2 rounded-xl border-2 border-gray-200 
+                cursor-pointer transition-colors duration-200
+                peer-checked:border-blue-500 peer-checked:bg-blue-50
+                hover:border-gray-300 hover:bg-gray-50
+                peer-disabled:cursor-not-allowed peer-disabled:opacity-50
+                peer-disabled:hover:border-gray-200 peer-disabled:hover:bg-white">
+      <div class="w-8 h-8 text-gray-500 peer-checked:text-blue-500">
+        <%= local_assigns[:icon] %>
+      </div>
+      <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">
+        <%= local_assigns[:label] %>
+      </span>
+    </div>
+  </label>
+</div> 

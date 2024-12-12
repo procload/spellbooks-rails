@@ -35,26 +35,30 @@
           </div>
         <% end %>
 
-        <div class="grid grid-cols-6 gap-6">
-          <div class="col-span-6 sm:col-span-3">
-            <%= f.label :first_name, class: "block text-sm font-medium text-gray-700" %>
-            <%= f.text_field :first_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+        <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <div class="sm:col-span-3">
+            <%= text_input :first_name,
+                form: f,
+                label: "First name",
+                required: true %>
           </div>
 
-          <div class="col-span-6 sm:col-span-3">
-            <%= f.label :last_name, class: "block text-sm font-medium text-gray-700" %>
-            <%= f.text_field :last_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+          <div class="sm:col-span-3">
+            <%= text_input :last_name,
+                form: f,
+                label: "Last name",
+                required: true %>
           </div>
 
-          <div class="col-span-6">
+          <div class="sm:col-span-3">
             <%= f.label :email_address, class: "block text-sm font-medium text-gray-700" %>
             <%= f.email_field :email_address, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
           </div>
         </div>
 
         <div class="flex justify-end">
-          <%= link_to "Cancel", students_path, class: "rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
-          <%= f.submit "Create Student", class: "ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+          <%= transparent_button "Cancel", href: students_path %>
+          <%= primary_button "Create Student", type: "submit" %>
         </div>
       <% end %>
     </div>

@@ -15,9 +15,7 @@
 
       <!-- Create Assignment Button for Teachers -->
       <% if Current.user&.teacher? %>
-        <%= link_to new_assignment_path, class: "px-6 py-3 bg-spellbooks-element text-spellbooks-text rounded-lg hover:bg-spellbooks-element-hover transition-colors" do %>
-          Create New Assignment
-        <% end %>
+        <%= primary_button "Create New Assignment", href: new_assignment_path %>
       <% end %>
     </div>
 

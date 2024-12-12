@@ -1,0 +1,21 @@
+<div class="inline-flex flex-wrap rounded-lg shadow-sm bg-gray-100 p-1 gap-1" role="group">
+  <% options.each_with_index do |option, index| %>
+    <label class="relative flex-1 min-w-fit">
+      <input type="radio"
+             name="<%= local_assigns.fetch(:name, 'segmented_control') %>"
+             value="<%= option[:value] %>"
+             class="peer sr-only"
+             <%= 'checked' if option[:checked] %>
+             <%= 'disabled' if option[:disabled] %>>
+      
+      <span class="block px-4 py-2 text-sm font-medium rounded-md cursor-pointer text-center
+                   transition-all duration-200 ease-in-out whitespace-nowrap
+                   peer-checked:bg-white peer-checked:text-gray-900 peer-checked:shadow
+                   peer-disabled:cursor-not-allowed peer-disabled:opacity-50
+                   <%= index == 0 ? 'peer-checked:shadow-sm' : '' %>
+                   <%= !option[:checked] ? 'text-gray-500 hover:text-gray-900' : '' %>">
+        <%= option[:label] %>
+      </span>
+    </label>
+  <% end %>
+</div> 

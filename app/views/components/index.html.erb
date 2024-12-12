@@ -1,0 +1,470 @@
+<%# Components Index %>
+<div class="space-y-12">
+  <%# Form Fields Section %>
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-gray-900">Form Fields</h2>
+    <div class="p-6 bg-white rounded-lg shadow">
+      <div class="space-y-8">
+        <%# Text Inputs %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Text Inputs</h3>
+          <div class="grid grid-cols-1 gap-6 max-w-xl">
+            <%# Default state %>
+            <%= render "components/form/text_input/text_input",
+                name: "default",
+                label: "Default Input",
+                placeholder: "Enter some text",
+                hint: "This is a helpful message" %>
+
+            <%# Required state %>
+            <%= render "components/form/text_input/text_input",
+                name: "required",
+                label: "Required Input",
+                required: true,
+                placeholder: "This field is required" %>
+
+            <%# With error %>
+            <%= render "components/form/text_input/text_input",
+                name: "with_error",
+                label: "Input with Error",
+                value: "Invalid input",
+                error: "Please enter a valid value" %>
+
+            <%# Disabled state %>
+            <%= render "components/form/text_input/text_input",
+                name: "disabled",
+                label: "Disabled Input",
+                disabled: true,
+                value: "Can't edit this" %>
+
+            <%# Email type %>
+            <%= render "components/form/text_input/text_input",
+                name: "email",
+                label: "Email Input",
+                type: "email",
+                placeholder: "Enter your email" %>
+
+            <%# Password type %>
+            <%= render "components/form/text_input/text_input",
+                name: "password",
+                label: "Password Input",
+                type: "password",
+                placeholder: "Enter your password" %>
+          </div>
+        </div>
+
+        <%# Select Inputs %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Select Inputs</h3>
+          <div class="grid grid-cols-1 gap-6 max-w-xl">
+            <%# Default state %>
+            <%= render "components/form/select/select",
+                name: "default_select",
+                label: "Default Select",
+                options: [["Option 1", 1], ["Option 2", 2], ["Option 3", 3]],
+                prompt: "Choose an option",
+                hint: "Select from the available options" %>
+
+            <%# Required state %>
+            <%= render "components/form/select/select",
+                name: "required_select",
+                label: "Required Select",
+                options: [["Small", "sm"], ["Medium", "md"], ["Large", "lg"]],
+                required: true,
+                prompt: "Select a size" %>
+
+            <%# With error %>
+            <%= render "components/form/select/select",
+                name: "error_select",
+                label: "Select with Error",
+                options: [["Option A", "a"], ["Option B", "b"]],
+                error: "Please select a valid option" %>
+
+            <%# Disabled state %>
+            <%= render "components/form/select/select",
+                name: "disabled_select",
+                label: "Disabled Select",
+                options: [["Disabled Option", "disabled"]],
+                disabled: true %>
+          </div>
+        </div>
+
+        <%# Number Inputs %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Number Inputs</h3>
+          <div class="grid grid-cols-1 gap-6 max-w-xl">
+            <%# Default state %>
+            <%= render "components/form/number_input/number_input",
+                name: "default_number",
+                label: "Default Number",
+                placeholder: "Enter a number",
+                hint: "Enter any number" %>
+
+            <%# With min/max/step %>
+            <%= render "components/form/number_input/number_input",
+                name: "quantity",
+                label: "Quantity",
+                min: 0,
+                max: 100,
+                step: 1,
+                required: true,
+                hint: "Enter a number between 0 and 100" %>
+
+            <%# With error %>
+            <%= render "components/form/number_input/number_input",
+                name: "error_number",
+                label: "Number with Error",
+                value: "200",
+                error: "Number must be between 0 and 100" %>
+
+            <%# Disabled state %>
+            <%= render "components/form/number_input/number_input",
+                name: "disabled_number",
+                label: "Disabled Number",
+                value: "42",
+                disabled: true %>
+          </div>
+        </div>
+
+        <%# Range Inputs %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Range Inputs</h3>
+          <div class="grid grid-cols-1 gap-6 max-w-xl">
+            <%# Default state %>
+            <%= render "components/form/range_input/range_input",
+                name: "default_range",
+                label: "Default Range",
+                min: 0,
+                max: 100,
+                value: 50,
+                hint: "Drag the slider to select a value" %>
+
+            <%# With custom step %>
+            <%= render "components/form/range_input/range_input",
+                name: "step_range",
+                label: "Range with Steps",
+                min: 0,
+                max: 100,
+                step: 10,
+                value: 30,
+                hint: "Moves in steps of 10" %>
+
+            <%# Without value display %>
+            <%= render "components/form/range_input/range_input",
+                name: "no_value_range",
+                label: "Range without Value Display",
+                min: 0,
+                max: 5,
+                step: 0.5,
+                show_value: false,
+                value: 2.5 %>
+
+            <%# Disabled state %>
+            <%= render "components/form/range_input/range_input",
+                name: "disabled_range",
+                label: "Disabled Range",
+                min: 0,
+                max: 100,
+                value: 75,
+                disabled: true %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# Buttons Section %>
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-gray-900">Buttons</h2>
+    <div class="p-6 bg-white rounded-lg shadow">
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Primary Buttons</h3>
+          <div class="flex flex-wrap gap-4">
+            <%= render "components/button/button", variant: :primary do %>
+              Default Primary
+            <% end %>
+            <%= render "components/button/button", variant: :primary, size: :small do %>
+              Small Primary
+            <% end %>
+            <%= render "components/button/button", variant: :primary, disabled: true do %>
+              Disabled Primary
+            <% end %>
+            <%= render "components/button/button", variant: :primary, href: "#" do %>
+              <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+              </svg>
+              With Icon
+            <% end %>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Secondary Buttons</h3>
+          <div class="flex flex-wrap gap-4">
+            <%= render "components/button/button", variant: :secondary do %>
+              Default Secondary
+            <% end %>
+            <%= render "components/button/button", variant: :secondary, size: :small do %>
+              Small Secondary
+            <% end %>
+            <%= render "components/button/button", variant: :secondary, disabled: true do %>
+              Disabled Secondary
+            <% end %>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Negative Buttons</h3>
+          <div class="flex flex-wrap gap-4">
+            <%= render "components/button/button", variant: :negative do %>
+              Default Negative
+            <% end %>
+            <%= render "components/button/button", variant: :negative, size: :small do %>
+              Small Negative
+            <% end %>
+            <%= render "components/button/button", variant: :negative, disabled: true do %>
+              Disabled Negative
+            <% end %>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Transparent Buttons</h3>
+          <div class="flex flex-wrap gap-4">
+            <%= render "components/button/button", variant: :transparent do %>
+              Default Transparent
+            <% end %>
+            <%= render "components/button/button", variant: :transparent, size: :small do %>
+              Small Transparent
+            <% end %>
+            <%= render "components/button/button", variant: :transparent, disabled: true do %>
+              Disabled Transparent
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# Answer Choices Section %>
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-gray-900">Answer Choices</h2>
+    <div class="p-6 bg-white rounded-lg shadow">
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Default State</h3>
+          <%= render "components/answer_choice/answer_choice",
+                    letter: "A",
+                    text: "This is an unselected answer choice",
+                    selected: false,
+                    name: "demo_answer_1",
+                    value: "a" %>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Selected State</h3>
+          <%= render "components/answer_choice/answer_choice",
+                    letter: "B",
+                    text: "This is a selected answer choice",
+                    selected: true,
+                    name: "demo_answer_2",
+                    value: "b" %>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Disabled State</h3>
+          <%= render "components/answer_choice/answer_choice",
+                    letter: "C",
+                    text: "This is a disabled answer choice",
+                    selected: false,
+                    disabled: true,
+                    name: "demo_answer_3",
+                    value: "c" %>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Selected and Disabled</h3>
+          <%= render "components/answer_choice/answer_choice",
+                    letter: "D",
+                    text: "This is a selected and disabled answer choice",
+                    selected: true,
+                    disabled: true,
+                    name: "demo_answer_4",
+                    value: "d" %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# Subject Selectors Section %>
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-gray-900">Subject Selectors</h2>
+    <div class="p-6 bg-white rounded-lg shadow">
+      <div class="space-y-8">
+        <%# Radio Group Example %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Radio Selection</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl">
+            <%= render "components/subject_selector/subject_selector",
+                name: "subject_radio",
+                value: "reading",
+                label: "Reading",
+                checked: true,
+                icon: subject_icon(:reading) %>
+
+            <%= render "components/subject_selector/subject_selector",
+                name: "subject_radio",
+                value: "addition",
+                label: "Addition",
+                icon: subject_icon(:addition) %>
+
+            <%= render "components/subject_selector/subject_selector",
+                name: "subject_radio",
+                value: "subtraction",
+                label: "Subtraction",
+                icon: subject_icon(:subtraction) %>
+          </div>
+        </div>
+
+        <%# Checkbox Group Example %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Multiple Selection</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl">
+            <%= render "components/subject_selector/subject_selector",
+                type: "checkbox",
+                name: "subjects[]",
+                value: "reading",
+                label: "Reading",
+                checked: true,
+                icon: subject_icon(:reading) %>
+
+            <%= render "components/subject_selector/subject_selector",
+                type: "checkbox",
+                name: "subjects[]",
+                value: "addition",
+                label: "Addition",
+                checked: true,
+                icon: subject_icon(:addition) %>
+
+            <%= render "components/subject_selector/subject_selector",
+                type: "checkbox",
+                name: "subjects[]",
+                value: "subtraction",
+                label: "Subtraction",
+                icon: subject_icon(:subtraction) %>
+          </div>
+        </div>
+
+        <%# Disabled States %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Disabled States</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl">
+            <%= render "components/subject_selector/subject_selector",
+                name: "subject_disabled",
+                value: "reading",
+                label: "Reading",
+                disabled: true,
+                icon: subject_icon(:reading) %>
+
+            <%= render "components/subject_selector/subject_selector",
+                name: "subject_disabled",
+                value: "addition",
+                label: "Addition",
+                checked: true,
+                disabled: true,
+                icon: subject_icon(:addition) %>
+
+            <%= render "components/subject_selector/subject_selector",
+                type: "checkbox",
+                name: "subjects_disabled[]",
+                value: "subtraction",
+                label: "Subtraction",
+                checked: true,
+                disabled: true,
+                icon: subject_icon(:subtraction) %>
+          </div>
+        </div>
+
+        <%# With Stimulus Controller %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">With Stimulus Integration</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl" 
+               data-controller="subject-selector">
+            <%= render "components/subject_selector/subject_selector",
+                name: "subject_stimulus",
+                value: "reading",
+                label: "Reading",
+                icon: subject_icon(:reading),
+                data: { 
+                  subject_selector_target: "input",
+                  action: "change->subject-selector#toggle"
+                } %>
+
+            <%= render "components/subject_selector/subject_selector",
+                name: "subject_stimulus",
+                value: "addition",
+                label: "Addition",
+                icon: subject_icon(:addition),
+                data: { 
+                  subject_selector_target: "input",
+                  action: "change->subject-selector#toggle"
+                } %>
+
+            <%= render "components/subject_selector/subject_selector",
+                name: "subject_stimulus",
+                value: "subtraction",
+                label: "Subtraction",
+                icon: subject_icon(:subtraction),
+                data: { 
+                  subject_selector_target: "input",
+                  action: "change->subject-selector#toggle"
+                } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# Segmented Controls Section %>
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-gray-900">Segmented Controls</h2>
+    <div class="p-6 bg-white rounded-lg shadow">
+      <div class="space-y-8">
+        <%# Default Example %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Difficulty Selection</h3>
+          <%= render "components/segmented_control/segmented_control",
+              name: "difficulty",
+              options: difficulty_options %>
+        </div>
+
+        <%# Disabled Example %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Disabled State</h3>
+          <%= render "components/segmented_control/segmented_control",
+              name: "difficulty_disabled",
+              options: [
+                { label: 'Easy', value: 'easy', checked: true, disabled: true },
+                { label: 'Medium', value: 'medium', disabled: true },
+                { label: 'Hard', value: 'hard', disabled: true }
+              ] %>
+        </div>
+
+        <%# With Stimulus Controller %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">With Stimulus Integration</h3>
+          <div data-controller="segmented-control">
+            <%= render "components/segmented_control/segmented_control",
+                name: "difficulty_stimulus",
+                options: difficulty_options,
+                data: {
+                  segmented_control_target: "control",
+                  action: "change->segmented-control#toggle"
+                } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

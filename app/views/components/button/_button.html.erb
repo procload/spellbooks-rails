@@ -1,0 +1,51 @@
+<%# Usage: render "components/button/button", variant: :primary, size: :default, **options do %>
+<%#   Button Text %>
+<%# end %>
+
+<% 
+  # Default classes shared by all buttons
+  base_classes = "inline-flex items-center justify-center font-medium rounded-full transition-colors duration-200 ease-in-out"
+
+
+  # Height variations
+  size_classes = {
+    default: "px-5 py-2.5 text-[16px] h-12",
+    small: "px-4 py-2 text-[12px] h-8"
+  }
+
+  # Variant styles
+  variant_classes = {
+    primary: "bg-primary text-white hover:bg-primary/90 focus:ring-2 focus:ring-primary/20 focus:outline-none",
+    secondary: "bg-white text-lochmara-800 border-2 border-bunker-200 hover:bg-gray-50 focus:ring-2 focus:ring-bunker-200/20 focus:outline-none",
+    negative: "bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-600/20 focus:outline-none",
+    transparent: "bg-transparent hover:bg-gray-100 text-gray-700 focus:ring-2 focus:ring-gray-200 focus:outline-none"
+  }
+
+  # Determine classes based on provided options
+  size = local_assigns.fetch(:size, :default)
+  variant = local_assigns.fetch(:variant, :primary)
+  disabled = local_assigns[:disabled]
+  href = local_assigns[:href]
+  
+  # Combine classes
+  classes = [
+    base_classes,
+    size_classes[size],
+    variant_classes[variant],
+    disabled ? "opacity-50 cursor-not-allowed" : "",
+    local_assigns[:class]
+  ].compact.join(" ")
+
+  # Remove processed options to avoid duplication
+  options = local_assigns.except(:variant, :size, :class, :href)
+%>
+
+<% if href.present? %>
+  <%= link_to href, **options, class: classes, disabled: disabled do %>
+    <%= yield %>
+  <% end %>
+<% else %>
+  <%= button_tag(**options, type: local_assigns[:type] || 'button', class: classes, disabled: disabled) do %>
+    <%= yield %>
+  <% end %>
+<% end %> 

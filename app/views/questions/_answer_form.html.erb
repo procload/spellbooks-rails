@@ -14,8 +14,8 @@
           student_response: student_response %>
       
       <div class="mt-4 flex items-center gap-2">
-        <%= f.submit "Submit Answer",
-            class: "btn btn-primary",
+        <%= primary_button "Submit Answer",
+            type: "submit",
             data: { "question-submission-target": "submitButton" } %>
         
         <%= render "questions/spinner" %>

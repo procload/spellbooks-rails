@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= @page_title || 'UI Components' %> - Spellbooks</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <%= yield :styles %>
+  </head>
+
+  <body class="bg-gray-50">
+    <div class="min-h-screen">
+      <header class="bg-white shadow-sm">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="flex h-16 items-center justify-between">
+            <div class="flex items-center">
+              <h1 class="text-xl font-semibold">UI Components</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+              <%= link_to 'Back to App', root_path, class: 'text-gray-500 hover:text-gray-700' %>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          <%= yield %>
+        </div>
+      </main>
+    </div>
+  </body>
+</html> 

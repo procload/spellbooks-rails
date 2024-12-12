@@ -1,0 +1,152 @@
+<%# 
+  Renders a range slider input with optional label, hint text, and error message
+  
+  @param form [FormBuilder] The form builder object (optional)
+  @param name [String] The input field name
+  @param label [String] Label text (optional)
+  @param hint [String] Help text shown below the input (optional)
+  @param error [String] Error message to display (optional)
+  @param min [Number] Minimum value (default: 0)
+  @param max [Number] Maximum value (default: 100)
+  @param step [Number] Step increment value (default: 1)
+  @param show_value [Boolean] Whether to show the current value (default: true)
+  @param required [Boolean] Whether the field is required (default: false)
+  @param disabled [Boolean] Whether the field is disabled (default: false)
+  All other HTML input attributes are accepted and passed through
+%>
+
+<%
+  # Generate a unique ID for the input if not provided
+  input_id = local_assigns[:id] || "input_#{SecureRandom.hex(4)}"
+  
+  # Base classes for the range input
+  range_classes = [
+    "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer",
+    "focus:outline-none focus:ring-2 focus:ring-primary/10",
+    "range-input", # Custom class for styling the thumb
+    local_assigns[:disabled] ? "opacity-50 cursor-not-allowed" : ""
+  ].compact.join(" ")
+
+  # Extract options that shouldn't be passed to the input
+  input_options = local_assigns.except(
+    :form, :label, :hint, :error, :class, :input_class, :wrapper_class, :show_value
+  )
+
+  # Default values
+  min = local_assigns.fetch(:min, 0)
+  max = local_assigns.fetch(:max, 100)
+  step = local_assigns.fetch(:step, 1)
+  show_value = local_assigns.fetch(:show_value, true)
+%>
+
+<div class="<%= local_assigns[:wrapper_class] %>"
+     data-controller="range-input"
+     data-range-input-show-value-value="<%= show_value %>">
+  <div class="flex items-center justify-between mb-1">
+    <% if local_assigns[:label].present? %>
+      <label for="<%= input_id %>" class="block text-sm font-medium text-gray-700">
+        <%= local_assigns[:label] %>
+        <% if local_assigns[:required] %>
+          <span class="text-red-500 ml-1">*</span>
+        <% end %>
+      </label>
+    <% end %>
+
+    <% if show_value %>
+      <span class="text-sm text-gray-500" data-range-input-target="value"></span>
+    <% end %>
+  </div>
+
+  <div class="relative">
+    <% if local_assigns[:form].present? %>
+      <%= local_assigns[:form].range_field name,
+          input_options.merge(
+            id: input_id,
+            class: [range_classes, local_assigns[:input_class]].compact.join(" "),
+            min: min,
+            max: max,
+            step: step,
+            data: { 
+              action: "input->range-input#updateValue",
+              range_input_target: "input" 
+            }
+          )
+      %>
+    <% else %>
+      <%= range_field_tag name, nil,
+          input_options.merge(
+            id: input_id,
+            class: [range_classes, local_assigns[:input_class]].compact.join(" "),
+            min: min,
+            max: max,
+            step: step,
+            data: { 
+              action: "input->range-input#updateValue",
+              range_input_target: "input" 
+            }
+          )
+      %>
+    <% end %>
+  </div>
+
+  <% if local_assigns[:hint].present? && !local_assigns[:error].present? %>
+    <p class="mt-1 text-sm text-gray-500"><%= local_assigns[:hint] %></p>
+  <% end %>
+
+  <% if local_assigns[:error].present? %>
+    <p class="mt-1 text-sm text-red-500"><%= local_assigns[:error] %></p>
+  <% end %>
+</div>
+
+<% content_for :styles do %>
+  <style>
+    /* Custom range input styling */
+    .range-input::-webkit-slider-thumb {
+      @apply w-4 h-4 bg-primary rounded-full appearance-none cursor-pointer transition-all duration-150;
+      -webkit-appearance: none;
+      margin-top: -6px;
+    }
+    
+    .range-input::-moz-range-thumb {
+      @apply w-4 h-4 bg-primary border-0 rounded-full cursor-pointer transition-all duration-150;
+    }
+    
+    .range-input:focus::-webkit-slider-thumb {
+      @apply ring-2 ring-primary/20;
+    }
+    
+    .range-input:focus::-moz-range-thumb {
+      @apply ring-2 ring-primary/20;
+    }
+    
+    .range-input:disabled::-webkit-slider-thumb {
+      @apply bg-gray-400 cursor-not-allowed;
+    }
+    
+    .range-input:disabled::-moz-range-thumb {
+      @apply bg-gray-400 cursor-not-allowed;
+    }
+  </style>
+<% end %>
+
+<% content_for :javascript do %>
+  <script>
+    // Stimulus controller for range input
+    application.register("range-input", class extends Controller {
+      static targets = ["input", "value"]
+      static values = { showValue: Boolean }
+
+      connect() {
+        if (this.showValueValue && this.hasValueTarget) {
+          this.updateValue()
+        }
+      }
+
+      updateValue() {
+        if (this.showValueValue && this.hasValueTarget) {
+          this.valueTarget.textContent = this.inputTarget.value
+        }
+      }
+    })
+  </script>
+<% end %> 

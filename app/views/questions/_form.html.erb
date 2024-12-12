@@ -34,13 +34,12 @@
             </div>
 
             <div class="mt-4 flex justify-end space-x-3">
-              <%= f.submit "Save Changes", 
-                  class: "btn btn-primary",
+              <%= primary_button "Save Changes", 
+                  type: "submit",
                   data: { action: "click->question#handleSubmit" } %>
-              <%= link_to "Cancel", 
-                  assignment_path(@assignment), 
-                  data: { turbo_frame: dom_id(question) },
-                  class: "btn btn-secondary" %>
+              <%= transparent_button "Cancel", 
+                  href: assignment_path(@assignment),
+                  data: { turbo_frame: dom_id(question) } %>
             </div>
           
         </div>

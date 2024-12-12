@@ -1,0 +1,72 @@
+<%# 
+  Renders a text input field with optional label, hint text, and error message
+  
+  @param form [FormBuilder] The form builder object (optional)
+  @param name [String] The input field name
+  @param label [String] Label text (optional)
+  @param hint [String] Help text shown below the input (optional)
+  @param error [String] Error message to display (optional)
+  @param type [String] Input type (default: 'text')
+  @param required [Boolean] Whether the field is required (default: false)
+  @param disabled [Boolean] Whether the field is disabled (default: false)
+  All other HTML input attributes are accepted and passed through
+%>
+
+<%
+  # Generate a unique ID for the input if not provided
+  input_id = local_assigns[:id] || "input_#{SecureRandom.hex(4)}"
+  
+  # Input type (text, email, password, etc)
+  input_type = local_assigns.fetch(:type, 'text')
+  
+  # Base classes for the input field
+  input_classes = [
+    "block w-full rounded-lg transition-shadow duration-150",
+    "border-gray-300 bg-white",
+    "focus:border-primary focus:ring-2 focus:ring-primary/10 focus:outline-none",
+    local_assigns[:error].present? ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "",
+    local_assigns[:disabled] ? "bg-gray-50 text-gray-500 cursor-not-allowed" : ""
+  ].compact.join(" ")
+
+  # Extract options that shouldn't be passed to the input
+  input_options = local_assigns.except(
+    :form, :label, :hint, :error, :class, :input_class, :wrapper_class
+  )
+%>
+
+<div class="<%= local_assigns[:wrapper_class] %>">
+  <% if local_assigns[:label].present? %>
+    <label for="<%= input_id %>" class="block text-sm font-medium text-gray-700 mb-1">
+      <%= local_assigns[:label] %>
+      <% if local_assigns[:required] %>
+        <span class="text-red-500 ml-1">*</span>
+      <% end %>
+    </label>
+  <% end %>
+
+  <div class="relative">
+    <% if local_assigns[:form].present? %>
+      <%= local_assigns[:form].text_field name, 
+          input_options.merge(
+            id: input_id,
+            class: [input_classes, local_assigns[:input_class]].compact.join(" ")
+          ) 
+      %>
+    <% else %>
+      <%= text_field_tag name, nil,
+          input_options.merge(
+            id: input_id,
+            class: [input_classes, local_assigns[:input_class]].compact.join(" ")
+          )
+      %>
+    <% end %>
+  </div>
+
+  <% if local_assigns[:hint].present? && !local_assigns[:error].present? %>
+    <p class="mt-1 text-sm text-gray-500"><%= local_assigns[:hint] %></p>
+  <% end %>
+
+  <% if local_assigns[:error].present? %>
+    <p class="mt-1 text-sm text-red-500"><%= local_assigns[:error] %></p>
+  <% end %>
+</div> 

@@ -33,30 +33,36 @@
                  hover:file:bg-indigo-100" %>
     </div>
 
-    <div>
-      <%= form.label :first_name, class: "block text-sm font-medium text-gray-700" %>
-      <%= form.text_field :first_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-    </div>
+    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+      <div class="sm:col-span-3">
+        <%= text_input :first_name,
+            form: form,
+            label: "First name",
+            required: true %>
+      </div>
 
-    <div>
-      <%= form.label :last_name, class: "block text-sm font-medium text-gray-700" %>
-      <%= form.text_field :last_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-    </div>
+      <div class="sm:col-span-3">
+        <%= text_input :last_name,
+            form: form,
+            label: "Last name",
+            required: true %>
+      </div>
 
-    <div>
-      <%= form.label :email_address, class: "block text-sm font-medium text-gray-700" %>
-      <%= form.email_field :email_address, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-    </div>
+      <div class="sm:col-span-3">
+        <%= form.label :email_address, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.email_field :email_address, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
 
-    <div>
-      <%= form.label :password, "New Password (leave blank if you don't want to change it)", 
-          class: "block text-sm font-medium text-gray-700" %>
-      <%= form.password_field :password, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-    </div>
+      <div class="sm:col-span-3">
+        <%= form.label :password, "New Password (leave blank if you don't want to change it)", 
+            class: "block text-sm font-medium text-gray-700" %>
+        <%= form.password_field :password, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
 
-    <div>
-      <%= form.label :password_confirmation, class: "block text-sm font-medium text-gray-700" %>
-      <%= form.password_field :password_confirmation, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      <div class="sm:col-span-3">
+        <%= form.label :password_confirmation, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.password_field :password_confirmation, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
     </div>
 
     <div>

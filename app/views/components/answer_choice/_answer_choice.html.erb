@@ -1,0 +1,48 @@
+<%# frozen_string_literal: true %>
+
+<%# 
+  Renders an answer choice option with a letter label and text.
+  
+  @param letter [String] The letter label for the answer choice (e.g., 'A', 'B', 'C', 'D')
+  @param text [String] The text content of the answer choice
+  @param selected [Boolean] Whether this answer is currently selected
+  @param disabled [Boolean] Whether this answer choice is disabled
+  @param name [String] The form input name for the radio button
+  @param value [String] The value for this answer choice
+%>
+
+<div class="relative flex items-center gap-4 p-4 rounded-lg border-2 transition-all duration-200
+            hover:border-primary/50 hover:bg-primary-muted/10 cursor-pointer
+            focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2
+            <%= selected ? 'border-primary bg-primary-muted/20' : 'border-border bg-background' %>"
+     data-controller="answer-choice"
+     data-answer-choice-selected-value="<%= selected %>"
+     data-answer-choice-disabled-value="<%= local_assigns[:disabled] %>"
+     data-action="click->answer-choice#select">
+  
+  <%= radio_button_tag name, 
+      value, 
+      selected, 
+      class: "sr-only peer", 
+      disabled: local_assigns[:disabled],
+      data: { 
+        answer_choice_target: "input"
+      } 
+  %>
+  
+  <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium transition-colors duration-200
+              <%= selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground' %>">
+    <%= letter %>
+  </div>
+  
+  <div class="flex-grow text-foreground">
+    <%= text %>
+  </div>
+  
+  <div class="absolute right-4 flex items-center justify-center text-primary transition-opacity duration-200
+              <%= selected ? 'opacity-100' : 'opacity-0' %>">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+      <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+    </svg>
+  </div>
+</div> 

@@ -10,79 +10,120 @@
     </div>
   <% end %>
 
-  <!-- Title -->
-  <div>
-    <%= form.label :title, class: "block text-lg font-medium mb-2" %>
-    <%= form.text_field :title, class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element", placeholder: "Enter assignment title" %>
-  </div>
-
-  <!-- Subject -->
-  <div>
-    <%= form.label :subject, class: "block text-lg font-medium mb-2" %>
-    <%= form.select :subject, 
-        ['Math', 'Science', 'English', 'History', 'Art'],
-        { prompt: "Select a subject" },
-        class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element bg-white" %>
-  </div>
-
-  <!-- Grade -->
-  <div>
-    <%= form.label :grade_level, class: "block text-lg font-medium mb-2" %>
-    <%= form.select :grade_level,
-        [["Kindergarten", 0]] + (1..12).map { |n| ["#{n.ordinalize} Grade", n] },
-        { prompt: "Select a grade" },
-        class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element bg-white" %>
-  </div>
-
-  <!-- Difficulty -->
-  <div>
-    <%= form.label :difficulty, class: "block text-lg font-medium mb-2" %>
-    <%= form.select :difficulty,
-        ['Easy', 'Medium', 'Hard', 'Advanced'],
-        { prompt: "Select difficulty" },
-        class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element bg-white" %>
-  </div>
-
-  <!-- Number of Questions -->
-  <div>
-    <%= form.label :number_of_questions, class: "block text-lg font-medium mb-2" %>
-    <%= form.number_field :number_of_questions,
-        in: 1..100,
-        class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element",
-        placeholder: "Enter number of questions" %>
-  </div>
-
-  <!-- Interests -->
-  <div data-controller="interests">
-    <%= form.label :interests, class: "block text-lg font-medium mb-2" %>
-    <div class="flex flex-wrap gap-2 mb-2" data-interests-target="tags"></div>
-    <div class="flex">
-      <%= form.text_field :interests, 
-          class: "hidden",
-          data: { interests_target: "field" } %>
-      <input type="text"
-             data-interests-target="input"
-             data-action="keydown->interests#add"
-             class="flex-grow p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element"
-             placeholder="Add interests (press Enter to add)">
+  <div class="space-y-6">
+    <div>
+      <%= form.label :title, class: "block text-lg font-medium mb-2" %>
+      <%= form.text_field :title,
+          class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element",
+          required: true,
+          placeholder: "Enter assignment title" %>
     </div>
-    <div class="mt-2">
-      <p class="text-sm font-medium mb-1">Suggested interests:</p>
-      <div class="flex flex-wrap gap-2">
-        <% ['Industrial Revolution', 'Technology', 'Social Change', 'Economics'].each do |interest| %>
-          <button type="button" 
-                  data-action="click->interests#addSuggested"
-                  class="px-3 py-1 bg-spellbooks-sidebar text-foreground rounded-full text-sm hover:bg-spellbooks-element transition-colors">
-            <%= interest %>
-          </button>
-        <% end %>
+
+    <!-- Subject -->
+    <div>
+      <%= form.label :subject, class: "block text-lg font-medium mb-2" %>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl">
+        <%= render "components/subject_selector/subject_selector",
+            name: "assignment[subject]",
+            value: "Math",
+            label: "Math",
+            checked: true,
+            icon: subject_icon(:math) %>
+
+        <%= render "components/subject_selector/subject_selector",
+            name: "assignment[subject]",
+            value: "Science",
+            label: "Science",
+            icon: subject_icon(:science) %>
+
+        <%= render "components/subject_selector/subject_selector",
+            name: "assignment[subject]",
+            value: "English",
+            label: "English",
+            icon: subject_icon(:english) %>
+
+        <%= render "components/subject_selector/subject_selector",
+            name: "assignment[subject]",
+            value: "History",
+            label: "History",
+            icon: subject_icon(:history) %>
+
+        <%= render "components/subject_selector/subject_selector",
+            name: "assignment[subject]",
+            value: "Art",
+            label: "Art",
+            icon: subject_icon(:art) %>
       </div>
     </div>
-  </div>
 
-  <!-- Submit Buttons -->
-  <div class="flex justify-end space-x-4">
-    <%= link_to "Cancel", root_path, class: "px-6 py-3 bg-spellbooks-sidebar text-foreground rounded-lg hover:bg-spellbooks-element transition-colors" %>
-    <%= form.submit "Create Assignment", class: "px-6 py-3 bg-spellbooks-element text-foreground rounded-lg hover:bg-spellbooks-element-hover transition-colors" %>
+    <!-- Grade Level -->
+    <div>
+      <%= form.label :grade_level, class: "block text-lg font-medium mb-2" %>
+      <%= render "components/segmented_control/segmented_control",
+          name: "assignment[grade_level]",
+          options: [
+            { label: 'K', value: '0' },
+            { label: '1-2', value: '1,2' },
+            { label: '3-5', value: '3,4,5' },
+            { label: '6-8', value: '6,7,8' },
+            { label: '9-12', value: '9,10,11,12' }
+          ] %>
+    </div>
+
+    <!-- Difficulty -->
+    <div>
+      <%= form.label :difficulty, class: "block text-lg font-medium mb-2" %>
+      <%= render "components/segmented_control/segmented_control",
+          name: "assignment[difficulty]",
+          options: [
+            { label: 'Easy', value: 'Easy', checked: true },
+            { label: 'Medium', value: 'Medium' },
+            { label: 'Hard', value: 'Hard' },
+            { label: 'Advanced', value: 'Advanced' }
+          ] %>
+    </div>
+
+    <!-- Number of Questions -->
+    <div>
+      <%= form.label :number_of_questions, class: "block text-lg font-medium mb-2" %>
+      <%= form.number_field :number_of_questions,
+          in: 1..100,
+          class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element",
+          placeholder: "Enter number of questions" %>
+    </div>
+
+    <!-- Interests -->
+    <div data-controller="interests">
+      <%= form.label :interests, class: "block text-lg font-medium mb-2" %>
+      <div class="flex flex-wrap gap-2 mb-2" data-interests-target="tags"></div>
+      <div class="flex">
+        <%= form.text_field :interests, 
+            class: "hidden",
+            data: { interests_target: "field" } %>
+        <input type="text"
+               data-interests-target="input"
+               data-action="keydown->interests#add"
+               class="flex-grow p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element"
+               placeholder="Add interests (press Enter to add)">
+      </div>
+      <div class="mt-2">
+        <p class="text-sm font-medium mb-1">Suggested interests:</p>
+        <div class="flex flex-wrap gap-2">
+          <% ['Industrial Revolution', 'Technology', 'Social Change', 'Economics'].each do |interest| %>
+            <button type="button" 
+                    data-action="click->interests#addSuggested"
+                    class="px-3 py-1 bg-spellbooks-sidebar text-foreground rounded-full text-sm hover:bg-spellbooks-element transition-colors">
+              <%= interest %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Buttons -->
+    <div class="flex justify-end space-x-4">
+      <%= transparent_button "Cancel", href: root_path, data: { turbo_frame: "_top" } %>
+      <%= primary_button "Create Assignment", type: "submit" %>
+    </div>
   </div>
 <% end %>

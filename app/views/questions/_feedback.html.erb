@@ -1,4 +1,8 @@
+<%# frozen_string_literal: true %>
+
 <div id="<%= dom_id(question, :feedback) %>" class="mt-4 p-4 rounded-lg <%= correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
   <p class="font-medium"><%= correct ? "Correct!" : "Incorrect." %></p>
-  <p class="mt-2"><%= explanation %></p>
+  <% if explanation.present? %>
+    <p class="mt-2"><%= explanation %></p>
+  <% end %>
 </div> 

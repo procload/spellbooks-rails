@@ -1,0 +1,130 @@
+<%# 
+  Renders a select field with optional label, hint text, and error message
+  
+  @param form [FormBuilder] The form builder object (optional)
+  @param name [String] The select field name
+  @param collection [Array] Array of options for the select
+  @param value_method [Symbol] Method to call on collection objects for option values (optional)
+  @param text_method [Symbol] Method to call on collection objects for option text (optional)
+  @param label [String] Label text (optional)
+  @param hint [String] Help text shown below the select (optional)
+  @param error [String] Error message to display (optional)
+  @param required [Boolean] Whether the field is required (default: false)
+  @param disabled [Boolean] Whether the field is disabled (default: false)
+  @param include_blank [String/Boolean] Adds a blank option with given text, or true for default blank (optional)
+  @param prompt [String] Adds a prompt option with given text (optional)
+  All other HTML select attributes are accepted and passed through
+%>
+
+<% content_for :styles do %>
+  <style>
+    /* Hide default select arrow in modern browsers */
+    select.custom-select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: none;
+    }
+    
+    /* Hide default arrow in IE10+ */
+    select.custom-select::-ms-expand {
+      display: none;
+    }
+    
+    /* Add padding for the custom arrow */
+    select.custom-select {
+      padding-right: 2.5rem;
+    }
+  </style>
+<% end %>
+
+<%
+  # Generate a unique ID for the select if not provided
+  select_id = local_assigns[:id] || "select_#{SecureRandom.hex(4)}"
+  
+  # Base classes for the select field
+  select_classes = [
+    "block w-full rounded-lg transition-shadow duration-150",
+    "border-gray-300 bg-white",
+    "focus:border-primary focus:ring-2 focus:ring-primary/10 focus:outline-none",
+    "custom-select", # Add custom class for select styling
+    local_assigns[:error].present? ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "",
+    local_assigns[:disabled] ? "bg-gray-50 text-gray-500 cursor-not-allowed" : ""
+  ].compact.join(" ")
+
+  # Extract options that shouldn't be passed to the select
+  select_options = local_assigns.except(
+    :form, :label, :hint, :error, :class, :select_class, :wrapper_class,
+    :collection, :value_method, :text_method
+  )
+%>
+
+<div class="<%= local_assigns[:wrapper_class] %>">
+  <% if local_assigns[:label].present? %>
+    <label for="<%= select_id %>" class="block text-sm font-medium text-gray-700 mb-1">
+      <%= local_assigns[:label] %>
+      <% if local_assigns[:required] %>
+        <span class="text-red-500 ml-1">*</span>
+      <% end %>
+    </label>
+  <% end %>
+
+  <div class="relative">
+    <% if local_assigns[:form].present? %>
+      <% if local_assigns[:collection].present? %>
+        <%= local_assigns[:form].collection_select name,
+            local_assigns[:collection],
+            local_assigns[:value_method] || :id,
+            local_assigns[:text_method] || :name,
+            select_options.merge(
+              id: select_id,
+              class: [select_classes, local_assigns[:select_class]].compact.join(" ")
+            )
+        %>
+      <% else %>
+        <%= local_assigns[:form].select name,
+            options_for_select(local_assigns[:options] || []),
+            select_options.merge(
+              id: select_id,
+              class: [select_classes, local_assigns[:select_class]].compact.join(" ")
+            )
+        %>
+      <% end %>
+    <% else %>
+      <% if local_assigns[:collection].present? %>
+        <%= collection_select_tag name,
+            local_assigns[:collection],
+            local_assigns[:value_method] || :id,
+            local_assigns[:text_method] || :name,
+            select_options.merge(
+              id: select_id,
+              class: [select_classes, local_assigns[:select_class]].compact.join(" ")
+            )
+        %>
+      <% else %>
+        <%= select_tag name,
+            options_for_select(local_assigns[:options] || []),
+            select_options.merge(
+              id: select_id,
+              class: [select_classes, local_assigns[:select_class]].compact.join(" ")
+            )
+        %>
+      <% end %>
+    <% end %>
+
+    <%# Custom arrow icon %>
+    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+      </svg>
+    </div>
+  </div>
+
+  <% if local_assigns[:hint].present? && !local_assigns[:error].present? %>
+    <p class="mt-1 text-sm text-gray-500"><%= local_assigns[:hint] %></p>
+  <% end %>
+
+  <% if local_assigns[:error].present? %>
+    <p class="mt-1 text-sm text-red-500"><%= local_assigns[:error] %></p>
+  <% end %>
+</div> 

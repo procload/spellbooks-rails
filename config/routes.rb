@@ -1,6 +1,9 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  # Components preview (development only)
+  get 'components', to: 'components#index'
+  
   # User registration and management
   resources :users, only: [:new, :create, :edit, :update] do
     collection do

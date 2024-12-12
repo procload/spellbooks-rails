@@ -7,22 +7,18 @@
           <%= form_with url: check_answer_assignment_question_path(@assignment, question),
                       method: :post,
                       data: { 
-                        question_submission_target: "form"
+                        question_submission_target: "form",
+                        turbo: true
                       } do |f| %>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <% question.answers.each do |answer| %>
-                <button 
-                  type="submit"
-                  name="answer"
-                  value="<%= answer.text %>"
-                  data-question-submission-target="answerButton"
-                  data-action="click->question-submission#selectAnswer"
-                  class="w-full bg-white border-2 border-gray-200
-                         text-left p-4 rounded-lg transition-all duration-200
-                         hover:border-blue-400 hover:bg-blue-50
-                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  <%= answer.text %>
-                </button>
+              <% question.answers.each_with_index do |answer, index| %>
+                <%= render "components/answer_choice/answer_choice",
+                    letter: ('A'..'Z').to_a[index],
+                    text: answer.text,
+                    selected: @student_response&.answer_text == answer.text,
+                    name: "answer",
+                    value: answer.text,
+                    disabled: false %>
               <% end %>
             </div>
 
@@ -30,36 +26,42 @@
               <%= render "questions/spinner" %>
             </div>
 
-            <div id="<%= dom_id(question, :feedback) %>">
+            <%= turbo_frame_tag dom_id(question, :feedback) do %>
               <% if @student_response %>
                 <%= render "questions/feedback", 
                     question: question,
                     correct: @student_response.correct,
                     explanation: question.explanation %>
               <% end %>
-            </div>
+            <% end %>
           <% end %>
         <% else %>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <% question.answers.each do |answer| %>
-              <div class="<%= answer.is_correct ? 'bg-success/20' : 'bg-secondary' %> text-left p-4 rounded-lg">
-                <%= answer.text %>
-              </div>
+            <% question.answers.each_with_index do |answer, index| %>
+              <%= render "components/answer_choice/answer_choice",
+                  letter: ('A'..'Z').to_a[index],
+                  text: answer.text,
+                  selected: answer.is_correct,
+                  name: "answer_#{question.id}",
+                  value: answer.text,
+                  disabled: true %>
             <% end %>
           </div>
 
           <% if Current.user.teacher? %>
             <div class="mt-4 flex gap-4">
-              <%= link_to "Edit",
-                  edit_assignment_question_path(@assignment, question),
+              <%= secondary_button "Edit",
+                  href: edit_assignment_question_path(@assignment, question),
                   data: { turbo_frame: dom_id(question) },
-                  class: "text-warning hover:text-warning/90" %>
+                  size: :small %>
                   
-              <%= button_to "Regenerate",
-                  regenerate_assignment_question_path(@assignment, question),
-                  method: :post,
-                  params: { question_counter: question_counter },
-                  class: "text-info hover:text-info/90" %>
+              <%= primary_button "Regenerate",
+                  data: { 
+                    turbo_method: :post,
+                    question_counter: question_counter 
+                  },
+                  href: regenerate_assignment_question_path(@assignment, question),
+                  size: :small %>
             </div>
           <% end %>
         <% end %>

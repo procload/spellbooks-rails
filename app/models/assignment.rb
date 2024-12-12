@@ -167,6 +167,15 @@ class Assignment < ApplicationRecord
     end
   end
 
+  def grade_level=(value)
+    if value.include?(',')
+      # For segmented control multi-grade selections
+      super(value.split(',').first)
+    else
+      super(value)
+    end
+  end
+
   private
 
   def image_attached?
