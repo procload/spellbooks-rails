@@ -1,0 +1,36 @@
+<%# Interests form with typeahead %>
+<div data-controller="interests">
+  <%# Hidden field to store selected interests %>
+  <%= form.text_field :interests, 
+      class: "hidden",
+      data: { interests_target: "field" } %>
+
+  <%# Display selected interests as tags %>
+  <div class="flex flex-wrap gap-2 mb-2" data-interests-target="tags"></div>
+
+  <%# Input field with typeahead %>
+  <div class="relative">
+    <input type="text"
+           data-interests-target="input"
+           data-action="keydown->interests#add input->interests#input"
+           class="w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element"
+           placeholder="Add interests (press Enter to add)">
+
+    <%# Suggestions container %>
+    <div class="mt-2" data-interests-target="suggestions" id="interest-suggestions"></div>
+  </div>
+
+  <%# Initial suggested interests %>
+  <div class="mt-4">
+    <p class="text-sm font-medium mb-2">Popular interests:</p>
+    <div class="flex flex-wrap gap-2">
+      <% InterestsService.all_interests.first(6).each do |interest| %>
+        <button type="button" 
+                data-action="click->interests#addSuggested"
+                class="px-3 py-1 bg-spellbooks-sidebar text-foreground rounded-full text-sm hover:bg-spellbooks-element transition-colors">
+          <%= interest %>
+        </button>
+      <% end %>
+    </div>
+  </div>
+</div> 

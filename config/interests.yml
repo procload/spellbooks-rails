@@ -1,0 +1,52 @@
+interests:
+  science:
+    - Biology
+    - Chemistry
+    - Physics
+    - Environmental Science
+    - Space Exploration
+    - Human Body
+    - Ecosystems
+  history:
+    - Ancient Civilizations
+    - World Wars
+    - American Revolution
+    - Civil Rights Movement
+    - Industrial Revolution
+    - Medieval History
+    - Renaissance
+  mathematics:
+    - Algebra
+    - Geometry
+    - Statistics
+    - Calculus
+    - Number Theory
+    - Problem Solving
+  literature:
+    - Shakespeare
+    - Poetry
+    - Creative Writing
+    - World Literature
+    - Mythology
+    - Fiction
+  technology:
+    - Computer Science
+    - Robotics
+    - Artificial Intelligence
+    - Programming
+    - Digital Media
+    - Internet
+  arts:
+    - Visual Arts
+    - Music
+    - Theater
+    - Dance
+    - Photography
+    - Design
+  social_studies:
+    - Geography
+    - Economics
+    - Government
+    - Sociology
+    - Current Events
+    - Cultural Studies

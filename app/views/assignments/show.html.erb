@@ -37,31 +37,12 @@
           <h3 class="text-lg font-medium text-gray-900 mb-4">Assign to Students</h3>
           
           <% if @students.any? %>
-            <%= form_with url: assign_students_assignment_path(@assignment), method: :post, class: "space-y-4" do |f| %>
-              <div class="bg-white shadow-sm rounded-lg divide-y divide-gray-200">
-                <div class="p-4">
-                  <fieldset>
-                    <legend class="sr-only">Select students</legend>
-                    <div class="space-y-2">
-                      <% @students.each do |student| %>
-                        <div class="relative flex items-center">
-                          <%= check_box_tag "student_ids[]", 
-                              student.id, 
-                              @assignment.students.include?(student),
-                              id: dom_id(student),
-                              class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
-                          <%= label_tag dom_id(student), class: "ml-3 text-sm font-medium text-gray-700" do %>
-                            <%= student.first_name %> <%= student.last_name %>
-                            <span class="text-gray-500">(<%= student.email_address %>)</span>
-                          <% end %>
-                        </div>
-                      <% end %>
-                    </div>
-                  </fieldset>
-                </div>
-              </div>
+            <%= form_with url: assign_students_assignment_path(@assignment), method: :post do |f| %>
+              <%= render "components/assign_students/student_list",
+                  students: @students,
+                  selected_ids: @assignment.students.pluck(:id) %>
 
-              <div class="flex justify-end">
+              <div class="mt-6 flex justify-end">
                 <%= primary_button "Update Student Assignments", type: "submit" %>
               </div>
             <% end %>

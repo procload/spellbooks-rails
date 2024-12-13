@@ -63,10 +63,18 @@
           name: "assignment[grade_level]",
           options: [
             { label: 'K', value: '0' },
-            { label: '1-2', value: '1,2' },
-            { label: '3-5', value: '3,4,5' },
-            { label: '6-8', value: '6,7,8' },
-            { label: '9-12', value: '9,10,11,12' }
+            { label: '1st', value: '1' },
+            { label: '2nd', value: '2' },
+            { label: '3rd', value: '3' },
+            { label: '4th', value: '4' },
+            { label: '5th', value: '5' },
+            { label: '6th', value: '6' },
+            { label: '7th', value: '7' },
+            { label: '8th', value: '8' },
+            { label: '9th', value: '9' },
+            { label: '10th', value: '10' },
+            { label: '11th', value: '11' },
+            { label: '12th', value: '12' }
           ] %>
     </div>
 
@@ -93,31 +101,9 @@
     </div>
 
     <!-- Interests -->
-    <div data-controller="interests">
+    <div>
       <%= form.label :interests, class: "block text-lg font-medium mb-2" %>
-      <div class="flex flex-wrap gap-2 mb-2" data-interests-target="tags"></div>
-      <div class="flex">
-        <%= form.text_field :interests, 
-            class: "hidden",
-            data: { interests_target: "field" } %>
-        <input type="text"
-               data-interests-target="input"
-               data-action="keydown->interests#add"
-               class="flex-grow p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element"
-               placeholder="Add interests (press Enter to add)">
-      </div>
-      <div class="mt-2">
-        <p class="text-sm font-medium mb-1">Suggested interests:</p>
-        <div class="flex flex-wrap gap-2">
-          <% ['Industrial Revolution', 'Technology', 'Social Change', 'Economics'].each do |interest| %>
-            <button type="button" 
-                    data-action="click->interests#addSuggested"
-                    class="px-3 py-1 bg-spellbooks-sidebar text-foreground rounded-full text-sm hover:bg-spellbooks-element transition-colors">
-              <%= interest %>
-            </button>
-          <% end %>
-        </div>
-      </div>
+      <%= render "components/interests_form", form: form %>
     </div>
 
     <!-- Submit Buttons -->

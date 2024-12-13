@@ -19,7 +19,7 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
     @assignment = Assignment.create!(
       title: "Test Assignment",
       subject: "Math",
-      grade_level: 5,
+      grade_level: "5",
       difficulty: "Medium",
       number_of_questions: 10,
       interests: "test interests"
@@ -46,7 +46,7 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
         assignment: {
           title: "New Test Assignment",
           subject: "Science",
-          grade_level: 6,
+          grade_level: "6",
           difficulty: "Easy",
           number_of_questions: 5,
           interests: "test interests"
@@ -64,7 +64,7 @@ class AssignmentsControllerTest < ActionDispatch::IntegrationTest
         assignment: {
           title: "New Test Assignment",
           subject: "Science",
-          grade_level: 6,
+          grade_level: "6",
           difficulty: "Easy",
           number_of_questions: 5,
           interests: "test interests"

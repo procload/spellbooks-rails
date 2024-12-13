@@ -1,5 +1,41 @@
 <%# Components Index %>
 <div class="space-y-12">
+  <%# Student List Section %>
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-gray-900">Student List</h2>
+    <div class="p-6 bg-white rounded-lg shadow">
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Student Selection with Search</h3>
+          <%= form_with url: "#", method: :post do |form| %>
+            <%= render "components/assign_students/student_list",
+                students: sample_students,
+                selected_ids: [1, 3] %>
+
+            <div class="mt-6 flex justify-end">
+              <%= primary_button "Assign Students", type: "submit" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# Interests Form Section %>
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-gray-900">Interests Form</h2>
+    <div class="p-6 bg-white rounded-lg shadow">
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Typeahead with Tags</h3>
+          <%= form_with url: "#", method: :post do |form| %>
+            <%= render "components/interests_form", form: form %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <%# Form Fields Section %>
   <section class="space-y-4">
     <h2 class="text-2xl font-bold text-gray-900">Form Fields</h2>

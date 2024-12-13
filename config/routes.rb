@@ -1,6 +1,9 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  # Interest suggestions
+  get 'interests/suggestions', to: 'interests#suggestions'
+
   # Components preview (development only)
   get 'components', to: 'components#index'
   

@@ -1,0 +1,10 @@
+<%# Display suggestions in a flexbox layout %>
+<div class="flex flex-wrap gap-2">
+  <% suggestions.each do |interest| %>
+    <button type="button"
+            data-action="click->interests#addSuggested"
+            class="px-3 py-1 bg-spellbooks-sidebar text-foreground rounded-full text-sm hover:bg-spellbooks-element transition-colors">
+      <%= interest %>
+    </button>
+  <% end %>
+</div> 

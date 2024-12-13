@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :assignment do
-    title { "Test Assignment" }
+    sequence(:title) { |n| "Assignment #{n}" }
     subject { "Math" }
-    grade_level { 5 }
+    grade_level { "5" }
     difficulty { "Medium" }
     number_of_questions { 10 }
     interests { "test interests" }

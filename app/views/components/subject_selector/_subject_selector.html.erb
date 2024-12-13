@@ -5,7 +5,8 @@
            value="<%= local_assigns.fetch(:value, '') %>"
            class="sr-only peer"
            <%= 'checked' if local_assigns[:checked] %>
-           <%= 'disabled' if local_assigns[:disabled] %>>
+           <%= 'disabled' if local_assigns[:disabled] %>
+           <%= local_assigns[:data] ? raw(local_assigns[:data].map { |k, v| "data-#{k.to_s.dasherize}=\"#{v}\"" }.join(' ')) : '' %>>
     
     <div class="flex flex-col items-center p-4 gap-2 rounded-xl border-2 border-gray-200 
                 cursor-pointer transition-colors duration-200
