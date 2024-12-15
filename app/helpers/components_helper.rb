@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module ComponentsHelper
   def sample_students
     [
@@ -63,4 +65,4 @@ module ComponentsHelper
       )
     ]
   end
-end 
+end

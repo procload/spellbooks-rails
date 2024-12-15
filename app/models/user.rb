@@ -8,7 +8,7 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   
   # Define valid roles
-  ROLES = %w[teacher student].freeze
+  ROLES = %w[teacher student admin].freeze
   
   # Validations
   validates :role, inclusion: { in: ROLES }, allow_nil: true
@@ -19,6 +19,10 @@ class User < ApplicationRecord
                           format: { with: URI::MailTo::EMAIL_REGEXP }
   
   # Role checking methods
+  def name
+    "#{first_name} #{last_name}"
+  end
+
   def teacher?
     role == 'teacher'
   end
@@ -27,9 +31,14 @@ class User < ApplicationRecord
     role == 'student'
   end
   
+  def admin?
+    role == 'admin'
+  end
+  
   # Scopes for easily finding teachers and students
   scope :teachers, -> { where(role: 'teacher') }
   scope :students, -> { where(role: 'student') }
+  scope :admins, -> { where(role: 'admin') }
   
   # Get assignments specific to role
   def relevant_assignments
@@ -58,7 +67,7 @@ class User < ApplicationRecord
   belongs_to :teacher, class_name: 'User', optional: true
 
   def can_access_assignment?(assignment)
-    return true if teacher?
+    return true if teacher? || admin?
     assignment_users.exists?(assignment: assignment, role: 'student')
   end
 

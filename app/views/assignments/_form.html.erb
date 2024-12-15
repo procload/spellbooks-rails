@@ -1,4 +1,4 @@
-<%= form_with(model: assignment, class: "bg-white rounded-lg shadow-soft p-6 mb-8 space-y-6") do |form| %>
+<%= form_with(model: assignment, class: "bg-white rounded-lg shadow-soft p-6 mb-8 space-y-6", data: { controller: "random-details" }) do |form| %>
   <% if assignment.errors.any? %>
     <div class="bg-destructive/10 text-destructive px-3 py-2 font-medium rounded-lg">
       <h2><%= pluralize(assignment.errors.count, "error") %> prohibited this assignment from being saved:</h2>
@@ -16,7 +16,8 @@
       <%= form.text_field :title,
           class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element",
           required: true,
-          placeholder: "Enter assignment title" %>
+          placeholder: "Enter assignment title",
+          data: { random_details_target: "title" } %>
     </div>
 
     <!-- Subject -->
@@ -97,7 +98,8 @@
       <%= form.number_field :number_of_questions,
           in: 1..100,
           class: "w-full p-3 text-lg border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element",
-          placeholder: "Enter number of questions" %>
+          placeholder: "Enter number of questions",
+          data: { random_details_target: "questions" } %>
     </div>
 
     <!-- Interests -->
@@ -108,6 +110,7 @@
 
     <!-- Submit Buttons -->
     <div class="flex justify-end space-x-4">
+      <%= transparent_button "Fill Random Details", type: "button", data: { action: "click->random-details#fillRandom" } %>
       <%= transparent_button "Cancel", href: root_path, data: { turbo_frame: "_top" } %>
       <%= primary_button "Create Assignment", type: "submit" %>
     </div>

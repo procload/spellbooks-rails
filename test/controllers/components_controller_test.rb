@@ -12,6 +12,7 @@ class ComponentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index when authenticated" do
+    Rails.env.stubs(:development?).returns(true)
     sign_in_as(@user)
     get components_path
     assert_response :success
@@ -20,7 +21,14 @@ class ComponentsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect to login when not authenticated" do
     get components_path
     assert_redirected_to new_session_path
-    assert_equal 'Please sign in to continue.', flash[:notice]
+  end
+
+  test "should redirect to root when not a developer in production" do
+    Rails.env.stubs(:development?).returns(false)
+    Rails.env.stubs(:production?).returns(true)
+    sign_in_as(@user)
+    get components_path
+    assert_redirected_to root_path
   end
 
   private
