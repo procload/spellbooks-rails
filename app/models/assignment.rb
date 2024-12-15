@@ -31,6 +31,14 @@ class Assignment < ApplicationRecord
   validates :status, presence: true, 
                     inclusion: { in: %w[pending in_progress completed] }
 
+  def processing?
+    status == 'in_progress'
+  end
+
+  def student_ids
+    students.pluck(:id)
+  end
+
   def attach_image_from_url(url)
     require 'open-uri'
     begin

@@ -28,24 +28,70 @@
 
       <!-- Questions -->
       <div class="space-y-8">
-        <%= render partial: "questions/question", collection: @questions, as: :question %>
+        <% @questions.each_with_index do |question, index| %>
+          <% if Current.user.student? %>
+            <% assignment_user = @assignment.assignment_users.find_by(user: Current.user, role: 'student') %>
+            <% student_answer = assignment_user&.student_answers&.find_by(question: question) %>
+            <%= render "questions/question", question: question, question_counter: index, student_answer: student_answer %>
+          <% else %>
+            <%= render "questions/question", question: question, question_counter: index %>
+          <% end %>
+        <% end %>
       </div>
 
       <% if Current.user.teacher? && @assignment.teachers.include?(Current.user) %>
         <!-- Student Assignment Section -->
         <div class="mt-12 border-t pt-8">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Assign to Students</h3>
-          
           <% if @students.any? %>
-            <%= form_with url: assign_students_assignment_path(@assignment), method: :post do |f| %>
-              <%= render "components/assign_students/student_list",
-                  students: @students,
-                  selected_ids: @assignment.students.pluck(:id) %>
+            <%# Flash messages %>
+            <div id="flash_messages">
+              <%= render "shared/flash" %>
+            </div>
 
-              <div class="mt-6 flex justify-end">
-                <%= primary_button "Update Student Assignments", type: "submit" %>
+            <%= turbo_frame_tag "assignment_form" do %>
+              <div class="space-y-6">
+                <div class="bg-white shadow rounded-lg p-6">
+                  <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-medium text-gray-900">Student Assignments</h2>
+                    <% if @assignment.processing? %>
+                      <div class="flex items-center gap-2">
+                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                        <span class="text-sm text-gray-500">Processing...</span>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <%= form_with(url: assign_students_assignment_path(@assignment), 
+                               method: :post,
+                               class: "space-y-6",
+                               data: { 
+                                 controller: "student-selection",
+                                 student_selection_processing_value: @assignment.processing?,
+                                 action: "submit->student-selection#submitForm"
+                               }) do |f| %>
+                    <div class="space-y-6">
+                      <div id="student_list_container" class="bg-white rounded-lg">
+                        <%= render "components/assign_students/student_list",
+                                students: Current.user.students,
+                                selected_ids: @assignment.student_ids %>
+                      </div>
+
+                      <div id="currently_assigned_students" class="bg-gray-50 rounded-lg p-4">
+                        <%= render "assignments/currently_assigned_students" %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+
+                <div class="flex gap-4">
+                  <%= secondary_button "Edit", href: edit_assignment_path(@assignment) %>
+                  <%= negative_button "Delete", 
+                      data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this assignment?" },
+                      href: assignment_path(@assignment) %>
+                </div>
               </div>
             <% end %>
+
           <% else %>
             <div class="text-center py-6 bg-gray-50 rounded-lg">
               <p class="text-gray-500">You haven't added any students yet.</p>
@@ -53,45 +99,9 @@
             </div>
           <% end %>
 
-          <!-- Assigned Students List -->
-          <div class="mt-8">
-            <h4 class="text-sm font-medium text-gray-500 mb-4">Currently Assigned Students</h4>
-            <% if @assignment.students.distinct.any? %>
-              <div class="bg-gray-50 rounded-lg divide-y divide-gray-200">
-                <% @assignment.students.distinct.each do |student| %>
-                  <div class="p-4 flex items-center justify-between">
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">
-                        <%= student.first_name %> <%= student.last_name %>
-                      </p>
-                      <p class="text-sm text-gray-500"><%= student.email_address %></p>
-                    </div>
-                    <div class="text-sm text-gray-500">
-                      <% progress = @assignment.student_progress(student) %>
-                      <% if progress %>
-                        <p>Status: <%= progress[:status].humanize %></p>
-                        <p>Progress: <%= progress[:answered_questions] %>/<%= progress[:total_questions] %> questions</p>
-                        <p>Correct: <%= progress[:correct_answers] %>/<%= progress[:answered_questions] if progress[:answered_questions] > 0 %></p>
-                      <% else %>
-                        <p>Status: Not started</p>
-                      <% end %>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            <% else %>
-              <p class="text-sm text-gray-500">No students are currently assigned to this assignment.</p>
-            <% end %>
-          </div>
+          <% end %>
         </div>
-
-        <div class="mt-8 flex gap-4">
-          <%= secondary_button "Edit", href: edit_assignment_path(@assignment) %>
-          <%= negative_button "Delete", 
-              data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this assignment?" },
-              href: assignment_path(@assignment) %>
-        </div>
-      <% end %>
+      </div>
     </div>
   </main>
 </div>

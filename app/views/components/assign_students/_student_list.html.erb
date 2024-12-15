@@ -1,139 +1,88 @@
 <%# Student assignment list with search and selection %>
-<div class="relative space-y-2" data-controller="student-selection">
-  <%# Search input %>
-  <div class="w-full">
-    <input type="text"
-           class="w-full px-4 py-2 text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element"
-           placeholder="Search students..."
-           data-student-selection-target="search"
-           data-action="input->student-selection#filter focus->student-selection#showList">
-  </div>
-
-  <%# Selection header %>
+<%# Student list component %>
+<div id="student_list" class="space-y-4">
+  <%# Search and selection header %>
   <div class="flex items-center justify-between">
-    <label class="flex items-center">
-      <input type="checkbox"
-             class="h-4 w-4 text-primary border-gray-300 rounded"
-             data-student-selection-target="selectAll"
-             data-action="change->student-selection#toggleAll">
-      <span class="ml-2 text-sm text-gray-600">Select All</span>
-    </label>
-    <div class="flex items-center gap-2">
-      <button type="button"
-              class="text-sm text-gray-600 hover:text-gray-900"
-              data-student-selection-target="counter"
-              data-action="click->student-selection#toggleList">
-        0 students selected
-      </button>
+    <div class="relative flex-1 max-w-sm">
+      <input type="text"
+             class="w-full px-4 py-2 text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spellbooks-element"
+             placeholder="Search students..."
+             data-student-selection-target="search"
+             data-action="input->student-selection#filter">
+    </div>
+    <div class="flex items-center gap-4">
+      <label class="flex items-center gap-2">
+        <input type="checkbox"
+               class="h-4 w-4 text-primary border-gray-300 rounded"
+               data-student-selection-target="selectAll"
+               data-action="change->student-selection#toggleAll"
+               <%= 'disabled' if @assignment.processing? %>>
+        <span class="text-sm text-gray-600">Select All</span>
+      </label>
       <button type="button"
               class="text-sm text-red-600 hover:text-red-700 hidden"
               data-student-selection-target="clearButton"
               data-action="click->student-selection#clearSelection">
         Clear selection
       </button>
+      <span class="text-sm text-gray-500" data-student-selection-target="counter">
+        0 students selected
+      </span>
     </div>
   </div>
 
-  <%# Student list dropdown %>
-  <div class="absolute left-0 right-0 top-[calc(100%+0.5rem)] bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50 overflow-hidden"
-       data-student-selection-target="dropdown">
-    <div class="divide-y divide-gray-200" data-student-selection-target="list">
-      <% students.each do |student| %>
-        <div class="group transition-colors"
-             data-student-selection-target="student"
-             data-controller="disclosure">
-          <div class="flex items-center hover:bg-gray-50 bg-white data-[checked=true]:bg-blue-50">
-            <%# Make the entire row (except chevron) clickable %>
-            <label class="flex items-center flex-1 px-4 py-4 cursor-pointer">
-              <%= check_box_tag "student_ids[]",
-                  student.id,
-                  selected_ids&.include?(student.id),
-                  id: "student_#{student.id}",
-                  class: "h-4 w-4 text-primary border-gray-300 rounded",
-                  data: {
-                    action: "change->student-selection#updateSelection",
-                    student_selection_target: "checkbox"
-                  } %>
-              <span class="ml-3 flex-1">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-gray-900">
-                      <%= student.first_name %> <%= student.last_name %>
-                    </span>
-                    <span class="text-sm text-gray-500">
-                      <%= student.email_address %>
-                    </span>
-                  </div>
-                  <div class="text-sm text-gray-500">
-                    <span><%= pluralize(student.assignments.count, 'assignment') %></span>
-                  </div>
+  <%# Student list %>
+  <div class="divide-y divide-gray-100" data-student-selection-target="list">
+    <% students.each do |student| %>
+      <div class="flex items-center justify-between py-3 px-4 hover:bg-gray-50 cursor-pointer"
+           data-student-selection-target="student"
+           data-action="click->student-selection#toggleStudent">
+        <div class="flex items-center gap-4 flex-1">
+          <%= check_box_tag "student_ids[]",
+              student.id,
+              selected_ids&.include?(student.id),
+              id: "student_#{student.id}",
+              class: "h-4 w-4 text-primary border-gray-300 rounded",
+              disabled: @assignment.processing?,
+              data: {
+                action: "change->student-selection#updateSelectedCount change->student-selection#submitForm click->student-selection#stopPropagation",
+                student_selection_target: "checkbox"
+              } %>
+          <div class="flex items-center justify-between flex-1">
+            <div>
+              <p class="font-medium text-gray-900"><%= student.name %></p>
+              <p class="text-sm text-gray-500"><%= student.email_address %></p>
+            </div>
+            <div class="text-right space-y-1">
+              <% progress = @assignment.student_progress(student) %>
+              <% if progress %>
+                <div class="flex items-center gap-2 justify-end">
+                  <% status_color = case progress[:status]
+                    when 'completed' then 'bg-green-100 text-green-800'
+                    when 'in_progress' then 'bg-blue-100 text-blue-800'
+                    else 'bg-gray-100 text-gray-800'
+                    end %>
+                  <span class="text-sm px-2 py-1 rounded-full <%= status_color %>">
+                    <%= progress[:status].titleize %>
+                  </span>
                 </div>
-              </span>
-            </label>
-            <%# Keep chevron separate from clickable area %>
-            <button type="button"
-                    class="px-4 py-2 text-gray-400 hover:text-gray-600"
-                    data-disclosure-target="trigger"
-                    data-action="click->disclosure#toggle">
-              <svg class="w-5 h-5 transform transition-transform rotate-0" 
-                   data-disclosure-target="icon"
-                   fill="none" 
-                   stroke="currentColor" 
-                   viewBox="0 0 24 24">
-                <path stroke-linecap="round" 
-                      stroke-linejoin="round" 
-                      stroke-width="2" 
-                      d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-
-          <%# Expanded details %>
-          <div class="hidden px-4 py-3 bg-gray-50 border-t border-gray-100"
-               data-disclosure-target="content">
-            <div class="space-y-4">
-              <div class="text-sm">
-                <h4 class="font-medium text-gray-900 mb-2">Current Assignments</h4>
-                <% if student.assignments.any? %>
-                  <div class="space-y-2">
-                    <% student.assignments.each do |assignment| %>
-                      <div class="flex items-center justify-between group/assignment">
-                        <%= link_to assignment_path(assignment), class: "text-gray-700 hover:text-primary" do %>
-                          <div class="flex items-center gap-1">
-                            <span><%= assignment.title %></span>
-                            <svg class="w-4 h-4 text-gray-400 group-hover/assignment:text-primary" viewBox="0 0 20 20" fill="currentColor">
-                              <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clip-rule="evenodd" />
-                              <path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z" clip-rule="evenodd" />
-                            </svg>
-                          </div>
-                        <% end %>
-                        <% progress = assignment.student_progress(student) %>
-                        <% if progress %>
-                          <div class="flex items-center gap-4">
-                            <span class="text-gray-500">
-                              <%= progress[:answered_questions] %>/<%= progress[:total_questions] %> questions
-                            </span>
-                            <span class="px-2 py-1 text-xs rounded
-                              <%= progress[:status] == 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
-                              <%= progress[:status].humanize %>
-                            </span>
-                          </div>
-                        <% else %>
-                          <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">
-                            Not started
-                          </span>
-                        <% end %>
-                      </div>
-                    <% end %>
+                <div class="flex items-center gap-2">
+                  <div class="w-24 bg-gray-200 rounded-full h-2">
+                    <% percent = (progress[:answered_questions].to_f / progress[:total_questions] * 100).round %>
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: <%= percent %>%"></div>
                   </div>
-                <% else %>
-                  <p class="text-gray-500">No assignments yet</p>
-                <% end %>
-              </div>
+                  <p class="text-sm text-gray-600 whitespace-nowrap">
+                    <%= progress[:answered_questions] %>/<%= progress[:total_questions] %> questions
+                  </p>
+                </div>
+                <p class="text-xs text-gray-500">
+                  <%= progress[:correct_answers] %> correct
+                </p>
+              <% end %>
             </div>
           </div>
         </div>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
   </div>
-</div> 
+</div>

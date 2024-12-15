@@ -11,11 +11,12 @@
       <%= render "questions/answer_options", 
           question: question, 
           form: f, 
-          student_response: student_response %>
+          student_answer: student_answer %>
       
       <div class="mt-4 flex items-center gap-2">
         <%= primary_button "Submit Answer",
             type: "submit",
+            disabled: student_answer.present?,
             data: { "question-submission-target": "submitButton" } %>
         
         <%= render "questions/spinner" %>
@@ -25,8 +26,8 @@
     <%= turbo_frame_tag dom_id(question, :feedback) do %>
       <%= render "questions/feedback", 
           question: question,
-          correct: student_response&.correct,
-          explanation: question.explanation if student_response %>
+          correct: student_answer&.correct,
+          explanation: question.explanation if student_answer %>
     <% end %>
   </div>
-<% end %> 
+<% end %>

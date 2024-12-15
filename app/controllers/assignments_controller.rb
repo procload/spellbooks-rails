@@ -77,10 +77,37 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     student_ids = params[:student_ids] || []
     
-    if @assignment.assign_to_students(student_ids, Current.user)
-      redirect_to @assignment, notice: 'Student assignments have been updated.'
-    else
-      redirect_to @assignment, alert: 'There was an error updating student assignments.'
+    success = @assignment.assign_to_students(student_ids, Current.user)
+    
+    respond_to do |format|
+      format.turbo_stream do
+        flash.now[:notice] = 'Student assignments have been updated.' if success
+        flash.now[:alert] = 'There was an error updating student assignments.' unless success
+        
+        render turbo_stream: [
+          turbo_stream.replace("student_list",
+            partial: "components/assign_students/student_list",
+            locals: { 
+              students: Current.user.students,
+              selected_ids: @assignment.student_ids
+            }
+          ),
+          turbo_stream.replace("currently_assigned_students",
+            partial: "assignments/currently_assigned_students"
+          ),
+          turbo_stream.update("flash_messages",
+            partial: "shared/flash"
+          )
+        ]
+      end
+      
+      format.html do
+        if success
+          redirect_to @assignment, notice: 'Student assignments have been updated.'
+        else
+          redirect_to @assignment, alert: 'There was an error updating student assignments.'
+        end
+      end
     end
   end
 

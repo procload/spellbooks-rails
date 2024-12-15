@@ -1,11 +1,31 @@
-<% question.answers.each do |answer| %>
-  <div class="relative">
-    <%= form.radio_button :answer, answer.text,
-        id: "answer_#{question.id}_#{answer.id}",
-        class: "absolute w-full h-full opacity-0 cursor-pointer peer",
-        checked: student_response&.answer_text == answer.text %>
-    <%= form.label "answer_#{answer.text}".parameterize,
-        answer.text,
-        class: answer_label_classes(answer) %>
-  </div>
-<% end %> 
+<%# Answer options %>
+<div class="space-y-2">
+  <% question.answers.each do |answer| %>
+    <div class="flex items-center">
+      <label class="flex items-center w-full p-3 border rounded-lg cursor-pointer hover:bg-gray-50
+                  <%= 'bg-green-50 border-green-200' if student_answer&.correct && student_answer&.answer == answer.text %>
+                  <%= 'bg-red-50 border-red-200' if student_answer && !student_answer.correct && student_answer&.answer == answer.text %>">
+        <%= form.radio_button :answer, 
+            answer.text, 
+            class: "h-4 w-4 text-primary border-gray-300",
+            disabled: student_answer.present?,
+            checked: student_answer&.answer == answer.text %>
+        <span class="ml-3 text-gray-700"><%= answer.text %></span>
+        
+        <% if student_answer&.answer == answer.text %>
+          <span class="ml-auto">
+            <% if student_answer.correct %>
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            <% else %>
+              <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            <% end %>
+          </span>
+        <% end %>
+      </label>
+    </div>
+  <% end %>
+</div>

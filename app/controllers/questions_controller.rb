@@ -22,17 +22,29 @@ class QuestionsController < ApplicationController
     Rails.logger.info "Selected answer: #{selected_answer}"
     Rails.logger.info "Answer is correct: #{is_correct}"
 
-    # Find or create student response record
-    @student_response = StudentResponse.find_or_initialize_by(
-      question: @question,
-      user: Current.user
+    # Find the assignment user record
+    assignment_user = @assignment.assignment_users.find_by(
+      user: Current.user,
+      role: 'student'
+    )
+
+    unless assignment_user
+      Rails.logger.error "No assignment_user found for user #{Current.user.id} on assignment #{@assignment.id}"
+      handle_save_error
+      return
+    end
+
+    # Find or create student answer record
+    @student_answer = StudentAnswer.find_or_initialize_by(
+      assignment_user: assignment_user,
+      question: @question
     )
     
-    @student_response.answer_text = selected_answer
-    @student_response.correct = is_correct
+    @student_answer.answer = selected_answer
+    @student_answer.correct = is_correct
     
-    if @student_response.save
-      Rails.logger.info "Student response saved successfully"
+    if @student_answer.save
+      Rails.logger.info "Student answer saved successfully"
       
       respond_to do |format|
         format.html { redirect_to assignment_path(@assignment) }
@@ -58,7 +70,7 @@ class QuestionsController < ApplicationController
         }
       end
     else
-      Rails.logger.error "Failed to save student response: #{@student_response.errors.full_messages}"
+      Rails.logger.error "Failed to save student answer: #{@student_answer.errors.full_messages}"
       handle_save_error
     end
 
