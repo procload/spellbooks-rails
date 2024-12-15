@@ -30,7 +30,7 @@ class QuestionPromptService
 
   def self.generate_prompt(assignment)
     <<~PROMPT
-      Generate #{assignment.number_of_questions} multiple choice questions about #{assignment.interests}.
+      Generate #{assignment.number_of_questions || 1} multiple choice questions about #{assignment.interests || 'various topics'}.
       Subject: #{assignment.subject || 'General Knowledge'}
       Difficulty: #{assignment.difficulty || 'Medium'}
       Student Interests: #{assignment.interests}
