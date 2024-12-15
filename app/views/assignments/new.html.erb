@@ -1,43 +1,5 @@
 <div class="mx-auto md:w-2/3 w-full">
   <h1 class="font-bold text-4xl">New assignment</h1>
 
-  <div class="mt-4 mb-8">
-    <button onclick="fillRandomValues()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded">
-      Fill with Random Values
-    </button>
-  </div>
-
   <%= render 'form', assignment: @assignment %>
 </div>
-
-<script>
-  function fillRandomValues() {
-    const subjects = ['Math', 'Reading Comprehension', 'History', 'Science', 'Art', 'Physics'];
-    const difficulties = ['Easy', 'Medium', 'Hard'];
-    const interests = [
-      'dinosaurs and space exploration',
-      'music and dance',
-      'robots and technology',
-      'animals and nature',
-      'sports and games',
-      'cooking and food science',
-      'art and creativity',
-      'superheroes and comics',
-      'ocean life and marine biology',
-      'magic and fantasy stories'
-    ];
-
-    document.getElementById('assignment_title').value = 
-      `Learning about ${interests[Math.floor(Math.random() * interests.length)]}`;
-    document.getElementById('assignment_subject').value = 
-      subjects[Math.floor(Math.random() * subjects.length)];
-    document.getElementById('assignment_grade_level').value = 
-      Math.floor(Math.random() * 12);
-    document.getElementById('assignment_difficulty').value = 
-      difficulties[Math.floor(Math.random() * difficulties.length)];
-    document.getElementById('assignment_number_of_questions').value = 
-      Math.floor(Math.random() * 5) + 1;
-    document.getElementById('assignment_interests').value = 
-      interests[Math.floor(Math.random() * interests.length)];
-  }
-</script>

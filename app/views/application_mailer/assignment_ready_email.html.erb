@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Assignment Ready!</h1>
+    <p>
+      Hi <%= @teacher.name %>,
+    </p>
+    <p>
+      Your assignment "<%= @assignment.title %>" has been successfully generated and is now ready for your students.
+    </p>
+    <p>
+      You can view the assignment here: <%= link_to 'View Assignment', assignment_url(@assignment) %>
+    </p>
+    <p>Thanks for using our platform!</p>
+  </body>
+</html>

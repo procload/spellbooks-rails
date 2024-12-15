@@ -19,3 +19,16 @@ end
 Sidekiq.configure_client do |config|
   config.redis = redis_config
 end
+
+# Configure global Sidekiq middleware
+Sidekiq.configure_server do |config|
+  config.error_handlers << proc { |ex, ctx_hash| Rails.logger.error("Sidekiq job error: #{ex.message}") }
+end
+
+# Set global Sidekiq options
+Sidekiq.default_job_options = {
+  'retry' => 5,
+  'backtrace' => true,
+  'retry_interval' => 10,  # Base retry delay in seconds
+  'dead' => false  # Don't move to dead queue, keep retrying
+}

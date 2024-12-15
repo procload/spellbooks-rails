@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Assignment Generation Failed</h1>
+    <p>
+      Hi <%= @teacher.name %>,
+    </p>
+    <p>
+      We encountered an error while generating your assignment "<%= @assignment.title %>".
+    </p>
+    <p>
+      Error details: <%= @error %>
+    </p>
+    <p>
+      You can try again by editing the assignment here: <%= link_to 'Edit Assignment', edit_assignment_url(@assignment) %>
+    </p>
+    <p>
+      If the problem persists, please contact our support team.
+    </p>
+    <p>We apologize for any inconvenience.</p>
+  </body>
+</html>

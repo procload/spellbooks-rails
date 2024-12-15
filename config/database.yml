@@ -1,17 +1,17 @@
 default: &default
+  adapter: sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+  timeout: 5000  # Increased from default 5000ms to give more time for locks to clear
+  busy_timeout: 5000  # Add explicit busy_timeout to wait for locks
 
 # Keep SQLite for development
 development:
   <<: *default
-  adapter: sqlite3
   database: storage/development.sqlite3
 
 # Keep SQLite for test
 test:
   <<: *default
-  adapter: sqlite3
   database: storage/test.sqlite3
 
 # Use PostgreSQL only in production

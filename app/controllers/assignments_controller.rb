@@ -33,29 +33,24 @@ class AssignmentsController < ApplicationController
   end
 
   def create
-    @assignment = Assignment.new(assignment_params)
-    @assignment.status = 'pending' # Set initial status
+    service = AssignmentCreationService.new(assignment_params, Current.user)
+    result = service.execute
 
-    ActiveRecord::Base.transaction do
-      if @assignment.save
-        @assignment.assignment_users.create!(
-          user: Current.user,
-          role: 'creator'
-        )
-        
-        if @assignment.enqueue_processing
-          redirect_to root_path, notice: 'Assignment is being generated...'
-        else
-          redirect_to root_path, alert: 'Assignment could not be processed at this time.'
+    if result.success?
+      redirect_to root_path, notice: 'Assignment is being generated...'
+    else
+      @assignment = result.assignment || Assignment.new
+      if result.errors.is_a?(Hash)
+        result.errors.each do |attribute, messages|
+          Array(messages).each do |message|
+            @assignment.errors.add(attribute, message)
+          end
         end
       else
-        render :new, status: :unprocessable_entity
+        @assignment.errors.add(:base, result.errors)
       end
+      render :new, status: :unprocessable_entity
     end
-  rescue StandardError => e
-    Rails.logger.error "[Assignments] Error creating assignment: #{e.message}"
-    flash.now[:alert] = 'There was an error creating the assignment.'
-    render :new, status: :unprocessable_entity
   end
 
   def edit

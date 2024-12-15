@@ -3,7 +3,10 @@
   <%# Hidden field to store selected interests %>
   <%= form.text_field :interests, 
       class: "hidden",
-      data: { interests_target: "field" } %>
+      data: { 
+        interests_target: "field",
+        random_details_target: "interests"
+      } %>
 
   <%# Display selected interests as tags %>
   <div class="flex flex-wrap gap-2 mb-2" data-interests-target="tags"></div>
@@ -33,4 +36,4 @@
       <% end %>
     </div>
   </div>
-</div> 
+</div>

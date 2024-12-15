@@ -1,6 +1,8 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
+require "mocha/minitest"
+require "minitest/autorun"
 
 class ActiveSupport::TestCase
   include FactoryBot::Syntax::Methods
@@ -10,6 +12,10 @@ class ActiveSupport::TestCase
 
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
+
+  def sign_in_as(user)
+    post session_path, params: { email_address: user.email_address, password: 'password123' }
+  end
 end
 
 class ActionDispatch::IntegrationTest
