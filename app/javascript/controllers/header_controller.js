@@ -4,9 +4,9 @@ export default class extends Controller {
   static targets = ["logo"];
 
   connect() {
-    // Initialize last scroll position
+    // Initialize last scroll position and state
     this.lastScrollTop = 0;
-    this.isCompact = false;
+    this.isHidden = false;
 
     // Bind the scroll handler to maintain correct context
     this.handleScroll = this.handleScroll.bind(this);
@@ -22,14 +22,22 @@ export default class extends Controller {
 
   handleScroll() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollDelta = scrollTop - this.lastScrollTop;
 
-    // Toggle compact mode when scrolling past threshold
-    if (scrollTop > 10 && !this.isCompact) {
-      this.element.classList.add("header-compact");
-      this.isCompact = true;
-    } else if (scrollTop <= 10 && this.isCompact) {
-      this.element.classList.remove("header-compact");
-      this.isCompact = false;
+    // Don't do anything if the scroll amount is too small
+    if (Math.abs(scrollDelta) <= 5) {
+      return;
+    }
+
+    // Hide header when scrolling down, show when scrolling up
+    if (scrollDelta > 0 && !this.isHidden && scrollTop > 100) {
+      // Scrolling down & header is visible & past threshold
+      this.element.classList.add("header-hidden");
+      this.isHidden = true;
+    } else if ((scrollDelta < 0 || scrollTop <= 100) && this.isHidden) {
+      // Scrolling up or at top & header is hidden
+      this.element.classList.remove("header-hidden");
+      this.isHidden = false;
     }
 
     this.lastScrollTop = scrollTop;

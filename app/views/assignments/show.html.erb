@@ -18,10 +18,12 @@
       <!-- Reading Passage -->
       <div data-controller="markdown-editor" 
            data-markdown-editor-update-url-value="<%= update_passage_assignment_path(@assignment) %>"
-           data-action="markdown-editor:success->flash#success markdown-editor:error->flash#error">
-        <div class="mb-6">
-          <div class="flex justify-between items-center mb-2">
-            <h3 class="text-xl font-medium">Reading Passage</h3>
+           data-action="markdown-editor:success->flash#success markdown-editor:error->flash#error"
+           class="reading-passage">
+        
+        <div class="reading-passage-header">
+          <div class="flex justify-between items-center">
+            <h3 class="text-xl font-medium text-gray-900">Reading Passage</h3>
             <% if Current.user.teacher? && @assignment.teachers.include?(Current.user) %>
               <button data-markdown-editor-target="editButton"
                       data-action="click->markdown-editor#toggleEdit"
@@ -35,11 +37,19 @@
               </button>
             <% end %>
           </div>
+        </div>
           
-          <div class="text-gray-700 mb-4">
+        <div class="reading-passage-content">
+          <% if @assignment.image.attached? %>
+            <div class="reading-passage-image" data-markdown-editor-target="imageContainer">
+              <%= image_tag @assignment.image %>
+            </div>
+          <% end %>
+          
+          <div class="reading-passage-text">
             <div data-markdown-editor-target="passage"
                  data-original-content="<%= @assignment.markdown_passage %>"
-                 class="passage-text mb-4">
+                 class="passage-content">
               <%= markdown(@assignment.markdown_passage || @assignment.passage) %>
             </div>
             <textarea data-markdown-editor-target="editor"
@@ -48,28 +58,6 @@
           </div>
         </div>
       </div>
-
-      <% if @assignment.image.attached? %>
-        <div class="inline-block max-w-md mx-auto relative group" 
-             data-controller="image-regeneration"
-             data-image-regeneration-target="container">
-          <%= render "components/loading_overlay", message: "Regenerating image..." %>
-          <%= image_tag @assignment.image, class: "w-full h-auto", data: { image_regeneration_target: "image" } %>
-          <% if Current.user.teacher? %>
-            <%= button_to regenerate_image_assignment_path(@assignment), 
-                method: :post,
-                class: "absolute top-2 right-2 p-2 bg-white/90 hover:bg-white rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity",
-                data: { 
-                  image_regeneration_target: "button",
-                  action: "image-regeneration#regenerate"
-                } do %>
-              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            <% end %>
-          <% end %>
-        </div>
-      <% end %>
 
       <!-- Questions -->
       <div class="space-y-8">

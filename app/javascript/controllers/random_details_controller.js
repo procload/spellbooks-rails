@@ -31,9 +31,8 @@ export default class extends Controller {
     if (subjectInput) subjectInput.click()
 
     // Random grade level (K-12)
-    const gradeLevel = Math.floor(Math.random() * 13)
-    const gradeLevelInput = document.querySelector(`input[name="assignment[grade_level]"][value="${gradeLevel}"]`)
-    if (gradeLevelInput) gradeLevelInput.click()
+    const gradeLevel = Math.floor(Math.random() * 13).toString()
+    this.gradeLevelTarget.value = gradeLevel
 
     // Random difficulty
     const difficulties = ['Easy', 'Medium', 'Hard', 'Advanced']

@@ -2,7 +2,7 @@
 <div class="space-y-2">
   <% question.answers.each do |answer| %>
     <div class="flex items-center">
-      <% if show_correct %>
+      <% if defined?(show_correct) && show_correct %>
         <div class="flex items-center w-full p-3 border rounded-lg <%= answer.is_correct ? 'bg-green-50 border-green-200' : 'bg-gray-50' %>">
           <span class="ml-3 text-gray-700"><%= answer.text %></span>
           <% if answer.is_correct %>
@@ -14,16 +14,13 @@
           <% end %>
         </div>
       <% else %>
-        <label class="flex items-center w-full p-3 border rounded-lg cursor-pointer hover:bg-gray-50
+        <label class="flex items-center w-full p-3 border rounded-lg <%= student_answer ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50' %>
                     <%= 'bg-green-50 border-green-200' if student_answer&.correct && student_answer&.answer == answer.text %>
                     <%= 'bg-red-50 border-red-200' if student_answer && !student_answer.correct && student_answer&.answer == answer.text %>">
-          <%= form.radio_button :answer, 
-              answer.text, 
-              class: "h-4 w-4 text-primary border-gray-300",
-              disabled: student_answer.present?,
-              checked: student_answer&.answer == answer.text %>
-          <span class="ml-3 text-gray-700"><%= answer.text %></span>
-          
+          <%= form.radio_button :answer, answer.text,
+                              disabled: student_answer.present?,
+                              class: "w-4 h-4 text-lochmara-600 border-gray-300 focus:ring-lochmara-600 disabled:opacity-50" %>
+          <span class="ml-3 text-gray-700 <%= 'opacity-50' if student_answer %>"><%= answer.text %></span>
           <% if student_answer&.answer == answer.text %>
             <span class="ml-auto">
               <% if student_answer.correct %>

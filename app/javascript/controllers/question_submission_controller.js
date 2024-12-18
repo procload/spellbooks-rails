@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["spinner", "form"];
+  static targets = ["spinner", "submitButton"];
 
   connect() {
     this.element.addEventListener(
@@ -12,6 +12,15 @@ export default class extends Controller {
       "turbo:submit-end",
       this.submitEnd.bind(this)
     );
+    
+    // Initialize disabled state
+    if (this.hasSubmitButtonTarget) {
+      const form = this.element.closest('form');
+      const hasStudentAnswer = form.querySelector('input[type="radio"]:disabled');
+      if (hasStudentAnswer) {
+        this.submitButtonTarget.disabled = true;
+      }
+    }
   }
 
   disconnect() {
@@ -27,23 +36,29 @@ export default class extends Controller {
 
   submitStart() {
     this.spinnerTarget.classList.remove("hidden");
-
-    // Disable all answer choices during submission
-    this.element
-      .querySelectorAll('[data-controller="answer-choice"]')
-      .forEach((choice) => {
-        choice.dataset.answerChoiceDisabledValue = "true";
-      });
+    if (this.hasSubmitButtonTarget) {
+      this.submitButtonTarget.disabled = true;
+    }
   }
 
   submitEnd() {
     this.spinnerTarget.classList.add("hidden");
-
-    // Re-enable all answer choices after submission
-    this.element
-      .querySelectorAll('[data-controller="answer-choice"]')
-      .forEach((choice) => {
-        choice.dataset.answerChoiceDisabledValue = "false";
-      });
+    
+    // Ensure button stays disabled after submission
+    if (this.hasSubmitButtonTarget) {
+      this.submitButtonTarget.disabled = true;
+      this.submitButtonTarget.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+    
+    // Disable all radio inputs
+    this.element.querySelectorAll('input[type="radio"]').forEach(input => {
+      input.disabled = true;
+    });
+    
+    // Update label styles
+    this.element.querySelectorAll('label').forEach(label => {
+      label.classList.remove('hover:bg-gray-50', 'cursor-pointer');
+      label.classList.add('cursor-not-allowed', 'opacity-75');
+    });
   }
 }

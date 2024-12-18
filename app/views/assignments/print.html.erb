@@ -16,17 +16,11 @@
       <div class="assignment-details">
         <p><strong>Name:</strong> ________________________________</p>
         <p><strong>Date:</strong> ________________________________</p>
-        
-        <div class="metadata-grid">
-          <p><strong>Subject:</strong> <%= @assignment.subject %></p>
-          <p><strong>Grade Level:</strong> <%= @assignment.grade_level %></p>
-          <p><strong>Difficulty:</strong> <%= @assignment.difficulty %></p>
-        </div>
       </div>
     </div>
 
     <% if @assignment.passage.present? %>
-      <div class="assignment-passage">
+      <div class="assignment-passage passage-content">
         <h2>Reading Passage</h2>
         
         <% if @assignment.image.attached? %>

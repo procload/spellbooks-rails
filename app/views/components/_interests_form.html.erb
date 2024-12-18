@@ -4,12 +4,12 @@
   <%= form.text_field :interests, 
       class: "hidden",
       data: { 
-        interests_target: "field",
-        random_details_target: "interests"
+        "interests-target": "field",
+        "random-details-target": "interests"
       } %>
 
   <%# Display selected interests as tags %>
-  <div class="flex flex-wrap gap-2 mb-2" data-interests-target="tags"></div>
+  <div class="flex flex-wrap gap-2 mb-2" data-interests-target="tagsContainer"></div>
 
   <%# Input field with typeahead %>
   <div class="relative">
@@ -27,7 +27,7 @@
   <div class="mt-4">
     <p class="text-sm font-medium mb-2">Popular interests:</p>
     <div class="flex flex-wrap gap-2">
-      <% InterestsService.all_interests.first(6).each do |interest| %>
+      <% InterestsService.random_interests(6).each do |interest| %>
         <button type="button" 
                 data-action="click->interests#addSuggested"
                 class="px-3 py-1 bg-spellbooks-sidebar text-foreground rounded-full text-sm hover:bg-spellbooks-element transition-colors">

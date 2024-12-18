@@ -55,6 +55,7 @@ Rails.application.routes.draw do
       resources :answers, only: [:new, :create, :destroy]
     end
   end
+  get '/interests/random', to: 'interests#random'
 
   # Mount Sidekiq web interface
   mount Sidekiq::Web => '/sidekiq'

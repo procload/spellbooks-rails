@@ -1,52 +1,46 @@
 interests:
-  science:
-    - Biology
-    - Chemistry
-    - Physics
-    - Environmental Science
-    - Space Exploration
-    - Human Body
-    - Ecosystems
-  history:
-    - Ancient Civilizations
-    - World Wars
-    - American Revolution
-    - Civil Rights Movement
-    - Industrial Revolution
-    - Medieval History
-    - Renaissance
-  mathematics:
-    - Algebra
-    - Geometry
-    - Statistics
-    - Calculus
-    - Number Theory
+  creativity:
     - Problem Solving
-  literature:
-    - Shakespeare
-    - Poetry
+    - Critical Thinking
+    - Innovation
+    - Design Thinking
+    - Storytelling
+    - Visual Expression
     - Creative Writing
-    - World Literature
-    - Mythology
-    - Fiction
+  exploration:
+    - Adventure
+    - Discovery
+    - Nature
+    - Space
+    - Ocean
+    - Travel
+    - Exploration
   technology:
-    - Computer Science
+    - Gaming
+    - Digital Creation
+    - Animation
     - Robotics
-    - Artificial Intelligence
-    - Programming
-    - Digital Media
-    - Internet
-  arts:
-    - Visual Arts
+    - Virtual Reality
+    - Social Media
+  lifestyle:
+    - Sports
     - Music
-    - Theater
     - Dance
     - Photography
-    - Design
-  social_studies:
-    - Geography
-    - Economics
-    - Government
-    - Sociology
-    - Current Events
-    - Cultural Studies
+    - Cooking
+    - Fashion
+    - Entertainment
+  personal_growth:
+    - Leadership
+    - Teamwork
+    - Communication
+    - Self Expression
+    - Goal Setting
+    - Personal Development
+  social_impact:
+    - Environment
+    - Community
+    - Social Justice
+    - Sustainability
+    - Cultural Exchange
+    - Global Issues

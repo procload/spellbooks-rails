@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["passage", "editor", "editButton", "saveButton"]
+  static targets = ["passage", "editor", "editButton", "saveButton", "imageContainer"]
   static values = {
     updateUrl: String
   }
@@ -18,6 +18,11 @@ export default class extends Controller {
     this.passageTarget.classList.toggle("hidden")
     this.editButtonTarget.classList.toggle("hidden")
     this.saveButtonTarget.classList.toggle("hidden")
+    
+    // Toggle image visibility
+    if (this.hasImageContainerTarget) {
+      this.imageContainerTarget.classList.toggle("hidden")
+    }
     
     // If we're hiding the editor, also hide SimpleMDE's wrapper
     if (this.editor && this.editorTarget.classList.contains("hidden")) {

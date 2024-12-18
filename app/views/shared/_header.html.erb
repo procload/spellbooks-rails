@@ -1,5 +1,5 @@
 <header data-controller="header" class="bg-white dark:bg-bunker-800 fixed top-0 left-0 right-0 z-10 shadow-header">
-  <nav class="container mx-auto px-5 py-4">
+  <nav class="container mx-auto px-5 py-2">
     <div class="flex items-center justify-between">
       <div class="w-48">
         <!-- Left spacer -->
@@ -7,7 +7,7 @@
       
       <div class="flex items-center justify-center">
         <%= link_to root_path, class: "flex items-center text-primary hover:text-primary/80" do %>
-          <%= render "shared/logo", class: "w-12 h-12" %>
+          <%= render "shared/logo" %>
         <% end %>
       </div>
 

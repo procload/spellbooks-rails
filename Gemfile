@@ -58,3 +58,4 @@ group :test do
   gem 'faker'
   gem 'mocha'
 end
+gem "rails_icons", "~> 1.0"

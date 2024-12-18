@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["input", "tags", "field", "suggestions"];
+  static targets = ["input", "tagsContainer", "field", "suggestions"];
   static values = {
     debounce: { type: Number, default: 300 },
   };
@@ -12,6 +12,9 @@ export default class extends Controller {
       this.fetchSuggestions.bind(this),
       this.debounceValue
     );
+
+    // Listen for changes to the field value
+    this.fieldTarget.addEventListener('change', () => this.updateTags());
   }
 
   add(event) {
@@ -30,10 +33,24 @@ export default class extends Controller {
 
   addSuggested(event) {
     event.preventDefault();
-    const interest = event.currentTarget.textContent.trim();
+    const button = event.currentTarget;
+    const interest = button.textContent.trim();
     this.addInterest(interest);
     this.inputTarget.value = "";
     this.suggestionsTarget.innerHTML = "";
+    
+    // Replace the clicked suggestion with a new one
+    this.replaceSuggestion(button);
+  }
+
+  async replaceSuggestion(button) {
+    const response = await fetch('/interests/random');
+    const data = await response.json();
+    if (data.interest) {
+      button.textContent = data.interest;
+    } else {
+      button.remove();
+    }
   }
 
   remove(event) {
@@ -58,9 +75,16 @@ export default class extends Controller {
     }
   }
 
+  get currentInterests() {
+    return this.fieldTarget.value
+      .split(",")
+      .map((i) => i.trim())
+      .filter((i) => i);
+  }
+
   updateTags() {
     const interests = this.currentInterests;
-    this.tagsTarget.innerHTML = interests
+    this.tagsContainerTarget.innerHTML = interests
       .map(
         (interest) => `
       <span class="bg-spellbooks-sidebar text-foreground px-3 py-1 rounded-full text-sm flex items-center gap-1">
@@ -74,13 +98,6 @@ export default class extends Controller {
     `
       )
       .join("");
-  }
-
-  get currentInterests() {
-    return this.fieldTarget.value
-      .split(",")
-      .map((i) => i.trim())
-      .filter((i) => i);
   }
 
   // Typeahead functionality

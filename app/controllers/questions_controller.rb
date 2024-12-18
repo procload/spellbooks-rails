@@ -29,53 +29,24 @@ class QuestionsController < ApplicationController
     )
 
     unless assignment_user
-      Rails.logger.error "No assignment_user found for user #{Current.user.id} on assignment #{@assignment.id}"
-      handle_save_error
-      return
+      Rails.logger.error "No assignment_user found for user #{Current.user.id} and assignment #{@assignment.id}"
+      return head :unprocessable_entity
     end
 
-    # Find or create student answer record
+    # Create or update the student answer
     @student_answer = StudentAnswer.find_or_initialize_by(
       assignment_user: assignment_user,
       question: @question
     )
-    
+
     @student_answer.answer = selected_answer
     @student_answer.correct = is_correct
-    
-    if @student_answer.save
-      Rails.logger.info "Student answer saved successfully"
-      
-      respond_to do |format|
-        format.html { redirect_to assignment_path(@assignment) }
-        format.json { 
-          render json: {
-            correct: is_correct,
-            explanation: @question.explanation,
-            message: "Answer submitted successfully"
-          }
-        }
-        format.turbo_stream {
-          render turbo_stream: [
-            turbo_stream.replace(
-              dom_id(@question, :feedback),
-              partial: "questions/feedback",
-              locals: { 
-                correct: is_correct, 
-                explanation: @question.explanation,
-                question: @question 
-              }
-            )
-          ]
-        }
-      end
-    else
-      Rails.logger.error "Failed to save student answer: #{@student_answer.errors.full_messages}"
-      handle_save_error
-    end
+    @student_answer.save!
 
-  rescue StandardError => e
-    handle_turbo_stream_error(@question, e, params[:question_counter].to_i)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to assignment_path(@assignment) }
+    end
   end
 
   def edit

@@ -16,8 +16,10 @@
     <% else %>
       <%= form_with url: check_answer_assignment_question_path(@assignment, question),
                   method: :post,
+                  id: dom_id(question, :answer_form),
                   data: { 
-                    controller: "question-submission"
+                    controller: "question-submission",
+                    action: "turbo:submit-end->question-submission#handleSubmit"
                   },
                   class: "space-y-3" do |f| %>
         
@@ -30,7 +32,9 @@
           <%= primary_button "Submit Answer",
               type: "submit",
               disabled: student_answer.present?,
-              data: { "question-submission-target": "submitButton" } %>
+              data: { 
+                question_submission_target: "submitButton"
+              } %>
           
           <%= render "questions/spinner" %>
         </div>

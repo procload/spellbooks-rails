@@ -2,10 +2,10 @@
 .print-page {
   margin: 0;
   padding: 30px;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   font-size: 12pt;
   line-height: 1.6;
-  background: #f0f0f0;
+  background: hsl(220 10% 98%); /* bunker-50 */
   color: #000;
 }
 
@@ -25,9 +25,11 @@
 }
 
 .print-page .assignment-metadata h1 {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   font-size: 24pt;
   margin: 0 0 20px 0;
   font-weight: bold;
+  color: #000;
 }
 
 .print-page .assignment-details {
@@ -71,18 +73,22 @@
 }
 
 .print-page .assignment-passage h2 {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   font-size: 16pt;
   margin: 0 0 15px 0;
   border-bottom: 1px solid #ccc;
   padding-bottom: 8px;
   clear: none;
+  color: #000;
 }
 
 .print-page .assignment-passage p {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   font-size: 12pt;
   line-height: 1.8;
   margin-bottom: 1em;
   text-align: justify;
+  color: #000;
 }
 
 /* Clear float after the passage */
@@ -98,37 +104,41 @@
 }
 
 .print-page .question {
-  margin: 35px 0;
+  margin: 35px 0 40px 0;
   page-break-inside: avoid;
 }
 
 .print-page .question-content {
   font-size: 13pt;
-  margin-bottom: 20px;
+  font-weight: 500;
   line-height: 1.5;
+  margin-bottom: 20px;
 }
 
 .print-page .question-content strong {
   font-size: 14pt;
-  margin-right: 12px;
+  margin-right: 8px;
   font-weight: normal;
 }
 
 /* Answer options */
 .print-page .answers {
-  margin-left: 40px;
+  margin: 0 0 30px 32px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px 40px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
 .print-page .answer-option {
-  margin: 0;
-  padding: 8px 0 8px 35px;
-  font-size: 12pt;
   position: relative;
-  border: none;
-  border-radius: 0;
+  padding-left: 35px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  font-size: 12pt;
+  font-weight: normal;
 }
 
 .print-page .answer-option::before {
@@ -137,10 +147,19 @@
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
-  border: 2px solid #888;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #000;
   border-radius: 50%;
+  background-color: white;
+}
+
+/* Print-specific styles for answer choices */
+@media print {
+  .print-page .answer-option::before {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
 }
 
 /* Answer key */
@@ -153,33 +172,40 @@
 }
 
 .print-page .answer-key h2 {
-  font-size: 18pt;
-  margin: 0 0 25px 0;
-  text-align: center;
-  text-transform: uppercase;
+  font-size: 16pt;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .print-page .answer-item {
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 12pt;
+  line-height: 1.4;
+}
+
+.print-page .answer-item strong {
+  margin-right: 8px;
+  font-weight: 500;
 }
 
 .print-page .answer-details {
-  margin-left: 25px;
+  flex: 1;
 }
 
 .print-page .correct-answer {
-  font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .print-page .explanation {
-  font-style: italic;
+  margin-top: 4px;
+  font-size: 11pt;
   color: #444;
-  margin-top: 8px;
+}
+
+.print-page .explanation strong {
+  color: #000;
 }
 
 /* Utility classes */
@@ -221,4 +247,3 @@
     print-color-adjust: exact !important;
   }
 }
- 

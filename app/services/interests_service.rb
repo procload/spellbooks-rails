@@ -16,6 +16,10 @@ class InterestsService
       end
     end
 
+    def random_interests(count)
+      all_interests.sample(count)
+    end
+
     def categorized_interests
       @categorized_interests ||= begin
         interests_hash = YAML.load_file(Rails.root.join('config', 'interests.yml'))
@@ -23,4 +27,4 @@ class InterestsService
       end
     end
   end
-end 
+end

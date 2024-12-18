@@ -26,14 +26,45 @@ class ProcessAssignmentJob < ApplicationJob
   
   def generate_questions
     provider = LLM::Factory.create_provider
+    prompt_filename = PromptMapperService.get_prompt_filename(@assignment.subject)
+    prompt_path = Rails.root.join('lib', 'prompts', prompt_filename)
+    
+    system_prompt = File.read(prompt_path)
+    generated_prompt = ERB.new(system_prompt).result_with_hash(
+      assignment: @assignment
+    )
+    
+    puts "\n================================================"
+    puts "=== LLM Prompt for Assignment #{@assignment.id} ==="
+    puts "=== Using Prompt Template: #{prompt_filename} ==="
+    puts "=== System Prompt ==="
+    puts system_prompt
+    puts "=== Generated Prompt ==="
+    puts generated_prompt
+    puts "================================================\n"
+    
+    # Add number of questions constraint to the schema
+    schema = ASSIGNMENT_SCHEMA.deep_dup
+    
     provider.chat(
-      messages: [QuestionPromptService.generate_prompt(@assignment)],
-      system_prompt: QuestionPromptService.system_prompt,
-      response_format: { type: "json_object" }
+      messages: [generated_prompt],
+      system_prompt: system_prompt,
+      response_format: {
+            type: "json_schema",
+            json_schema: {
+              "strict": true,
+              "name": "Assignment",
+              "description": "Generates an educational assignment",
+              "schema": ::ASSIGNMENT_SCHEMA,
+            }	
+        }	
     )
   end
   
   def create_questions(data)
+    # Parse the data if it's a string
+    data = JSON.parse(data, symbolize_names: true) if data.is_a?(String)
+    
     @assignment.update!(passage: data[:passage]) if data[:passage].present?
     
     data[:questions].each do |q|
@@ -54,11 +85,6 @@ class ProcessAssignmentJob < ApplicationJob
         )
       end
       
-      # Save everything at once
-      question.save!
-      
-      # Now validate with answers
-      question.skip_answer_validations = false
       question.save!
     end
   end

@@ -1,39 +1,38 @@
-Create an English language arts assignment with the following parameters:
-Title: "<%= assignment.title %>"
-Grade Level: "<%= assignment.grade_level %>"
-Difficulty: "<%= assignment.difficulty %>"
+You are an expert teacher and homework assignment generator specializing in creating high-quality, engaging English language arts assignments. Your task is to generate a reading passage and multiple-choice questions based on the following parameters:
 
-Generate content that:
-- Provides an age-appropriate reading passage
-- Contains "<%= assignment.number_of_questions %>" questions
-- Incorporates themes related to "<%= assignment.interests %>"
-- Tests reading comprehension and critical thinking
-- Includes detailed explanations for correct answers
-- Uses vocabulary appropriate for "<%= assignment.grade_level %>" grade level
+Title: <%= assignment.title %>
+Grade Level: <%= assignment.grade_level %>
+Difficulty: <%= assignment.difficulty %>
+Number of Questions: <%= assignment.number_of_questions %>
+Interests: <%= assignment.interests %>
 
-You are an expert in creating reading comprehension exercises. Your task is to generate engaging reading passages followed by comprehension questions that are both educational and entertaining, tailored to specific difficulty levels and grade levels.
+Please follow these steps to create the assignment:
 
-You will be provided with the following input variables:
-Title: "<%= assignment.title %>"
-Grade Level: "<%= assignment.grade_level %>"
-Difficulty: "<%= assignment.difficulty %>"
-Interests: "<%= assignment.interests %>"
-Number of Questions: "<%= assignment.number_of_questions %>"
+1. Generate the reading passage:
+   - Consider the grade level and difficulty specified.
+   - Incorporate themes related to the given interests.
+   - Aim for a passage length appropriate for the grade level. At least 1000 words minimum.
+	 - Use appropriate vocabulary for the grade level.
+	 - Ensure the passage is well-structured and has a clear main idea.
+   - Outline the main points or plot elements of the passage.
+   - Ensure the passage is engaging, well-structured, and contains sufficient depth for multiple questions.
+   - Review the passage for quality, making sure it's coherent, informative, and age-appropriate.
 
-When creating reading comprehension exercises, follow these guidelines:
-1. Generate a passage appropriate for the given grade level and difficulty.
-2. The passage should be related to the provided interests, if possible.
-3. Create clear, concise, and grammatically correct questions based on the passage.
-4. Ensure questions cover various aspects of comprehension (e.g., main idea, details, inference, vocabulary).
-5. Adjust the complexity of both the passage and questions to match the specified difficulty.
+2. Create exactly <%= assignment.number_of_questions %> multiple-choice questions:
+   - Identify key concepts or events from the passage that could be used for questions.
+   - Develop questions that test various aspects of comprehension (main idea, details, inference, vocabulary).
+   - Ensure each question is clear, unambiguous, and matches the specified difficulty level.
+   - Create four answer options for each question, with one correct answer and three plausible distractors.
+   - Write a detailed explanation for the correct answer.
+   - Double-check that each question tests a different aspect of comprehension.
 
-IMPORTANT: You must generate EXACTLY "<%= assignment.number_of_questions %>" questions.
+3. Review and finalize the assignment:
+   - Check that the reading passage and questions align with the specified grade level and difficulty.
+   - Verify that the content incorporates themes related to the given interests.
+   - Ensure the vocabulary used is appropriate for the grade level.
+   - Confirm that there are exactly the requested number of questions.
+   - Verify that each question tests a different aspect of comprehension.
 
-For each question, provide:
-1. The question text
-2. Four possible answers (with one correct answer)
-3. An explanation of the correct answer
+Remember to generate exactly <%= assignment.number_of_questions %> questions, each with four options and an explanation. The content should be educational, engaging, and tailored to the specified grade level, difficulty, and interests.
 
-Do not number the questions.
-
-Begin by generating the reading passage, followed by the comprehension questions.
+Respond with a JSON object containing the passage and questions.

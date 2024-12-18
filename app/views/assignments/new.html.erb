@@ -1,5 +1,69 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New assignment</h1>
+<div class="container mx-auto px-4">
+  <h1 class="font-bold text-4xl text-center mb-8">Create a Personalized Assignment</h1>
 
-  <%= render 'form', assignment: @assignment %>
+  <%= form_with(model: @assignment, class: "space-y-6", data: { controller: "random-details" }) do |form| %>
+    <div class="bg-white rounded-lg shadow-soft">
+      <div class="grid grid-cols-1 lg:grid-cols-3">
+        <div class="lg:col-span-2 p-6">
+          <% if @assignment.errors.any? %>
+            <div class="bg-destructive/10 text-destructive px-3 py-2 font-medium rounded-lg">
+              <h2><%= pluralize(@assignment.errors.count, "error") %> prohibited this assignment from being saved:</h2>
+              <ul>
+                <% @assignment.errors.each do |error| %>
+                  <li><%= error.full_message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <%= render 'form', form: form %>
+        </div>
+
+        <div class="lg:border-l border-gray-200 p-6">
+          <h2 class="text-xl font-semibold mb-4">Tips</h2>
+          
+          <ul class="space-y-4 mb-8">
+            <li class="flex gap-2">
+              <span class="text-primary font-medium">1.</span>
+              <p>Choose a catchy title that sparks curiosity.</p>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-primary font-medium">2.</span>
+              <p>Select a subject that aligns with your curriculum goals.</p>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-primary font-medium">3.</span>
+              <p>Adjust the difficulty to challenge students appropriately.</p>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-primary font-medium">4.</span>
+              <p>Include diverse interests to make the assignment more engaging.</p>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-primary font-medium">5.</span>
+              <p>Balance the number of questions with the complexity of the topic.</p>
+            </li>
+          </ul>
+
+          <div class="mb-6">
+            <h3 class="text-sm font-medium text-muted-foreground mb-2">Looking for inspiration?</h3>
+            <%= render "components/button/button", 
+                variant: :transparent,
+                size: :small,
+                data: { action: "click->random-details#fillRandom" } do %>
+              <%= icon "sparkles", library: "heroicons", class: "w-4 h-4 mr-2" %>
+              Randomize Assignment
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200 p-6">
+        <div class="flex justify-end space-x-4">
+          <%= transparent_button "Cancel", href: root_path, data: { turbo_frame: "_top" } %>
+          <%= primary_button "Create Assignment", type: "submit" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

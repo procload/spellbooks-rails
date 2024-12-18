@@ -154,6 +154,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* background-image: url(/images/fabric.webp); */
+    background-repeat: repeat;
+    background-size: auto;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply text-foreground font-semibold;
@@ -207,12 +210,124 @@
 }
 
 @layer components {
+  /* Passage Typography */
+  .passage-content {
+    @apply prose prose-slate max-w-none
+           prose-headings:font-serif prose-headings:font-medium prose-headings:text-gray-900
+           prose-h1:text-3xl prose-h1:mb-6 prose-h1:font-bold
+           prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-8
+           prose-h3:text-xl prose-h3:mb-3
+           prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-4
+           prose-a:text-lochmara-600 prose-a:no-underline hover:prose-a:underline
+           prose-strong:text-gray-900 prose-strong:font-medium
+           prose-ul:list-disc prose-ol:list-decimal
+           prose-li:text-gray-600
+           prose-blockquote:text-gray-600 prose-blockquote:border-lochmara-200 prose-blockquote:bg-blue-50/50
+           prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:not-italic
+           prose-hr:border-gray-200
+           prose-pre:bg-gray-50 prose-pre:text-gray-700;
+  }
+
+  /* Reading Passage Container */
+  .reading-passage {
+    @apply bg-white rounded-xl shadow-sm overflow-hidden;
+  }
+
+  .reading-passage-header {
+    @apply bg-gradient-to-r from-gray-50 to-white
+           border-b border-gray-100
+           px-8 py-6;
+  }
+
+  .reading-passage-content {
+    @apply px-8 py-6 lg:px-12 lg:py-8 relative
+           max-w-[900px] mx-auto;
+  }
+
+  .reading-passage-text {
+    @apply space-y-6 text-lg leading-relaxed text-gray-800;
+  }
+
+  /* Typography styles */
+  .reading-passage-text h1 {
+    @apply text-3xl font-bold mb-6 text-gray-900;
+  }
+
+  .reading-passage-text h2 {
+    @apply text-2xl font-semibold mb-4 mt-8 text-gray-900;
+  }
+
+  .reading-passage-text h3 {
+    @apply text-xl font-medium mb-3 mt-6 text-gray-900;
+  }
+
+  .reading-passage-text p {
+    @apply mb-4;
+    font-size: 18px;
+  }
+
+  .reading-passage-text blockquote {
+    @apply pl-4 border-l-4 border-lochmara-200 
+           bg-blue-50 py-2 pr-4 rounded-r-lg
+           text-gray-700 italic;
+  }
+
+  .reading-passage-image {
+    @apply float-right ml-8 mb-6 max-w-[320px];
+  }
+
+  .reading-passage-image img {
+    @apply w-full h-auto rounded-lg shadow-md;
+  }
+
+  /* Clear float after the content */
+  .reading-passage-content::after {
+    content: "";
+    @apply block clear-both;
+  }
+
+  /* Editor Styles */
+  .reading-passage-content .CodeMirror,
+  .reading-passage-content .editor-toolbar {
+    @apply !border-gray-200;
+  }
+
+  .reading-passage-content .CodeMirror {
+    @apply !h-[500px] !bg-white;
+  }
+
+  .reading-passage-content .editor-toolbar {
+    @apply !bg-gray-50 !rounded-t-lg !border-b-0;
+  }
+
+  .reading-passage-content .editor-toolbar button {
+    @apply !border !border-gray-200 !rounded !mx-0.5;
+  }
+
+  .reading-passage-content .editor-toolbar button:hover {
+    @apply !bg-white !border-gray-300;
+  }
+
+  .reading-passage-content .editor-toolbar button.active {
+    @apply !bg-white !border-lochmara-200;
+  }
+
+  /* Hide editor when not active */
+  .reading-passage-content textarea.hidden + .CodeMirror {
+    @apply !hidden;
+  }
+
+  /* Hide image when editing */
+  .reading-passage-content .CodeMirror-wrap ~ .reading-passage-image {
+    @apply !hidden;
+  }
+
   /* Base Button Styles */
   .btn {
     @apply inline-flex items-center justify-center
            font-medium
            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50
-           disabled:opacity-50 disabled:cursor-not-allowed
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:bg-inherit
            transition-colors duration-200
            rounded-md px-4 py-2;
   }
@@ -220,7 +335,8 @@
   /* Primary Button */
   .btn-primary {
     @apply bg-primary text-primary-foreground hover:bg-primary-hover
-           shadow-sm hover:shadow-md;
+           shadow-sm hover:shadow-md
+           disabled:bg-primary/50 disabled:text-primary-foreground/75 disabled:hover:bg-primary/50;
   }
 
   /* Secondary Button */
@@ -331,17 +447,56 @@
   .ui-text {
     @apply font-sans;
   }
+
+  .header-hidden {
+    transform: translateY(-100%);
+  }
+
+  header {
+    @apply fixed top-0 left-0 right-0 z-50;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .hidden {
+    display: none;
+  }
 }
 
-.hidden {
-  display: none;
-}
+@media print {
+  /* Ensure consistent font families */
+  body {
+    @apply font-sans text-bunker-900;
+  }
 
-/* Add these styles to your existing CSS */
-.header-compact .header-nav {
-  @apply py-1;
-}
+  /* Maintain heading styles */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-bunker-900;
+    page-break-after: avoid;
+  }
 
-.header-compact .w-12 {
-  @apply w-9 h-9;
+  /* Ensure proper text colors and contrast */
+  p, ul, ol, dl {
+    @apply text-bunker-900;
+  }
+
+  /* Remove background colors and ensure proper contrast */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Ensure links are readable */
+  a {
+    @apply text-bunker-900 no-underline;
+  }
+
+  /* Prevent orphaned headers */
+  h1, h2, h3, h4, h5, h6 {
+    break-after: avoid;
+  }
+
+  /* Prevent orphaned list items */
+  li {
+    break-inside: avoid;
+  }
 }
