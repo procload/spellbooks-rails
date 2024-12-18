@@ -2,8 +2,8 @@ require 'ostruct'
 
 class AssignmentsController < ApplicationController
   before_action :require_authentication
-  before_action :require_teacher, only: [:new, :create, :edit, :update, :destroy]
-  before_action :set_assignment, only: [:show, :edit, :update, :destroy, :assign_students]
+  before_action :require_teacher, only: [:new, :create, :edit, :update, :destroy, :update_passage]
+  before_action :set_assignment, only: [:show, :edit, :update, :destroy, :assign_students, :regenerate_image, :update_passage]
 
   def index
     @assignments = if Current.user.teacher?
@@ -144,6 +144,49 @@ class AssignmentsController < ApplicationController
     render layout: 'print'
   end
 
+  def regenerate_image
+    unless @assignment.teachers.include?(Current.user)
+      redirect_to @assignment, alert: "Only teachers can regenerate images"
+      return
+    end
+
+    service = AssignmentProcessingService.new(@assignment)
+    result = service.regenerate_image
+
+    respond_to do |format|
+      format.turbo_stream do
+        if result.success?
+          flash.now[:notice] = "Image is being regenerated..."
+        else
+          flash.now[:alert] = "Failed to regenerate image: #{result.error}"
+        end
+        
+        render turbo_stream: [
+          turbo_stream.replace("flash_messages", partial: "shared/flash")
+        ]
+      end
+
+      format.html do
+        if result.success?
+          redirect_to @assignment, notice: "Image is being regenerated..."
+        else
+          redirect_to @assignment, alert: "Failed to regenerate image: #{result.error}"
+        end
+      end
+    end
+  end
+
+  def update_passage
+    if @assignment.update(passage_params)
+      render json: {
+        rendered_passage: helpers.markdown(@assignment.markdown_passage),
+        message: "Passage updated successfully"
+      }
+    else
+      render json: { error: "Failed to update passage" }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_assignment
@@ -158,6 +201,10 @@ class AssignmentsController < ApplicationController
       :title, :subject, :grade_level, :difficulty, 
       :number_of_questions, :interests, :published
     )
+  end
+
+  def passage_params
+    params.require(:assignment).permit(:markdown_passage)
   end
 
   def generate_prompt(assignment)

@@ -1,33 +1,47 @@
 <% if question.answers.any? %>
   <div class="space-y-2">
-    <%= form_with url: check_answer_assignment_question_path(@assignment, question),
-                method: :post,
-                data: { 
-                  controller: "question-submission",
-                  action: "question-submission#submit"
-                },
-                class: "space-y-3" do |f| %>
-      
-      <%= render "questions/answer_options", 
-          question: question, 
-          form: f, 
-          student_answer: student_answer %>
-      
-      <div class="mt-4 flex items-center gap-2">
-        <%= primary_button "Submit Answer",
-            type: "submit",
-            disabled: student_answer.present?,
-            data: { "question-submission-target": "submitButton" } %>
+    <% if Current.user.teacher? %>
+      <div class="space-y-3">
+        <%= render "questions/answer_options", 
+            question: question, 
+            show_correct: true %>
         
-        <%= render "questions/spinner" %>
+        <% if question.explanation.present? %>
+          <div class="mt-4 p-4 rounded-lg bg-gray-50">
+            <p class="font-medium">Explanation:</p>
+            <p class="mt-2"><%= question.explanation %></p>
+          </div>
+        <% end %>
       </div>
-    <% end %>
-    
-    <%= turbo_frame_tag dom_id(question, :feedback) do %>
-      <%= render "questions/feedback", 
-          question: question,
-          correct: student_answer&.correct,
-          explanation: question.explanation if student_answer %>
+    <% else %>
+      <%= form_with url: check_answer_assignment_question_path(@assignment, question),
+                  method: :post,
+                  data: { 
+                    controller: "question-submission"
+                  },
+                  class: "space-y-3" do |f| %>
+        
+        <%= render "questions/answer_options", 
+            question: question, 
+            form: f, 
+            student_answer: student_answer %>
+        
+        <div class="mt-4 flex items-center gap-2">
+          <%= primary_button "Submit Answer",
+              type: "submit",
+              disabled: student_answer.present?,
+              data: { "question-submission-target": "submitButton" } %>
+          
+          <%= render "questions/spinner" %>
+        </div>
+      <% end %>
+      
+      <%= turbo_frame_tag dom_id(question, :feedback) do %>
+        <%= render "questions/feedback", 
+            question: question,
+            correct: student_answer&.correct,
+            explanation: question.explanation if student_answer %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

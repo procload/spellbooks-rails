@@ -9,6 +9,15 @@ class AssignmentProcessingService
     ProcessAssignmentJob.perform_later(@assignment.id)
   end
 
+  def regenerate_image
+    generate_image
+    success_result
+  rescue => e
+    Rails.logger.error "Error regenerating image: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    failure_result(e.message)
+  end
+
   private
 
   def generate_questions
@@ -26,7 +35,8 @@ class AssignmentProcessingService
   end
 
   def generate_image
-    image_prompt = "Create an educational illustration for the following passage: #{@assignment.passage}"
+    image_prompt = ImagePromptService.generate_prompt(@assignment)
+    Rails.logger.info "[AssignmentProcessingService] Image generation prompt: #{image_prompt}"
     
     provider = LLM::Factory.create_image_provider
     if image_url = provider.generate_image(prompt: image_prompt)

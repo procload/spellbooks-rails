@@ -73,7 +73,7 @@ class ProcessAssignmentJob < ApplicationJob
     
     provider = LLM::Factory.create_image_provider
     url = provider.generate_image(
-      prompt: @assignment.passage,
+      prompt: ImagePromptService.generate_prompt(@assignment),
       size: "1024x1024",
       quality: "standard"
     )

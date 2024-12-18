@@ -39,7 +39,9 @@ Rails.application.routes.draw do
     member do
       post :assign_students
       patch :update_status
+      patch :update_passage
       get :print
+      post :regenerate_image
     end
     
     resources :submissions, only: [:create], controller: 'assignment_submissions'

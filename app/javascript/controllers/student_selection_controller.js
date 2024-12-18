@@ -10,7 +10,7 @@ export default class extends Controller {
     "counter",
     "clearButton",
     "dropdown",
-    "form"
+    "form",
   ];
 
   static values = {
@@ -67,15 +67,18 @@ export default class extends Controller {
   }
 
   updateSelectedCount() {
-    const selectedCount = this.checkboxTargets.filter(checkbox => checkbox.checked).length;
+    const selectedCount = this.checkboxTargets.filter(
+      (checkbox) => checkbox.checked
+    ).length;
     this.counterTarget.textContent = `${selectedCount} students selected`;
-    this.clearButtonTarget.classList.toggle('hidden', selectedCount === 0);
-    this.selectAllTarget.checked = selectedCount === this.checkboxTargets.length && selectedCount > 0;
+    this.clearButtonTarget.classList.toggle("hidden", selectedCount === 0);
+    this.selectAllTarget.checked =
+      selectedCount === this.checkboxTargets.length && selectedCount > 0;
   }
 
   toggleAll(event) {
     const checked = event.target.checked;
-    this.checkboxTargets.forEach(checkbox => {
+    this.checkboxTargets.forEach((checkbox) => {
       checkbox.checked = checked;
     });
     this.updateSelectedCount();
@@ -84,7 +87,9 @@ export default class extends Controller {
 
   toggleStudent(event) {
     // Find the checkbox within the clicked row
-    const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
+    const checkbox = event.currentTarget.querySelector(
+      'input[type="checkbox"]'
+    );
     if (checkbox && !checkbox.disabled) {
       checkbox.checked = !checkbox.checked;
       this.updateSelectedCount();
@@ -98,7 +103,7 @@ export default class extends Controller {
   }
 
   clearSelection() {
-    this.checkboxTargets.forEach(checkbox => {
+    this.checkboxTargets.forEach((checkbox) => {
       checkbox.checked = false;
     });
     this.updateSelectedCount();
@@ -107,22 +112,28 @@ export default class extends Controller {
 
   filter() {
     const query = this.searchTarget.value.toLowerCase();
-    this.studentTargets.forEach(student => {
-      const name = student.querySelector('p').textContent.toLowerCase();
-      student.parentElement.style.display = name.includes(query) ? '' : 'none';
+    this.studentTargets.forEach((student) => {
+      const name = student.querySelector("p").textContent.toLowerCase();
+      student.parentElement.style.display = name.includes(query) ? "" : "none";
     });
   }
 
   toggleList() {
-    this.dropdownTarget.classList.toggle("hidden");
+    if (this.hasDropdownTarget) {
+      this.dropdownTarget.classList.toggle("hidden");
+    }
   }
 
   showList() {
-    this.dropdownTarget.classList.remove("hidden");
+    if (this.hasDropdownTarget) {
+      this.dropdownTarget.classList.remove("hidden");
+    }
   }
 
   hideList() {
-    this.dropdownTarget.classList.add("hidden");
+    if (this.hasDropdownTarget) {
+      this.dropdownTarget.classList.add("hidden");
+    }
   }
 
   updateSelectAllState() {
@@ -154,7 +165,7 @@ export default class extends Controller {
   }
 
   handleClickOutside(event) {
-    if (!this.element.contains(event.target)) {
+    if (!this.element.contains(event.target) && this.hasDropdownTarget) {
       this.hideList();
     }
   }
@@ -164,7 +175,7 @@ export default class extends Controller {
     if (this.processingValue) return;
 
     // Find the closest form
-    const form = this.element.closest('form');
+    const form = this.element.closest("form");
     if (!form) return;
 
     // Prevent default form submission if event exists
@@ -177,58 +188,61 @@ export default class extends Controller {
 
     // Get current selection state
     const selectedIds = Array.from(this.checkboxTargets)
-      .filter(checkbox => checkbox.checked)
-      .map(checkbox => checkbox.value);
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => checkbox.value);
 
     // Submit form with fetch
     fetch(form.action, {
       method: form.method,
       body: formData,
       headers: {
-        'Accept': 'text/vnd.turbo-stream.html',
-        'X-Requested-With': 'XMLHttpRequest'
+        Accept: "text/vnd.turbo-stream.html",
+        "X-Requested-With": "XMLHttpRequest",
       },
-      credentials: 'same-origin'
+      credentials: "same-origin",
     })
-    .then(response => response.text())
-    .then(html => {
-      // Parse all Turbo Stream elements and apply them
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const streamElements = doc.querySelectorAll('turbo-stream');
-      
-      streamElements.forEach(streamElement => {
-        const target = document.getElementById(streamElement.getAttribute('target'));
-        if (target) {
-          const content = streamElement.querySelector('template').content.firstElementChild;
-          
-          // If updating student list, preserve checkbox states
-          if (streamElement.getAttribute('target') === 'student_list') {
-            // Update the content
-            target.innerHTML = content.innerHTML;
-            
-            // Restore checkbox states
-            selectedIds.forEach(id => {
-              const checkbox = target.querySelector(`input[value="${id}"]`);
-              if (checkbox) {
-                checkbox.checked = true;
-              }
-            });
-            
-            // Update counter and select all state
-            this.updateSelectedCount();
-          } else {
-            // For other targets, just replace/update as normal
-            if (streamElement.getAttribute('action') === 'replace') {
-              target.replaceWith(content);
-            } else if (streamElement.getAttribute('action') === 'update') {
+      .then((response) => response.text())
+      .then((html) => {
+        // Parse all Turbo Stream elements and apply them
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        const streamElements = doc.querySelectorAll("turbo-stream");
+
+        streamElements.forEach((streamElement) => {
+          const target = document.getElementById(
+            streamElement.getAttribute("target")
+          );
+          if (target) {
+            const content =
+              streamElement.querySelector("template").content.firstElementChild;
+
+            // If updating student list, preserve checkbox states
+            if (streamElement.getAttribute("target") === "student_list") {
+              // Update the content
               target.innerHTML = content.innerHTML;
+
+              // Restore checkbox states
+              selectedIds.forEach((id) => {
+                const checkbox = target.querySelector(`input[value="${id}"]`);
+                if (checkbox) {
+                  checkbox.checked = true;
+                }
+              });
+
+              // Update counter and select all state
+              this.updateSelectedCount();
+            } else {
+              // For other targets, just replace/update as normal
+              if (streamElement.getAttribute("action") === "replace") {
+                target.replaceWith(content);
+              } else if (streamElement.getAttribute("action") === "update") {
+                target.innerHTML = content.innerHTML;
+              }
             }
           }
-        }
-      });
-    })
-    .catch(error => console.error('Error:', error));
+        });
+      })
+      .catch((error) => console.error("Error:", error));
   }
 
   sortStudents() {
