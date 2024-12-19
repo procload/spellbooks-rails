@@ -3,13 +3,15 @@
     <h1 class="text-4xl font-medium mb-8">Homework Dashboard</h1>
 
     <div class="flex justify-between items-center mb-8">
-      <!-- Subject Tabs -->
-      <div class="space-x-2">
-        <%= link_to "All", dashboard_path, 
-            class: "px-4 py-2 #{params[:subject].nil? ? 'bg-spellbooks-element text-white font-medium shadow-sm' : 'bg-spellbooks-sidebar hover:bg-spellbooks-element-hover'} rounded-full transition-colors" %>
+      <!-- Subject Filters -->
+      <div class="flex gap-2">
+        <%= render "components/button/toggle_button", active: params[:subject].blank?, href: dashboard_path do %>
+          All
+        <% end %>
         <% @available_subjects.each do |subject| %>
-          <%= link_to subject, dashboard_path(subject: subject), 
-              class: "px-4 py-2 #{params[:subject] == subject ? 'bg-spellbooks-element text-white font-medium shadow-sm' : 'bg-spellbooks-sidebar hover:bg-spellbooks-element-hover'} rounded-full transition-colors" %>
+          <%= render "components/button/toggle_button", active: params[:subject] == subject, href: dashboard_path(subject: subject) do %>
+            <%= subject %>
+          <% end %>
         <% end %>
       </div>
 
@@ -19,15 +21,16 @@
       <% end %>
     </div>
 
-    <h2 class="text-lg font-medium mb-4">Recent Assignments</h2>
-
-    <!-- Assignment Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <% @assignments.each do |assignment| %>
-        <div class="relative">
-          <%= render "assignments/assignment_card", assignment: assignment %>
-        </div>
-      <% end %>
+    <div class="space-y-6">
+      <h2 class="text-2xl font-semibold text-gray-900">Recent Assignments</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @assignments.each do |assignment| %>
+          <%= render 'assignments/assignment_card', 
+                    assignment: assignment,
+                    image_forward: assignment.image.attached? %>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>

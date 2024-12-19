@@ -32,37 +32,25 @@ module ComponentsHelper
         first_name: "Edward",
         last_name: "Evans",
         email_address: "edward@example.com"
-      ),
-      OpenStruct.new(
-        id: 6,
-        first_name: "Fiona",
-        last_name: "Fisher",
-        email_address: "fiona@example.com"
-      ),
-      OpenStruct.new(
-        id: 7,
-        first_name: "George",
-        last_name: "Garcia",
-        email_address: "george@example.com"
-      ),
-      OpenStruct.new(
-        id: 8,
-        first_name: "Hannah",
-        last_name: "Harris",
-        email_address: "hannah@example.com"
-      ),
-      OpenStruct.new(
-        id: 9,
-        first_name: "Ian",
-        last_name: "Ibrahim",
-        email_address: "ian@example.com"
-      ),
-      OpenStruct.new(
-        id: 10,
-        first_name: "Julia",
-        last_name: "Jones",
-        email_address: "julia@example.com"
       )
+    ]
+  end
+
+  def difficulty_options
+    [
+      { label: 'Easy', value: 'easy', checked: true },
+      { label: 'Medium', value: 'medium' },
+      { label: 'Hard', value: 'hard' }
+    ]
+  end
+
+  def subject_options
+    [
+      { label: 'Math', value: 'Math', checked: true },
+      { label: 'Science', value: 'Science' },
+      { label: 'English', value: 'English' },
+      { label: 'History', value: 'History' },
+      { label: 'Art', value: 'Art' }
     ]
   end
 end

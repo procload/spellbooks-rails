@@ -2,15 +2,17 @@ module AssignmentsHelper
   def assignment_card_color(subject)
     case subject&.downcase
     when 'math'
-      'bg-spellbooks-subject-math'
+      'bg-white border border-gray-50 border-l-2 border-l-lochmara-200/60'
     when 'science'
-      'bg-spellbooks-subject-science'
+      'bg-white border border-gray-50 border-l-2 border-l-punch-200/60'
     when 'english'
-      'bg-spellbooks-subject-english'
+      'bg-white border border-gray-50 border-l-2 border-l-bunker-200/60'
     when 'history'
-      'bg-spellbooks-subject-history'
+      'bg-white border border-gray-50 border-l-2 border-l-lochmara-200/60'
+    when 'art'
+      'bg-white border border-gray-50 border-l-2 border-l-punch-200/60'
     else
-      'bg-spellbooks-subject-default'
+      'bg-white border border-gray-50 border-l-2 border-l-bunker-200/60'
     end
   end
 

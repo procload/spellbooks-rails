@@ -8,12 +8,14 @@
         <div>
           <h3 class="text-lg font-medium text-gray-900 mb-4">Student Selection with Search</h3>
           <%= form_with url: "#", method: :post do |form| %>
-            <%= render "components/assign_students/student_list",
-                students: @students,
+            <%= render "components/assign_students/demo_student_list",
+                students: sample_students,
                 selected_ids: [1, 3] %>
 
             <div class="mt-6 flex justify-end">
-              <%= primary_button "Assign Students", type: "submit" %>
+              <%= render "components/button/button", variant: :primary, type: "submit" do %>
+                Assign Students
+              <% end %>
             </div>
           <% end %>
         </div>
@@ -279,6 +281,24 @@
             <% end %>
           </div>
         </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Toggle Buttons</h3>
+          <div class="flex gap-2">
+            <%= render "components/button/toggle_button", active: true do %>
+              All
+            <% end %>
+            <%= render "components/button/toggle_button", active: false do %>
+              Math
+            <% end %>
+            <%= render "components/button/toggle_button", active: false do %>
+              History
+            <% end %>
+            <%= render "components/button/toggle_button", active: false do %>
+              Physics
+            <% end %>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -498,6 +518,85 @@
                   segmented_control_target: "control",
                   action: "change->segmented-control#toggle"
                 } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# Action Dropdown Section %>
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-gray-900">Action Dropdown</h2>
+    <div class="p-6 bg-white rounded-lg shadow">
+      <div class="space-y-8">
+        <%# Basic Example %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Usage</h3>
+          <div class="flex items-center gap-4">
+            <%= render "shared/action_dropdown", actions: [
+              {
+                label: 'Edit',
+                url: '#',
+                method: 'GET',
+                icon: 'pencil'
+              },
+              {
+                label: 'Regenerate',
+                url: '#',
+                method: 'POST',
+                icon: 'refresh'
+              }
+            ] %>
+          </div>
+          
+          <div class="mt-4">
+            <pre class="bg-gray-50 p-4 rounded-lg overflow-x-auto"><code>&lt;%= render "shared/action_dropdown", actions: [
+  {
+    label: 'Edit',
+    url: edit_path,
+    method: 'GET',
+    icon: 'pencil'
+  },
+  {
+    label: 'Regenerate',
+    url: regenerate_path,
+    method: 'POST',
+    icon: 'refresh'
+  }
+] %></code></pre>
+          </div>
+        </div>
+
+        <%# Multiple Actions Example %>
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Multiple Actions</h3>
+          <div class="flex items-center gap-4">
+            <%= render "shared/action_dropdown", actions: [
+              {
+                label: 'View Details',
+                url: '#',
+                method: 'GET',
+                icon: 'eye'
+              },
+              {
+                label: 'Edit',
+                url: '#',
+                method: 'GET',
+                icon: 'pencil'
+              },
+              {
+                label: 'Regenerate',
+                url: '#',
+                method: 'POST',
+                icon: 'refresh'
+              },
+              {
+                label: 'Delete',
+                url: '#',
+                method: 'DELETE',
+                icon: 'trash'
+              }
+            ] %>
           </div>
         </div>
       </div>

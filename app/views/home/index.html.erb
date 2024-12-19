@@ -17,6 +17,24 @@
       </div>
     <% end %>
 
+    <div class="flex gap-2">
+      <%= render "components/button/toggle_button", active: params[:subject].blank?, href: root_path do %>
+        All
+      <% end %>
+      <%= render "components/button/toggle_button", active: params[:subject] == "Math", href: root_path(subject: "Math") do %>
+        Math
+      <% end %>
+      <%= render "components/button/toggle_button", active: params[:subject] == "History", href: root_path(subject: "History") do %>
+        History
+      <% end %>
+      <%= render "components/button/toggle_button", active: params[:subject] == "Physics", href: root_path(subject: "Physics") do %>
+        Physics
+      <% end %>
+      <%= render "components/button/toggle_button", active: params[:subject] == "Mathematics", href: root_path(subject: "Mathematics") do %>
+        Mathematics
+      <% end %>
+    </div>
+
     <% if @assignments.any? %>
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <%= render partial: "assignments/assignment_card", collection: @assignments, as: :assignment %>

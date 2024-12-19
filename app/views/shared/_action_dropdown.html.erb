@@ -1,24 +1,62 @@
-<div class="relative inline-block" data-controller="dropdown">
+<%# Usage: render 'shared/action_dropdown', actions: [
+  {
+    label: 'Edit',
+    url: edit_path,
+    method: 'GET',
+    icon: 'pencil'
+  }
+] %>
+
+<div class="relative" data-controller="action-dropdown">
   <button
     type="button"
-    data-action="dropdown#toggle"
-    data-dropdown-target="button"
-    class="inline-flex items-center gap-x-1 rounded-md bg-white px-2 py-1 text-xs font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-    ⚡️ Recast
-    <svg class="-mr-0.5 h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+    data-action="action-dropdown#toggle"
+    class="inline-flex items-center justify-center w-8 h-8 text-gray-500 rounded-full hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+  >
+    <span class="sr-only">Open actions menu</span>
+    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
     </svg>
   </button>
 
   <div
-    data-dropdown-target="menu"
-    class="absolute left-0 top-full z-10 mt-1 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
+    data-action-dropdown-target="menu"
+    class="absolute right-0 z-10 hidden w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
     role="menu"
     aria-orientation="vertical"
-    aria-labelledby="menu-button"
-    tabindex="-1">
+    aria-labelledby="action-menu-button"
+    tabindex="-1"
+  >
     <div class="py-1" role="none">
-      <%= yield %>
+      <% actions.each do |action| %>
+        <%= button_to action[:url],
+          method: action[:method],
+          class: "flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+          role: "menuitem",
+          tabindex: "-1",
+          data: {
+            action: "action-dropdown#handleAction",
+            url: action[:url],
+            method: action[:method]
+          } do %>
+          <% if action[:icon] %>
+            <%= render partial: "shared/icons/#{action[:icon]}", locals: { classes: "w-4 h-4 mr-3" } %>
+          <% end %>
+          <%= action[:label] %>
+        <% end %>
+      <% end %>
     </div>
+  </div>
+
+  <%# Loading overlay %>
+  <div
+    data-action-dropdown-target="loadingOverlay"
+    class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75"
+    style="display: none;"
+  >
+    <svg class="w-5 h-5 text-indigo-600 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
   </div>
 </div> 

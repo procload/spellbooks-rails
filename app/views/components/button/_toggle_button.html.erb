@@ -1,0 +1,34 @@
+<%# Usage: render "components/button/toggle_button", active: false, href: nil, **options do %>
+<%#   Button Text %>
+<%# end %>
+
+<% 
+  # Default classes shared by all toggle buttons
+  base_classes = "inline-flex items-center justify-center font-medium rounded-full transition-colors duration-200 ease-in-out px-4 py-2 text-[12px] h-8 border-2"
+
+  # State-based styles
+  state_classes = {
+    active: "bg-primary text-white hover:bg-primary/90 border-primary",
+    inactive: "bg-white text-gray-700 hover:bg-gray-50 border-gray-200 hover:border-gray-300"
+  }
+
+  # Combine classes based on active state
+  classes = [
+    base_classes,
+    state_classes[local_assigns[:active] ? :active : :inactive],
+    local_assigns[:class]
+  ].compact.join(" ")
+
+  # Remove our custom attributes from options
+  options = local_assigns.except(:active, :href)
+%>
+
+<% if local_assigns[:href].present? %>
+  <%= link_to local_assigns[:href], class: classes, **options do %>
+    <%= yield %>
+  <% end %>
+<% else %>
+  <button type="button" class="<%= classes %>" <%= tag.attributes(options) %>>
+    <%= yield %>
+  </button>
+<% end %>
