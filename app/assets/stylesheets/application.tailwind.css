@@ -313,8 +313,8 @@
   }
 
   /* Hide editor when not active */
-  .reading-passage-content textarea.hidden + .CodeMirror {
-    @apply !hidden;
+  .reading-passage-content textarea[hidden] + .CodeMirror {
+    display: none;
   }
 
   /* Hide image when editing */
